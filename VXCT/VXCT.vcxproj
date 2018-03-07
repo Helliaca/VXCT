@@ -69,13 +69,21 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>G:\Users\Kahl\source\assimp-3.1.1\include;G:\Users\Kahl\source\glfw-3.2.1\include;G:\Users\Kahl\source\glad\include;$(IncludePath)</IncludePath>
+    <LibraryPath>G:\Users\Kahl\source\assimp-3.1.1\libraries;G:\Users\Kahl\source\glfw-3.2.1\libraries;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>G:\Users\Kahl\source\GLM_9_8_5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -111,6 +119,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\glad\src\glad.c" />
+    <ClCompile Include="core\Engine.cpp" />
+    <ClCompile Include="core\Window.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="stb_image.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="core\base.h" />
+    <ClInclude Include="core\camera.h" />
+    <ClInclude Include="core\Engine.h" />
+    <ClInclude Include="core\settings\defs.h" />
+    <ClInclude Include="core\shader.h" />
+    <ClInclude Include="core\Window.h" />
+    <ClInclude Include="globals.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="VertexData.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\emit.fs" />
+    <None Include="shaders\emit.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
