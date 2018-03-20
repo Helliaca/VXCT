@@ -19,3 +19,7 @@
 
 #define EMITSHADER_VS "../VXCT/shaders/emit.vs"
 #define EMITSHADER_FS "../VXCT/shaders/emit.fs"
+
+#define VOXSHADER_VS "../VXCT/shaders/vox.vs"
+#define VOXSHADER_GS "../VXCT/shaders/vox.gs"
+#define VOXSHADER_FS "../VXCT/shaders/vox.fs"

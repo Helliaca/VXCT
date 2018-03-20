@@ -169,8 +169,10 @@ void Engine::run() {
 
 	//==================================================================================
 
-	Shader lightingShader(COLORSHADER_VS, COLORSHADER_FS);
+	//Shader lightingShader(COLORSHADER_VS, COLORSHADER_FS);
 	Shader lampShader(EMITSHADER_VS, EMITSHADER_FS);
+	Shader lightingShader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
+	//Shader lightingShader(VOXSHADER_VS, VOXSHADER_FS);
 
 	//==================================================================================
 
@@ -219,6 +221,7 @@ void Engine::run() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// be sure to activate shader when setting uniforms/drawing objects
+		//glViewport(0, 0, 100, 100);
 		lightingShader.use();
 		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
@@ -228,12 +231,12 @@ void Engine::run() {
 		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
-		lightingShader.setMat4("projection", projection);
-		lightingShader.setMat4("view", view);
+		lightingShader.setMat4("proj_u", projection);
+		lightingShader.setMat4("view_u", view);
 
 		// world transformation
 		glm::mat4 model;
-		lightingShader.setMat4("model", model);
+		lightingShader.setMat4("model_u", model);
 
 		// render the cube
 		glBindVertexArray(cubeVAO);
@@ -267,4 +270,10 @@ void Engine::run() {
 
 	glfwTerminate(); //Delete and clean all glfw resources allocated
 	return;
+}
+
+void Voxelize() {
+	Shader voxShader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
+	voxShader.use();
+	//TODO
 }

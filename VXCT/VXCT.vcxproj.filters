@@ -69,5 +69,10 @@
   <ItemGroup>
     <None Include="shaders\emit.fs" />
     <None Include="shaders\emit.vs" />
+    <None Include="shaders\vox.fs" />
+    <None Include="shaders\vox.gs" />
+    <None Include="shaders\vox.vs" />
+    <None Include="shaders\color.fs" />
+    <None Include="shaders\color.vs" />
   </ItemGroup>
 </Project>
