@@ -1,13 +1,11 @@
 #include "Engine.h"
 
-#include <iostream>
-#include <string>
-#include <glad\glad.h>
-#include <GLFW\glfw3.h>
+//#include <glad\glad.h>
+//#include <GLFW\glfw3.h>
 
 #include "shader.h"
 #include "..\stb_image.h"
-#include "Camera.h"
+//#include "Camera.h"
 
 #include "glm\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
@@ -17,13 +15,13 @@
 
 //=====================================================================
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-float lastX = WIN_WIDTH / 2.0f;
-float lastY = WIN_HEIGHT / 2.0f;
-bool firstMouse = true;
+//Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+//float lastX = WIN_WIDTH / 2.0f;
+//float lastY = WIN_HEIGHT / 2.0f;
+//bool firstMouse = true;
 
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
+//float deltaTime = 0.0f;
+//float lastFrame = 0.0f;
 float currentFrame = (float)glfwGetTime();
 
 // lighting
@@ -31,49 +29,6 @@ glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 //=====================================================================
 
-//Camera movement and stuff
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (firstMouse)
-	{
-		lastX = (float)xpos;
-		lastY = (float)ypos;
-		firstMouse = false;
-	}
-
-	float xoffset = (float)xpos - lastX;
-	float yoffset = lastY - (float)ypos;
-	lastX = (float)xpos;
-	lastY = (float)ypos;
-
-	camera.ProcessMouseMovement(xoffset, yoffset);
-}
-
-//Zoom on scroll wheel
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	camera.ProcessMouseScroll((float)yoffset);
-}
-
-//Function that gets calle when window is resized. Viewport should be adjusted accordingly
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height); //Tell OpenGL size of rendering window
-}
-
-//Function to handle all user input
-void processInput(GLFWwindow *window) {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
-}
 
 //Check how many vertex attributes our hardware allows
 void shaderInfo() {
@@ -129,43 +84,23 @@ Engine::~Engine() {
 
 }
 
-void Engine::run() {
-	glfwInit(); //Initialize glfw
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //Set opengl version to 4.5 core
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //For MacOS
-
-	//Create glfw window
-	GLFWwindow* window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "WindowName", NULL, NULL);
-	if (window == NULL) {
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return;
-	}
-	glfwMakeContextCurrent(window);
-	//Register framebuffer_size_callback as function that gets called on window resize
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	//Register mouse_callback as mouse function stuff
-	glfwSetCursorPosCallback(window, mouse_callback);
-	//Register scroll_callback as scroll function
-	glfwSetScrollCallback(window, scroll_callback);
-
+void Engine::loadGlad() { //only needs to be called once.
 	//Initialize GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return;
 	}
+}
 
-	//==================================================================================
+void Engine::run() {
+	Window* window = new Window(); //create opengl context with GLFW
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //turn on wireframe mode
+	loadGlad();	//Load Glad Extension library
+
 	glEnable(GL_DEPTH_TEST); //turn on z-buffer
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	//Display shader info
-	shaderInfo();
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	shaderInfo(); //Display shader info
 
 	//==================================================================================
 
@@ -203,17 +138,17 @@ void Engine::run() {
 	glEnableVertexAttribArray(0);
 
 	//Render loop:
-	while (!glfwWindowShouldClose(window))
+	while (!window->shouldClose())
 	{
 		// per-frame time logic
 		// --------------------
 		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+		G::deltaTime = currentFrame - G::lastFrame;
+		G::lastFrame = currentFrame;
 
 		// input
 		// -----
-		processInput(window);
+		//processInput(window);
 
 		// render
 		// ------
@@ -226,11 +161,11 @@ void Engine::run() {
 		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		lightingShader.setVec3("lightPos", lightPos);
-		lightingShader.setVec3("viewPos", camera.Position);
+		lightingShader.setVec3("viewPos", G::SceneCamera->Position);
 
 		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 projection = glm::perspective(glm::radians(G::SceneCamera->Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 view = G::SceneCamera->GetViewMatrix();
 		lightingShader.setMat4("proj_u", projection);
 		lightingShader.setMat4("view_u", view);
 
@@ -258,7 +193,7 @@ void Engine::run() {
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(window->getGLFWwindow());
 		glfwPollEvents();
 	}
 

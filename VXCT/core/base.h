@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include "settings\defs.h"
 
 class IOobject {
 
