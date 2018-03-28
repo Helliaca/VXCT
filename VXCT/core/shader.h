@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <string>
+#include <map>
 
 #include "settings/defs.h"
 #include "base.h"
@@ -21,7 +23,7 @@ public:
 	unsigned int ID;
 
 
-	Shader(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath = nullptr)
+	Shader(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath = nullptr) : IOobject("unnamedShader")
 	{
 		std::string vertexShaderCode, fragmentShaderCode, geometryShaderCode;
 		std::ifstream vShaderFile, fShaderFile, gShaderFile;
@@ -166,6 +168,7 @@ public:
 	// ------------------------------------------------------------------------
 	void setMat4(const std::string &name, const glm::mat4 &mat) const
 	{
+		//std::cout << name << " :: " << mat[0].x << mat[0].y << mat[0].z << std::endl;
 		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	}
 

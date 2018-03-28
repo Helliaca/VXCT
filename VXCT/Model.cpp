@@ -2,53 +2,80 @@
 
 
 #include "VertexData.h"
-#include <glad\glad.h>
 #include <GLFW\glfw3.h>
 
 
-Model::Model()
+Model::Model(std::string name = "unnamedModel", RenderShader sh=RenderShader::EMIT) : IOobject(name)
 {
-	shader = new Shader("shaders/emit.vs", "shaders/emit.fs");
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vdata), Vdata, GL_STATIC_DRAW);
+
+	if (sh == RenderShader::VOX) {
+		shader = new Shader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
+
+		glBindVertexArray(VAO);
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// normal attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+	}
+	if (sh == RenderShader::COLOR) {
+		shader = new Shader(COLORSHADER_VS, COLORSHADER_FS);
+
+		glBindVertexArray(VAO);
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// normal attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+	}
+	else if (sh == RenderShader::EMIT) {
+		shader = new Shader(EMITSHADER_VS, EMITSHADER_FS);
+
+		glBindVertexArray(VAO);
+		// note that we update the lamp's position attribute's stride to reflect the updated buffer data
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+	}
 }
 
 
 Model::~Model()
 {
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	//The two lines below will be necessary to avoid memory leaks but will lead to problems when removing memory other Models are pointing at. (Like viewMatrix)
+	//for (auto const& x : vec3Refs) if (x.second != NULL) { delete(x.second); x.second = 0; } //first is not a pointer so there is no need to call delete on it
+	//for (auto const& x : mat4Refs) if (x.second != NULL) delete(x.second);
 }
 
+void Model::draw() {
 
-void Model::load()
-{
-	glGenVertexArrays(1, &VAO); //generate VAO
-	glGenBuffers(1, &VBO);		//generate VBO
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO); //bind VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vdata), Vdata, GL_STATIC_DRAW); //create buffer objects data store
-
-	glBindVertexArray(VAO);
-
-	//set vertex attributes
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// normal attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-}
-
-void Model::draw(Camera* camera)
-{
-	glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
-	glm::mat4 view = camera->GetViewMatrix();
-	glm::mat4 model;
 	shader->use();
-	shader->setMat4("projection", projection);
-	shader->setMat4("view", view);
-	model = glm::mat4();
-	model = glm::translate(model, glm::vec3(0));
-	model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-	shader->setMat4("model", model);
 
+	//Set all references
+	for (auto const& x : vec3Refs) shader->setVec3(x.first, *x.second);
+	for (auto const& x : mat4Refs) shader->setMat4(x.first, *x.second);
+
+	// render the cube
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void Model::scale(float scale) {
+	model = glm::scale(model, glm::vec3(scale));
+}
+
+void Model::translate(glm::vec3 vec) {
+	model = glm::translate(model, vec);
+}
+
+void Model::translate(float x, float y, float z) {
+	model = glm::translate(model, glm::vec3(x, y, z));
 }

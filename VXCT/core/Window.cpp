@@ -5,7 +5,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
-Window::Window()
+Window::Window() : IOobject("unnamedWindow")
 {
 	glfwInit(); //Initialize glfw
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //Set opengl version to 4.5 core
@@ -81,7 +81,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 //Function to handle all user input
-void processInput(GLFWwindow *window) {
+void Window::processInput() {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 

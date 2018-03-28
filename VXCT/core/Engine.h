@@ -6,6 +6,7 @@
 #include "base.h"
 #include "globals.h"
 #include "Window.h"
+#include "../Model.h"
 
 class Engine : IOobject
 {

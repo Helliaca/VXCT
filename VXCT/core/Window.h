@@ -20,6 +20,7 @@ public:
 	~Window();
 	bool shouldClose();
 	GLFWwindow* getGLFWwindow();
+	void processInput();
 };
 
 #endif

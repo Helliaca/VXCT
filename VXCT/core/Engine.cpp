@@ -76,7 +76,7 @@ unsigned int loadTexture(char const * path) {
 
 //=====================================================================
 
-Engine::Engine() {
+Engine::Engine() : IOobject("unnamedEngine") {
 
 }
 
@@ -99,43 +99,44 @@ void Engine::run() {
 	loadGlad();	//Load Glad Extension library
 
 	glEnable(GL_DEPTH_TEST); //turn on z-buffer
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window->getGLFWwindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	shaderInfo(); //Display shader info
 
-	//==================================================================================
-
-	//Shader lightingShader(COLORSHADER_VS, COLORSHADER_FS);
-	Shader lampShader(EMITSHADER_VS, EMITSHADER_FS);
-	Shader lightingShader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
-	//Shader lightingShader(VOXSHADER_VS, VOXSHADER_FS);
+	glm::mat4 viewMatrix;
+	glm::mat4 projMatrix;
 
 	//==================================================================================
 
-	unsigned int VBO, cubeVAO;
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &VBO);
+	/*
+	//Cube voxeization
+	Model* mainCube = new Model("mainCube", RenderShader::VOX);
+	mainCube->addMat4Reference("model_u", &mainCube->model);
+	mainCube->addMat4Reference("proj_u", &projMatrix);
+	mainCube->addMat4Reference("view_u", &viewMatrix);
+	mainCube->addVec3Reference("lightPos", &lightPos);
+	mainCube->addVec3Reference("viewPos", &G::SceneCamera->Position);
+	mainCube->addVec3Reference("objectColor", &glm::vec3(1.0f, 0.5f, 0.31f)); //Might lead to memory leaks as we keep no reference of this variable
+	mainCube->addVec3Reference("lightColor", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
+	*/
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vdata), Vdata, GL_STATIC_DRAW);
+	///*
+	//Regular Cube
+	Model* mainCube = new Model("mainCube", RenderShader::COLOR);
+	mainCube->addMat4Reference("model_u", &mainCube->model);
+	mainCube->addMat4Reference("proj_u", &projMatrix);
+	mainCube->addMat4Reference("view_u", &viewMatrix);
+	mainCube->addVec3Reference("lightPos", &lightPos);
+	mainCube->addVec3Reference("viewPos", &G::SceneCamera->Position);
+	mainCube->addVec3Reference("objectColor", &glm::vec3(1.0f, 0.5f, 0.31f)); //Might lead to memory leaks as we keep no reference of this variable
+	mainCube->addVec3Reference("lightColor", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
+	//*/
 
-	glBindVertexArray(cubeVAO);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// normal attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	// second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
-	unsigned int lightVAO;
-	glGenVertexArrays(1, &lightVAO);
-	glBindVertexArray(lightVAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// note that we update the lamp's position attribute's stride to reflect the updated buffer data
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	Model* lamp = new Model("lamp", RenderShader::EMIT);
+	lamp->addMat4Reference("model", &lamp->model);
+	lamp->addMat4Reference("view", &viewMatrix);
+	lamp->addMat4Reference("projection", &projMatrix);
+	lamp->translate(lightPos);
+	lamp->scale(0.2f); //A smaller cube
 
 	//Render loop:
 	while (!window->shouldClose())
@@ -146,50 +147,22 @@ void Engine::run() {
 		G::deltaTime = currentFrame - G::lastFrame;
 		G::lastFrame = currentFrame;
 
+		//Update projection and view matrices
+		projMatrix = glm::perspective(glm::radians(G::SceneCamera->Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
+		viewMatrix = G::SceneCamera->GetViewMatrix();
+
 		// input
 		// -----
-		//processInput(window);
+		window->processInput();
 
 		// render
 		// ------
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// be sure to activate shader when setting uniforms/drawing objects
-		//glViewport(0, 0, 100, 100);
-		lightingShader.use();
-		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		lightingShader.setVec3("lightPos", lightPos);
-		lightingShader.setVec3("viewPos", G::SceneCamera->Position);
-
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(G::SceneCamera->Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
-		glm::mat4 view = G::SceneCamera->GetViewMatrix();
-		lightingShader.setMat4("proj_u", projection);
-		lightingShader.setMat4("view_u", view);
-
-		// world transformation
-		glm::mat4 model;
-		lightingShader.setMat4("model_u", model);
-
-		// render the cube
-		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-		// also draw the lamp object
-		lampShader.use();
-		lampShader.setMat4("projection", projection);
-		lampShader.setMat4("view", view);
-		model = glm::mat4();
-		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-		lampShader.setMat4("model", model);
-
-		glBindVertexArray(lightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
+		//glViewport(0, 0, 100, 100); //For voxelization resolution
+		mainCube->draw();
+		lamp->draw();
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -197,11 +170,9 @@ void Engine::run() {
 		glfwPollEvents();
 	}
 
-	// optional: de-allocate all resources once they've outlived their purpose:
-	// ------------------------------------------------------------------------
-	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteVertexArrays(1, &lightVAO);
-	glDeleteBuffers(1, &VBO);
+	// de-allocate all resources once they've outlived their purpose:
+	delete(lamp);
+	delete(mainCube);
 
 	glfwTerminate(); //Delete and clean all glfw resources allocated
 	return;
