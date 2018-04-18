@@ -13,6 +13,8 @@
 #define WIN_HEIGHT 600
 #define WIN_NAME "VXCT"
 
+#define VOX_SIZE 16
+
 //Paths
 #define COLORSHADER_VS "../VXCT/shaders/color.vs"
 #define COLORSHADER_FS "../VXCT/shaders/color.fs"

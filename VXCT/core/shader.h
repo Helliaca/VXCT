@@ -10,7 +10,6 @@
 #include <string>
 #include <map>
 
-#include "settings/defs.h"
 #include "base.h"
 
 #include "glm\glm.hpp"

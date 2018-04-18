@@ -4,8 +4,6 @@
 #define MODEL_H
 
 #include "core\shader.h"
-#include "core\camera.h"
-#include "core\globals.h"
 
 enum RenderShader {VOX, EMIT, COLOR};
 
@@ -17,6 +15,9 @@ private:
 	std::map<std::string, glm::vec3*> vec3Refs;
 	typedef std::pair<std::string, glm::vec3*> Vec3Entry;
 
+	std::map<std::string, glm::vec4*> vec4Refs;
+	typedef std::pair<std::string, glm::vec4*> Vec4Entry;
+
 	std::map<std::string, glm::mat4*> mat4Refs;
 	typedef std::pair<std::string, glm::mat4*> Mat4Entry;
 
@@ -25,6 +26,11 @@ public:
 	void addVec3Reference(std::string name, glm::vec3* ref) {
 		print(this, "Registered Reference: " + name);
 		vec3Refs.insert(Vec3Entry(name, ref));
+	}
+
+	void addVec4Reference(std::string name, glm::vec4* ref) {
+		print(this, "Registered Reference: " + name);
+		vec4Refs.insert(Vec4Entry(name, ref));
 	}
 
 	void addMat4Reference(std::string name, glm::mat4* ref) {
@@ -36,9 +42,12 @@ public:
 	void scale(float scale);
 	void translate(glm::vec3 vec);
 	void translate(float x, float y, float z);
+	void setPosition(float x, float y, float z);
+	void setPosition(glm::vec3 pos);
 	Shader* shader;
 	unsigned int VBO, VAO;
 	void draw();
+	void vox(GLint textureID);
 	Model(std::string name, RenderShader sh);
 	~Model();
 	//void load(Shader* shader);

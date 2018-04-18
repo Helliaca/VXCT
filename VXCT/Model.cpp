@@ -68,6 +68,17 @@ void Model::draw() {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
+void Model::vox(GLint textureID) {
+	//Set all references
+	for (auto const& x : vec3Refs) shader->setVec3(x.first, *x.second);
+	for (auto const& x : vec4Refs) shader->setVec4(x.first, *x.second);
+	for (auto const& x : mat4Refs) shader->setMat4(x.first, *x.second);
+
+	// render the cube
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
 void Model::scale(float scale) {
 	model = glm::scale(model, glm::vec3(scale));
 }
@@ -78,4 +89,14 @@ void Model::translate(glm::vec3 vec) {
 
 void Model::translate(float x, float y, float z) {
 	model = glm::translate(model, glm::vec3(x, y, z));
+}
+
+void Model::setPosition(float x, float y, float z) { //Set 3rd column of model matrix to xyz
+	model[3].x = x;
+	model[3].y = y;
+	model[3].z = z;
+}
+
+void Model::setPosition(glm::vec3 pos) {
+	setPosition(pos.x, pos.y, pos.z);
 }

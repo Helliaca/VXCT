@@ -126,6 +126,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="core\VoxelMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\base.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="VertexData.h" />
+    <ClInclude Include="core\VoxelMap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\color.fs" />
