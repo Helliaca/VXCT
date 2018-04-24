@@ -113,11 +113,16 @@ void Engine::run() {
 	//glm::mat4 viewMatrix; //These are global due to usage in voxelize()
 	//glm::mat4 projMatrix; //^
 
+	//glEnable(GL_CULL_FACE); //Enable Face Culling
+	//glCullFace(GL_FRONT); //One sided faces
+	//glFrontFace(GL_CW); //Set front face to clockwise (GL_CCW for counterclockwise)
+
 	//==================================================================================
 
 
 	//Model* mainCube = new Model("mainCube", RenderShader::VOX);		//Voxelization
-	Model* mainCube = new Model("mainCube", RenderShader::COLOR);	//Regular Cube
+	//Model* mainCube = new Model("mainCube", RenderShader::COLOR, OBJ_SPHERE);	//Regular Cube
+	Model* mainCube = new Model("mainCube", RenderShader::COLOR, defaultModels::fullcube_indices, defaultModels::fullcube_vertexData);	//Regular Cube
 
 	mainCube->addMat4Reference("model_u", &mainCube->model);
 	mainCube->addMat4Reference("proj_u", &projMatrix);
@@ -127,7 +132,7 @@ void Engine::run() {
 	mainCube->addVec3Reference("objectColor", &glm::vec3(1.0f, 0.5f, 0.31f)); //Might lead to memory leaks as we keep no reference of this variable
 	mainCube->addVec3Reference("lightColor", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
 
-	Model* lamp = new Model("lamp", RenderShader::EMIT);
+	Model* lamp = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	lamp->addMat4Reference("model", &lamp->model);
 	lamp->addMat4Reference("view", &viewMatrix);
 	lamp->addMat4Reference("projection", &projMatrix);
@@ -135,7 +140,7 @@ void Engine::run() {
 	lamp->translate(lightPos);
 	lamp->scale(0.2f); //A smaller cube
 
-	Model* voxel = new Model("lamp", RenderShader::EMIT);
+	Model* voxel = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	voxel->addMat4Reference("model", &voxel->model);
 	voxel->addMat4Reference("view", &viewMatrix);
 	voxel->addMat4Reference("projection", &projMatrix);
@@ -208,7 +213,8 @@ void Engine::Voxelize() {
 	viewMatrix = G::SceneCamera->GetViewMatrix();
 
 	//Scene
-	Model* mainCube = new Model("voxCube", RenderShader::VOX);	//Regular Cube
+	//Model* mainCube = new Model("voxCube", RenderShader::VOX, defaultModels::fullcube_indices, defaultModels::fullcube_vertexData);	//Regular Cube
+	Model* mainCube = new Model("voxCube", RenderShader::VOX, OBJ_SPHERE);	//Regular Cube
 	mainCube->addMat4Reference("model_u", &mainCube->model);
 	mainCube->addMat4Reference("proj_u", &projMatrix);
 	mainCube->addMat4Reference("view_u", &viewMatrix);

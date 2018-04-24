@@ -136,6 +136,7 @@
     <ClInclude Include="core\settings\defs.h" />
     <ClInclude Include="core\shader.h" />
     <ClInclude Include="core\Window.h" />
+    <ClInclude Include="lib\tiny_obj_loader.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="VertexData.h" />

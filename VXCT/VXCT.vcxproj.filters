@@ -74,6 +74,9 @@
     <ClInclude Include="core\VoxelMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lib\tiny_obj_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\emit.fs" />

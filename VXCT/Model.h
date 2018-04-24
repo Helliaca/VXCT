@@ -44,15 +44,18 @@ public:
 	void translate(float x, float y, float z);
 	void setPosition(float x, float y, float z);
 	void setPosition(glm::vec3 pos);
+	std::vector<float> vertexData; //Includes vertices and Normals
+	std::vector<int> indices;
 	Shader* shader;
-	unsigned int VBO, VAO;
+	unsigned int VBO, VAO, EBO;
 	void draw();
 	void vox(GLint textureID);
-	Model(std::string name, RenderShader sh);
+	Model(std::string name, RenderShader sh, std::string inputfile);
+	Model(std::string name, RenderShader sh, std::vector<int>indices, std::vector<float>vertexData);
 	~Model();
-	//void load(Shader* shader);
-	//void draw(Camera* camera);
-	//void bind();
+private:
+	void fromFile(std::string inputfile);
+	void initialize(RenderShader sh);
 };
 
 #endif

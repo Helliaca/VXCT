@@ -4,19 +4,38 @@
 #include "VertexData.h"
 #include <GLFW\glfw3.h>
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "lib\tiny_obj_loader.h"
 
-Model::Model(std::string name = "unnamedModel", RenderShader sh=RenderShader::EMIT) : IOobject(name)
+Model::Model(std::string name, RenderShader sh=RenderShader::EMIT, std::string inputfile="") : IOobject(name)
 {
+	if (inputfile!="") { this->fromFile(inputfile); }
+	initialize(sh);
+}
+
+Model::Model(std::string name = "unnamedModel", RenderShader sh = RenderShader::EMIT, std::vector<int>indices = {}, std::vector<float>vertexData = {}) : IOobject(name)
+{
+	this->vertexData = vertexData;
+	this->indices = indices;
+	initialize(sh);
+}
+
+void Model::initialize(RenderShader sh) {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vdata), Vdata, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertexData.size(), &vertexData[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int)*indices.size(), &indices[0], GL_STATIC_DRAW);
 
 	if (sh == RenderShader::VOX) {
 		shader = new Shader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
 
-		glBindVertexArray(VAO);
 		// position attribute
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
@@ -27,7 +46,6 @@ Model::Model(std::string name = "unnamedModel", RenderShader sh=RenderShader::EM
 	if (sh == RenderShader::COLOR) {
 		shader = new Shader(COLORSHADER_VS, COLORSHADER_FS);
 
-		glBindVertexArray(VAO);
 		// position attribute
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
@@ -38,13 +56,14 @@ Model::Model(std::string name = "unnamedModel", RenderShader sh=RenderShader::EM
 	else if (sh == RenderShader::EMIT) {
 		shader = new Shader(EMITSHADER_VS, EMITSHADER_FS);
 
-		glBindVertexArray(VAO);
 		// note that we update the lamp's position attribute's stride to reflect the updated buffer data
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 	}
-}
 
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
 
 Model::~Model()
 {
@@ -65,7 +84,8 @@ void Model::draw() {
 
 	// render the cube
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDrawElements(GL_TRIANGLES, vertexData.size(), GL_UNSIGNED_INT, 0);
 }
 
 void Model::vox(GLint textureID) {
@@ -76,7 +96,8 @@ void Model::vox(GLint textureID) {
 
 	// render the cube
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDrawElements(GL_TRIANGLES, vertexData.size(), GL_UNSIGNED_INT, 0);
 }
 
 void Model::scale(float scale) {
@@ -99,4 +120,84 @@ void Model::setPosition(float x, float y, float z) { //Set 3rd column of model m
 
 void Model::setPosition(glm::vec3 pos) {
 	setPosition(pos.x, pos.y, pos.z);
+}
+
+void Model::fromFile(std::string inputfile) {
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+
+	std::string err;
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, inputfile.c_str());
+
+	if (!err.empty()) print(this, "Error reading File: " + err);
+
+	if (!ret) { exit(1); }
+
+	//Format conversion:
+
+	for (int i = 0; i < shapes[0].mesh.indices.size(); i++) {
+		indices.push_back(shapes[0].mesh.indices[i].vertex_index);
+	}
+
+	for (int i = 0; i+2 < attrib.vertices.size(); i+=3) {
+		int current_vindex = i / 3;
+		//Get vertex
+		float x, y, z;
+		float nx, ny, nz;
+		x = attrib.vertices[i + 0];
+		y = attrib.vertices[i + 1];
+		z = attrib.vertices[i + 2];
+
+		//Push vertex onto vector
+		vertexData.push_back(x);
+		vertexData.push_back(y);
+		vertexData.push_back(z);
+
+		//Get respective normal index
+		for (int j = 0; j < shapes[0].mesh.indices.size(); j++) {
+			if (shapes[0].mesh.indices[j].vertex_index == current_vindex) {
+				int normalindex = shapes[0].mesh.indices[j].normal_index;
+
+				//Push normal onto vector
+				nx = attrib.normals[3 * normalindex + 0];
+				ny = attrib.normals[3 * normalindex + 1];
+				nz = attrib.normals[3 * normalindex + 2];
+				vertexData.push_back(nx);
+				vertexData.push_back(ny);
+				vertexData.push_back(nz);
+				break;
+			}
+		}
+	}
+
+	//Format conversion done
+
+	print(this, "File loaded. Size of vertexData: " + vertexData.size());
+
+	/*
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertexData.size(), &vertexData[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int)*indices.size(), &indices[0], GL_STATIC_DRAW);
+
+	shader = new Shader(COLORSHADER_VS, COLORSHADER_FS);
+
+	glBindVertexArray(VAO);
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// normal attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);*/
 }

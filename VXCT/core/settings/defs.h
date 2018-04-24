@@ -25,3 +25,5 @@
 #define VOXSHADER_VS "../VXCT/shaders/vox.vs"
 #define VOXSHADER_GS "../VXCT/shaders/vox.gs"
 #define VOXSHADER_FS "../VXCT/shaders/vox.fs"
+
+#define OBJ_SPHERE "voxel_test.obj"
