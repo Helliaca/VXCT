@@ -5,20 +5,26 @@
 
 #include "base.h"
 #include "Window.h"
-#include "../Model.h"
+#include "../Scene.h"
 #include "VoxelMap.h"
+#include <mutex>
+#include <thread>
 
 class Engine : IOobject
 {
 private:
 	void loadGlad();
+	void console();
+	std::thread consoleThread;
+	std::mutex settingMutex;
 public:
 	VoxelMap * voxelMap;
-	void Voxelize();
+	void Voxelize(Scene* scene);
 	Window* window;
 	Engine();
 	~Engine();
 	void run();
+	Scene* InitScene();
 };
 
 #endif

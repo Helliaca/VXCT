@@ -122,9 +122,11 @@
     <ClCompile Include="..\..\..\glad\src\glad.c" />
     <ClCompile Include="core\Engine.cpp" />
     <ClCompile Include="core\globals.cpp" />
+    <ClCompile Include="core\InitScene.cpp" />
     <ClCompile Include="core\Window.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="core\VoxelMap.cpp" />
   </ItemGroup>
@@ -138,6 +140,7 @@
     <ClInclude Include="core\Window.h" />
     <ClInclude Include="lib\tiny_obj_loader.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="VertexData.h" />
     <ClInclude Include="core\VoxelMap.h" />
@@ -150,6 +153,8 @@
     <None Include="shaders\vox.fs" />
     <None Include="shaders\vox.gs" />
     <None Include="shaders\vox.vs" />
+    <None Include="shaders\voxillumin.fs" />
+    <None Include="shaders\voxillumin.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

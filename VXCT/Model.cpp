@@ -82,22 +82,30 @@ void Model::draw() {
 	for (auto const& x : vec3Refs) shader->setVec3(x.first, *x.second);
 	for (auto const& x : mat4Refs) shader->setMat4(x.first, *x.second);
 
-	// render the cube
+	// render
 	glBindVertexArray(VAO);
 	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDrawElements(GL_TRIANGLES, vertexData.size(), GL_UNSIGNED_INT, 0);
+
+	checkErrors("Draw");
 }
 
-void Model::vox(GLint textureID) {
+void Model::vox() {
 	//Set all references
 	for (auto const& x : vec3Refs) shader->setVec3(x.first, *x.second);
 	for (auto const& x : vec4Refs) shader->setVec4(x.first, *x.second);
-	for (auto const& x : mat4Refs) shader->setMat4(x.first, *x.second);
+	for (auto const& x : mat4Refs) {
+		shader->setMat4(x.first, *x.second);
+		checkErrors("RefSet_" + x.first);
+	}
+	checkErrors("ReferenceSet");
 
-	// render the cube
+	// render
 	glBindVertexArray(VAO);
 	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDrawElements(GL_TRIANGLES, vertexData.size(), GL_UNSIGNED_INT, 0);
+
+	checkErrors("Vox");
 }
 
 void Model::scale(float scale) {

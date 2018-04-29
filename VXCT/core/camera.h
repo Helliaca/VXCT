@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <vector>
+#include "settings\defs.h"
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -29,6 +30,9 @@ const float ZOOM = 45.0f;
 class Camera
 {
 public:
+	//For public access. Updated in Camera->update
+	glm::mat4 viewMatrix;
+	glm::mat4 projMatrix;
 	// Camera Attributes
 	glm::vec3 Position;
 	glm::vec3 Front;
@@ -42,6 +46,11 @@ public:
 	float MovementSpeed;
 	float MouseSensitivity;
 	float Zoom;
+
+	void Update() {
+		projMatrix = glm::perspective(glm::radians(this->Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
+		viewMatrix = this->GetViewMatrix();
+	}
 
 	// Constructor with vectors
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)

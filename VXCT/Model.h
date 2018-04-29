@@ -39,6 +39,7 @@ public:
 	}
 
 	glm::mat4 model; //Model Matrix
+	glm::vec3 color; //Color of the object, used only if reference is applied (same as model matrix)
 	void scale(float scale);
 	void translate(glm::vec3 vec);
 	void translate(float x, float y, float z);
@@ -49,11 +50,10 @@ public:
 	Shader* shader;
 	unsigned int VBO, VAO, EBO;
 	void draw();
-	void vox(GLint textureID);
+	void vox();
 	Model(std::string name, RenderShader sh, std::string inputfile);
 	Model(std::string name, RenderShader sh, std::vector<int>indices, std::vector<float>vertexData);
 	~Model();
-private:
 	void fromFile(std::string inputfile);
 	void initialize(RenderShader sh);
 };

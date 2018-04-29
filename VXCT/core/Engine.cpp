@@ -1,36 +1,19 @@
 #include "Engine.h"
 
-//#include <glad\glad.h>
-//#include <GLFW\glfw3.h>
-
 #include "shader.h"
 #include "..\stb_image.h"
-//#include "Camera.h"
-
-#include "glm\glm.hpp"
-#include "glm\gtc\matrix_transform.hpp"
-#include "glm\gtc\type_ptr.hpp"
 
 #include "..\VertexData.h"
 
 //=====================================================================
 
-//Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-//float lastX = WIN_WIDTH / 2.0f;
-//float lastY = WIN_HEIGHT / 2.0f;
-//bool firstMouse = true;
-
-//float deltaTime = 0.0f;
-//float lastFrame = 0.0f;
 float currentFrame = (float)glfwGetTime();
 
-// lighting
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-
-glm::mat4 viewMatrix;
-glm::mat4 projMatrix;
-
 const std::vector<GLubyte> texture3D(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
+
+bool objs = true;
+bool voxs = true;
+bool voxelizeOnNextFrame = false;
 
 //=====================================================================
 
@@ -40,43 +23,6 @@ void shaderInfo() {
 	int nrAttributes;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
-}
-
-//=====================================================================
-
-//load texture and stuff
-unsigned int loadTexture(char const * path) {
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
-
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 0);
-	if (data) {
-		GLenum format;
-		if (nrChannels == 1) format = GL_RED;
-		else if (nrChannels == 3) format = GL_RGB;
-		else if (nrChannels == 4) format = GL_RGBA;
-		//bind to id
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		//Hand image data to opengl
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		//Generate mipmaps for currently loaded texture
-		glGenerateMipmap(GL_TEXTURE_2D);
-		//set texture options
-		//Wrapping
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		//Filtering
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//free image memory
-		stbi_image_free(data);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
-		stbi_image_free(data);
-	}
-	return textureID;
 }
 
 //=====================================================================
@@ -110,56 +56,48 @@ void Engine::run() {
 	glfwSetInputMode(window->getGLFWwindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	shaderInfo(); //Display shader info
 
-	//glm::mat4 viewMatrix; //These are global due to usage in voxelize()
-	//glm::mat4 projMatrix; //^
-
-	//glEnable(GL_CULL_FACE); //Enable Face Culling
-	//glCullFace(GL_FRONT); //One sided faces
-	//glFrontFace(GL_CW); //Set front face to clockwise (GL_CCW for counterclockwise)
+	if (VXCT_CULLING) {
+		glEnable(GL_CULL_FACE); //Enable Face Culling
+		glCullFace(GL_FRONT); //One sided faces
+		glFrontFace(GL_CW); //Set front face to clockwise (GL_CCW for counterclockwise)
+	}
 
 	//==================================================================================
 
-
-	//Model* mainCube = new Model("mainCube", RenderShader::VOX);		//Voxelization
-	//Model* mainCube = new Model("mainCube", RenderShader::COLOR, OBJ_SPHERE);	//Regular Cube
-	Model* mainCube = new Model("mainCube", RenderShader::COLOR, defaultModels::fullcube_indices, defaultModels::fullcube_vertexData);	//Regular Cube
-
-	mainCube->addMat4Reference("model_u", &mainCube->model);
-	mainCube->addMat4Reference("proj_u", &projMatrix);
-	mainCube->addMat4Reference("view_u", &viewMatrix);
-	mainCube->addVec3Reference("lightPos", &lightPos);
-	mainCube->addVec3Reference("viewPos", &G::SceneCamera->Position);
-	mainCube->addVec3Reference("objectColor", &glm::vec3(1.0f, 0.5f, 0.31f)); //Might lead to memory leaks as we keep no reference of this variable
-	mainCube->addVec3Reference("lightColor", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
+	Scene* mainScene = InitScene();
 
 	Model* lamp = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	lamp->addMat4Reference("model", &lamp->model);
-	lamp->addMat4Reference("view", &viewMatrix);
-	lamp->addMat4Reference("projection", &projMatrix);
+	lamp->addMat4Reference("view", &G::SceneCamera->viewMatrix);
+	lamp->addMat4Reference("projection", &G::SceneCamera->projMatrix);
 	lamp->addVec3Reference("emitColor", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
-	lamp->translate(lightPos);
+	lamp->translate(G::lightPos);
 	lamp->scale(0.2f); //A smaller cube
 
 	Model* voxel = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	voxel->addMat4Reference("model", &voxel->model);
-	voxel->addMat4Reference("view", &viewMatrix);
-	voxel->addMat4Reference("projection", &projMatrix);
-	glm::vec3 putColorHere;
+	voxel->addMat4Reference("view", &G::SceneCamera->viewMatrix);
+	voxel->addMat4Reference("projection", &G::SceneCamera->projMatrix);
+	glm::vec3 putColorHere; //The value of this vector will be changed in VoxelMap.visualize()
 	voxel->addVec3Reference("emitColor", &putColorHere); //Might lead to memory leaks as we keep no reference of this variable
-	voxel->scale(1.0f);
+	voxel->scale((MAX_X - MIN_X)/VOX_SIZE); //Note: only MAX/MIN_X is taken into account when sclaing voxel representatives
 
 	std::string s;
+
+	consoleThread = std::thread(&Engine::console, this);
+	consoleThread.detach();
+
 	//Render loop:
 	while (!window->shouldClose())
 	{
-		if(s!="free") std::cin >> s;
-		if (s == "vox") {
-			Voxelize();
+		settingMutex.lock();
+
+		if (voxelizeOnNextFrame) {
+			Voxelize(mainScene);
 			checkErrors();
-			print(this, "Pause --");
-			continue;
+			voxelizeOnNextFrame = false;
 		}
-		else checkErrors();
+		checkErrors("EngineLoop");
 
 		// per-frame time logic
 		// --------------------
@@ -167,9 +105,10 @@ void Engine::run() {
 		G::deltaTime = currentFrame - G::lastFrame;
 		G::lastFrame = currentFrame;
 
-		//Update projection and view matrices
-		projMatrix = glm::perspective(glm::radians(G::SceneCamera->Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
-		viewMatrix = G::SceneCamera->GetViewMatrix();
+		G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
+		//previously:
+		//projMatrix = glm::perspective(glm::radians(G::SceneCamera->Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
+		//viewMatrix = G::SceneCamera->GetViewMatrix();
 
 		// input
 		// -----
@@ -181,11 +120,12 @@ void Engine::run() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		lamp->draw();
-		mainCube->draw();
-		
+		//mainCube->draw();
+		if(objs) mainScene->draw();
+		settingMutex.unlock();
 
 		//window->setPolygonMode(PolygonMode::W_WIREFRAME);
-		if (voxelMap != nullptr) {
+		if (voxelMap != nullptr && voxs) {
 			voxelMap->visualize(voxel, &putColorHere);
 		}
 		//window->setPolygonMode(PolygonMode::W_FILL);
@@ -199,55 +139,46 @@ void Engine::run() {
 
 	// de-allocate all resources once they've outlived their purpose:
 	delete(lamp);
-	delete(mainCube);
+	//delete(mainCube);
 
 	glfwTerminate(); //Delete and clean all glfw resources allocated
 	return;
 }
 
-void Engine::Voxelize() {
+void Engine::Voxelize(Scene* scene) {
 	//>>initVoxelization
 	voxelMap = new VoxelMap(texture3D);
 
-	projMatrix = glm::perspective(glm::radians(G::SceneCamera->Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
-	viewMatrix = G::SceneCamera->GetViewMatrix();
+	G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
 
-	//Scene
-	//Model* mainCube = new Model("voxCube", RenderShader::VOX, defaultModels::fullcube_indices, defaultModels::fullcube_vertexData);	//Regular Cube
-	Model* mainCube = new Model("voxCube", RenderShader::VOX, OBJ_SPHERE);	//Regular Cube
-	mainCube->addMat4Reference("model_u", &mainCube->model);
-	mainCube->addMat4Reference("proj_u", &projMatrix);
-	mainCube->addMat4Reference("view_u", &viewMatrix);
-	mainCube->addVec3Reference("lightPos", &lightPos);
-	mainCube->addVec3Reference("viewPos", &G::SceneCamera->Position);
-	mainCube->addVec3Reference("objectColor", &glm::vec3(1.0f, 0.5f, 0.31f)); //Might lead to memory leaks as we keep no reference of this variable
-	mainCube->addVec3Reference("lightColor", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
+	Shader* sh = new Shader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
+
+	checkErrors("VoxelizeInit");
 
 	//>>voxelize
 
 	//if clearVoxelization: voxelMap->clear();
-	mainCube->shader->use(); //needed here?
+	sh->use();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0); //TODO: why do we do this?
 
 	//Settings
 	glViewport(0, 0, VOX_SIZE, VOX_SIZE);
 	//glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); //?
-	//glDisable(GL_CULL_FACE); //?
+	glDisable(GL_CULL_FACE);
 	//glDisable(GL_DEPTH_TEST); //?
 	//glDisable(GL_BLEND); //?
 
 	//Texture/Map
-	voxelMap->activate(mainCube->shader->ID, "tex3D", 0);
+	voxelMap->activate(sh->ID, "tex3D", 0);
 	glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
 	
-
+	checkErrors("VoxelizePreDraw");
 	// render
 	// ------
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	//mainCube->draw();
-	mainCube->vox(voxelMap->textureID);
+	scene->vox();
 
 	// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 	// -------------------------------------------------------------------------------
@@ -255,7 +186,25 @@ void Engine::Voxelize() {
 	glfwPollEvents();
 
 	//glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); //if we set to false previously, revert.
-	
+	checkErrors("VoxelizeEnd");
+
 	voxelMap->updateMemory();
+
+	//Revert Settings
+	if(VXCT_CULLING) glEnable(GL_CULL_FACE);
 	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
+}
+
+void Engine::console() {
+	std::string input;
+	while (true)
+	{
+		std::cin >> input;
+
+		settingMutex.lock();
+		if (input == "objs") objs = !objs;
+		if (input == "voxs") voxs = !voxs;
+		if (input == "vox") voxelizeOnNextFrame = true;
+		settingMutex.unlock();
+	}
 }

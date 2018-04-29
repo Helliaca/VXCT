@@ -39,6 +39,12 @@
     <ClCompile Include="core\VoxelMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\InitScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Engine.h">
@@ -77,6 +83,9 @@
     <ClInclude Include="lib\tiny_obj_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\emit.fs" />
@@ -86,5 +95,7 @@
     <None Include="shaders\vox.vs" />
     <None Include="shaders\color.fs" />
     <None Include="shaders\color.vs" />
+    <None Include="shaders\voxillumin.vs" />
+    <None Include="shaders\voxillumin.fs" />
   </ItemGroup>
 </Project>

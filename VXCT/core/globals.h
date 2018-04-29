@@ -13,6 +13,8 @@ namespace G {
 	extern bool firstMouse;
 	extern Camera* SceneCamera;
 
+	extern glm::vec3 lightPos;
+	extern glm::vec3 lightColor;
 }
 
 #endif

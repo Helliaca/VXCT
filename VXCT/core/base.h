@@ -35,3 +35,16 @@ public:
 };
 
 inline void print(IOobject* source, std::string out) { std::cout << source->name << " >> " << out << std::endl; }
+
+//Coordiante Systems:
+// World Coordiante: From (MIN_X, MIN_Y, MIN_Z) to (MAX_X, MAX_Y, MAX_Z)
+// Base Voxel Coordiante: From (0, 0, 0) to (1, 1, 1) on VoxelMap
+// Voxel Coordiante: From (0, 0, 0) to (VOX_SIZE, VOX_SIZE, VOX_SIZE) on VoxelMap
+
+//Voxel Coordiante to World Coordinate
+inline glm::vec3 vC_to_wC(glm::vec3 pos) {
+	float x = (pos.x / VOX_SIZE) * (MAX_X - MIN_X) + MIN_X;
+	float y = (pos.y / VOX_SIZE) * (MAX_Y - MIN_Y) + MIN_Y;
+	float z = (pos.z / VOX_SIZE) * (MAX_Z - MIN_Z) + MIN_Z;
+	return glm::vec3(x, y, z);
+}
