@@ -132,7 +132,7 @@ void VoxelMap::visualize(Model* voxelModel, glm::vec3* shaderReference) {
 
 				voxelModel->setPosition(vC_to_wC(glm::vec3(x, y, z)));
 
-				if(shaderReference->r != dontDraw.r && shaderReference->g != dontDraw.g && shaderReference->g != dontDraw.b) voxelModel->draw();
+				if(shaderReference->r != dontDraw.r || shaderReference->g != dontDraw.g || shaderReference->g != dontDraw.b) voxelModel->draw();
 			}
 		}
 	}

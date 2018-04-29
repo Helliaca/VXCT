@@ -15,7 +15,7 @@
 #define WIN_HEIGHT 600
 #define WIN_NAME "VXCT"
 
-#define VOX_SIZE 16
+#define VOX_SIZE 32
 
 //World Coordinate Bounds (Changing Values might not work)
 #define MIN_X -1.0f

@@ -11,9 +11,13 @@ float currentFrame = (float)glfwGetTime();
 
 const std::vector<GLubyte> texture3D(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
 
-bool objs = true;
-bool voxs = true;
-bool voxelizeOnNextFrame = false;
+bool objs = true;					//Draw Objects
+bool voxs = true;					//Draw Voxels
+bool voxelizeOnNextFrame = false;	//voxelize the Scene on the next Frame
+bool voxsWireframe = false;			//Show voxels in Wireframe Mode
+bool objsWireframe = false;			//Show objects in Wireframe Mode
+bool sfMode = false;				//Display Frames individually on input
+bool singleFrame = true;			//Show next frame
 
 //=====================================================================
 
@@ -82,8 +86,6 @@ void Engine::run() {
 	voxel->addVec3Reference("emitColor", &putColorHere); //Might lead to memory leaks as we keep no reference of this variable
 	voxel->scale((MAX_X - MIN_X)/VOX_SIZE); //Note: only MAX/MIN_X is taken into account when sclaing voxel representatives
 
-	std::string s;
-
 	consoleThread = std::thread(&Engine::console, this);
 	consoleThread.detach();
 
@@ -92,6 +94,13 @@ void Engine::run() {
 	{
 		settingMutex.lock();
 
+		if (sfMode) {
+			if (!singleFrame) {
+				settingMutex.unlock();
+				continue;
+			}
+			else singleFrame = false;
+		}
 		if (voxelizeOnNextFrame) {
 			Voxelize(mainScene);
 			checkErrors();
@@ -106,30 +115,31 @@ void Engine::run() {
 		G::lastFrame = currentFrame;
 
 		G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
-		//previously:
-		//projMatrix = glm::perspective(glm::radians(G::SceneCamera->Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
-		//viewMatrix = G::SceneCamera->GetViewMatrix();
 
 		// input
 		// -----
-		window->processInput();
+		if(!sfMode) window->processInput(); //Dont move Camera if in sfMode
 
 		// render
 		// ------
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		//Object Drawing
+		if (objsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
 		lamp->draw();
-		//mainCube->draw();
 		if(objs) mainScene->draw();
-		settingMutex.unlock();
+		if (objsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
-		//window->setPolygonMode(PolygonMode::W_WIREFRAME);
+		//Voxel Drawing
+		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
 		if (voxelMap != nullptr && voxs) {
 			voxelMap->visualize(voxel, &putColorHere);
 		}
-		//window->setPolygonMode(PolygonMode::W_FILL);
+		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
+
+		settingMutex.unlock();
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -202,9 +212,16 @@ void Engine::console() {
 		std::cin >> input;
 
 		settingMutex.lock();
+
 		if (input == "objs") objs = !objs;
-		if (input == "voxs") voxs = !voxs;
-		if (input == "vox") voxelizeOnNextFrame = true;
+		else if (input == "voxs") voxs = !voxs;
+		else if (input == "vox") voxelizeOnNextFrame = true;
+		else if (input == "voxsW") voxsWireframe = !voxsWireframe;
+		else if (input == "objsW") objsWireframe = !objsWireframe;
+		else if (input == "sfMode") sfMode = !sfMode;
+		else if (input == "sf" && sfMode) singleFrame = true;
+		else print(this, "Unknwon Command");
+
 		settingMutex.unlock();
 	}
 }
