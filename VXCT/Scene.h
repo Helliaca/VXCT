@@ -23,6 +23,6 @@ public:
 	~Scene();
 	void addObject(Model* obj);
 	void draw();
-	void vox();
+	void draw(Shader* customShader);
 };
 

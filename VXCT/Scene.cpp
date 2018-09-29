@@ -21,8 +21,8 @@ void Scene::draw() {
 	}
 }
 
-void Scene::vox() {
+void Scene::draw(Shader* customShader) {
 	for (std::vector<int>::size_type i = 0; i != objs.size(); i++) {
-		objs[i]->vox();
+		objs[i]->draw(customShader);
 	}
 }

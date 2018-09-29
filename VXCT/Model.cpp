@@ -90,22 +90,19 @@ void Model::draw() {
 	checkErrors("Draw");
 }
 
-void Model::vox() {
+void Model::draw(Shader* customShader) {
+
+	customShader->use();
+
 	//Set all references
-	for (auto const& x : vec3Refs) shader->setVec3(x.first, *x.second);
-	for (auto const& x : vec4Refs) shader->setVec4(x.first, *x.second);
-	for (auto const& x : mat4Refs) {
-		shader->setMat4(x.first, *x.second);
-		checkErrors("RefSet_" + x.first);
-	}
-	checkErrors("ReferenceSet");
+	for (auto const& x : vec3Refs) customShader->setVec3(x.first, *x.second);
+	for (auto const& x : mat4Refs) customShader->setMat4(x.first, *x.second);
 
 	// render
 	glBindVertexArray(VAO);
-	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDrawElements(GL_TRIANGLES, vertexData.size(), GL_UNSIGNED_INT, 0);
 
-	checkErrors("Vox");
+	checkErrors("Draw(CustomShader)");
 }
 
 void Model::scale(float scale) {

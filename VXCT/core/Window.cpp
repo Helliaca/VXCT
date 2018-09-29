@@ -14,7 +14,7 @@ Window::Window() : IOobject("unnamedWindow")
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //For MacOS
 
 	//Create glfw window
-	window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "WindowName", NULL, NULL);
+	window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, WIN_NAME, NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();

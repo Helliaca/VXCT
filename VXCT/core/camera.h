@@ -124,6 +124,16 @@ public:
 			Zoom = 45.0f;
 	}
 
+	void setPosition1() {
+		Position.x = 1.26f;
+		Position.y = 0.10f;
+		Position.z = 1.73f;
+		Yaw = -126;
+		Pitch = - 4;
+
+		updateCameraVectors();
+	}
+
 private:
 	// Calculates the front vector from the Camera's (updated) Eular Angles
 	void updateCameraVectors()

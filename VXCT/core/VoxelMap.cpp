@@ -77,10 +77,11 @@ void VoxelMap::updateMemory() {
 	data = (GLubyte*)malloc(mem_size); //Allocate image data into memory
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); //Explicit Synchronization, as ImageStore is not always memory coherent
 	glGetTexImage(GL_TEXTURE_3D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); //Retrieve image data from GPU
+	print(this, "Voxelization Complete:");
+	print(this, "\tVoxelMap size (bytes): " + std::to_string(numBytes));
+	return; //Remove this to re-enable voxel visualzation.
 	{
-		//NOTE: This output is only correct for RGBA8 and outputs only the rist 100 values.
-		print(this, "Voxelization Complete:");
-		print(this, "\tVoxelMap size (bytes): " + std::to_string(numBytes));
+		//Write to CPU memory
 		long int ar, ag, ab, aa, values;
 		ar = ag = ab = aa = values = 0;
 		for (int i = 0; i+3 < numBytes; i+=4) {
@@ -117,7 +118,8 @@ void VoxelMap::visualize(Model* voxelModel, glm::vec3* shaderReference) {
 	if (voxelModel == nullptr) { print(this, "Visualization Error: voxelModel is NULL"); return; }
 
 	voxelModel->setPosition(0, 0, 0);
-	glm::vec3 dontDraw(0, 0, 0);
+	glm::vec3 dontDraw(0, 0, 0); //Color values for which we dont draw a voxel
+	glm::vec3 voxelOffset(1.0f / VOX_SIZE, 1.0f / VOX_SIZE, 1.0f / VOX_SIZE); //Origin of our voxel-cube model is centered, thus we need to offset to set it to the actual position of the voxel
 
 	for (int x = 0; x < width; x++) {
 		for (int y = 0; y < height; y++) {
@@ -130,7 +132,7 @@ void VoxelMap::visualize(Model* voxelModel, glm::vec3* shaderReference) {
 				shaderReference->b = data[arrayPos + 2] / 255.0f;
 				//shaderReference->a = data[arrayPos + 3];
 
-				voxelModel->setPosition(vC_to_wC(glm::vec3(x, y, z)));
+				voxelModel->setPosition(voxelOffset + vC_to_wC(glm::vec3(x, y, z)));
 
 				if(shaderReference->r != dontDraw.r || shaderReference->g != dontDraw.g || shaderReference->g != dontDraw.b) voxelModel->draw();
 			}

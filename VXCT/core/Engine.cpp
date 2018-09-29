@@ -12,12 +12,14 @@ float currentFrame = (float)glfwGetTime();
 const std::vector<GLubyte> texture3D(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
 
 bool objs = true;					//Draw Objects
-bool voxs = true;					//Draw Voxels
+bool voxs = false;					//Draw Voxels  (Very costly! SfMode recommended)
 bool voxelizeOnNextFrame = false;	//voxelize the Scene on the next Frame
 bool voxsWireframe = false;			//Show voxels in Wireframe Mode
 bool objsWireframe = false;			//Show objects in Wireframe Mode
 bool sfMode = false;				//Display Frames individually on input
 bool singleFrame = true;			//Show next frame
+bool iLight = false;				//Toggle Indirect Light
+bool overlayWireframe = false;		//Overlay objects with their Wireframe
 
 //=====================================================================
 
@@ -67,6 +69,8 @@ void Engine::run() {
 	}
 
 	//==================================================================================
+
+	Shader* voxIlluminShader = new Shader(VOXILLUMINSHADER_VS, VOXILLUMINSHADER_FS);
 
 	Scene* mainScene = InitScene();
 
@@ -128,13 +132,25 @@ void Engine::run() {
 		//Object Drawing
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
 		lamp->draw();
-		if(objs) mainScene->draw();
+		if (objs) {
+			if (iLight) {
+				//voxelMap->activate(voxIlluminShader->ID, "tex3D", 0); //This line leads to errors, is it necessary?
+				//glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8); //Is this necessary?
+				mainScene->draw(voxIlluminShader);
+			}
+			else mainScene->draw();
+			if (overlayWireframe) {
+				window->setPolygonMode(PolygonMode::W_WIREFRAME);
+				mainScene->draw();
+				window->setPolygonMode(PolygonMode::W_FILL);
+			}
+		}
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
 		//Voxel Drawing
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
 		if (voxelMap != nullptr && voxs) {
-			voxelMap->visualize(voxel, &putColorHere);
+			voxelMap->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
 		}
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
@@ -188,7 +204,7 @@ void Engine::Voxelize(Scene* scene) {
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	scene->vox();
+	scene->draw(sh);
 
 	// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 	// -------------------------------------------------------------------------------
@@ -220,6 +236,9 @@ void Engine::console() {
 		else if (input == "objsW") objsWireframe = !objsWireframe;
 		else if (input == "sfMode") sfMode = !sfMode;
 		else if (input == "sf" && sfMode) singleFrame = true;
+		else if (input == "iLight") iLight = !iLight;
+		else if (input == "overlayW") overlayWireframe = !overlayWireframe;
+		else if (input == "pos1") G::SceneCamera->setPosition1();
 		else print(this, "Unknwon Command");
 
 		settingMutex.unlock();

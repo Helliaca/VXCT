@@ -50,7 +50,7 @@ public:
 	Shader* shader;
 	unsigned int VBO, VAO, EBO;
 	void draw();
-	void vox();
+	void draw(Shader* customShader);
 	Model(std::string name, RenderShader sh, std::string inputfile);
 	Model(std::string name, RenderShader sh, std::vector<int>indices, std::vector<float>vertexData);
 	~Model();
