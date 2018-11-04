@@ -43,7 +43,7 @@ vec3 orthogonal(vec3 u){
 
 void main()
 {
-	FragColor = vec4(0, 0, 0, 1);
+	FragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	const vec3 viewDirection = normalize(pos_fs - viewPos);
 
 	// Indirect diffuse light.

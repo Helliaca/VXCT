@@ -1,93 +1,73 @@
-#include "VoxelMap.h"
+#include "VoxelLodMap.h"
 
 
 
-VoxelMap::VoxelMap(const std::vector<GLubyte> & textureBuffer, const std::vector<GLubyte> & lod_textureBuffer) : IOobject("Unnamed VoxelMap")
+VoxelLodMap::VoxelLodMap(const std::vector<GLubyte> & textureBuffer, GLint LodLevel) : IOobject("Unnamed VoxelLodMap")
 {
-	int voxelTextureSize = VOX_SIZE;
-	//const std::vector<GLfloat> texture3D(4 * voxelTextureSize * voxelTextureSize * voxelTextureSize, 0.0f); //4 because RGBA
+	this->LodLevel = LodLevel;
+	getVoxelLodMap = new SVCall();
+
+	int TextureSize = VOX_SIZE;
+	for (int i = 0; i < LodLevel; i++) { TextureSize /= 2; } //unelegant solution TODO: use log2
 
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_3D, textureID);
-	
+
 	//Set wrapping options
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
-	
+
 	//LOD settings
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	
+	//glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 	//TODO: What does this do and is it necessary?
 	//Specify Storage for all levels of 3d texture
-	const GLint levels = 7;
-	const GLint width = voxelTextureSize;
-	const GLint height = voxelTextureSize;
-	const GLint depth = voxelTextureSize;
-	
-	glTexStorage3D(GL_TEXTURE_3D, levels, GL_RGBA8, width, height, depth); //Specify storage
+	const GLint levels = 1;
+	const GLint width = TextureSize;
+	const GLint height = TextureSize;
+	const GLint depth = TextureSize;
 
-	glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RGBA, GL_UNSIGNED_BYTE, &textureBuffer[0]); //Set colors for lowest mipmap level (all black)
-	
-	glGenerateMipmap(GL_TEXTURE_3D); //If we want mipmaps
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, width, height, depth, 0, GL_RGBA, GL_UNSIGNED_BYTE, &textureBuffer[0]);
+	glTexStorage3D(GL_TEXTURE_3D, levels, GL_RGBA8, width, height, depth); //TODO: Vital for program to work, but why?
 
-	glBindTexture(GL_TEXTURE_3D, 0); //Unbind Texture
+	glBindTexture(GL_TEXTURE_3D, 0); //Unbind Texture (?)
 
-	checkErrors("VoxelMap Initialization");
-
-	//setting lod1Map
-	VoxelLodMap* lod1Map = new VoxelLodMap(lod_textureBuffer, 1.0f);
-
-
-	checkErrors("Setting VoxelLodMap Level1");
+	checkErrors("VoxelLodMap Initialization");
 }
 
 
-VoxelMap::~VoxelMap()
+VoxelLodMap::~VoxelLodMap()
 {
 	free(data); //de-allocate pixel data
 }
 
-void VoxelMap::clear() {
+void VoxelLodMap::clear() {
 	//TODO
 }
 
-void VoxelMap::activate(const int shaderProgramID, const std::string glSamplerName, const int textureUnit) {
+void VoxelLodMap::activate(const int shaderProgramID, const std::string glSamplerName, const int textureUnit) {
 	//?
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(GL_TEXTURE_3D, textureID);
 	glUniform1i(glGetUniformLocation(shaderProgramID, glSamplerName.c_str()), textureUnit);
 }
 
-void VoxelMap::updateMemory() {
+void VoxelLodMap::updateMemory() {
 	free(data); //De-allocate previously saved pixel data
 
 	width = height = depth = 0;
 	internalFormat = GL_RGBA8;
-	
+
 	glBindTexture(GL_TEXTURE_3D, textureID);
 
-	//------------TMP
-	print(this, "Making Single Vertex Call");
-	Shader* tmp = new Shader(LODTEXTURESHADER_VS, LODTEXTURESHADER_FS);
-
-	SVCall* svcall = new SVCall();
-	svcall->callShader = tmp;
-	svcall->callShader->use();
-	this->activate(svcall->callShader->ID, "tex3D", 0);
-	glBindImageTexture(0, this->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
-	svcall->execute();
-	checkErrors("Single Vertex Call");
-	//---------------
-	
 	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_INTERNAL_FORMAT, &internalFormat);
-	
+
 	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_WIDTH, &width);
 	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_HEIGHT, &height);
 	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_DEPTH, &depth);
-	
+
 	numBytes = 0;
 
 	if (internalFormat == GL_RGB8) numBytes = width * height * depth * 3;
@@ -98,20 +78,14 @@ void VoxelMap::updateMemory() {
 	data = (GLubyte*)malloc(mem_size); //Allocate image data into memory
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); //Explicit Synchronization, as ImageStore is not always memory coherent
 	glGetTexImage(GL_TEXTURE_3D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); //Retrieve image data from GPU
-
-	glGenerateMipmap(GL_TEXTURE_3D); //Re-generate mimaps after having drawn to them. Note: Imagelod will not work without running this.
-
 	print(this, "Voxelization Complete:");
 	print(this, "\tVoxelMap size (bytes): " + std::to_string(numBytes));
-
-	checkErrors("VoxelMap updateMemory");
-	return; //Remove this to re-enable voxel visualzation Details
-
+	return; //Remove this to re-enable voxel visualzation.
 	{
 		//Write to CPU memory
 		long int ar, ag, ab, aa, values;
 		ar = ag = ab = aa = values = 0;
-		for (int i = 0; i+3 < numBytes; i+=4) {
+		for (int i = 0; i + 3 < numBytes; i += 4) {
 			if (std::to_string(data[i]) != "0" || std::to_string(data[i + 1]) != "0" || std::to_string(data[i + 2]) != "0" || std::to_string(data[i + 3]) != "0") {
 				values++;
 				ar += data[i];
@@ -122,7 +96,7 @@ void VoxelMap::updateMemory() {
 			}
 		}
 		print(this, "\tNon-0 Value Amount: " + std::to_string(values));
-		if(values!=0) print(this, "\tAvarage Non-0 Value: R" + std::to_string(ar / values) + "G" + std::to_string(ag / values) + "B" + std::to_string(ab /values) + "A" + std::to_string(aa / values));
+		if (values != 0) print(this, "\tAvarage Non-0 Value: R" + std::to_string(ar / values) + "G" + std::to_string(ag / values) + "B" + std::to_string(ab / values) + "A" + std::to_string(aa / values));
 		print(this, "\tTotal Value: R" + std::to_string(ar) + "G" + std::to_string(ag) + "B" + std::to_string(ab) + "A" + std::to_string(aa));
 
 		/*
@@ -132,16 +106,16 @@ void VoxelMap::updateMemory() {
 		y = 7;
 		z = 13;
 		int arrayPos = 4 * (x + y * VOX_SIZE + z * VOX_SIZE * VOX_SIZE );
-		std::string r = std::to_string(pixels[arrayPos]); 
+		std::string r = std::to_string(pixels[arrayPos]);
 		*/
 	}
 
-	checkErrors("VoxelMap updateMemory Details");
+	checkErrors("VoxelMap updateMemory");
 }
 
 // voxelModel : Model to draw in place of each voxel
 // shaderReference : Where to write colors of each voxel to
-void VoxelMap::visualize(Model* voxelModel, glm::vec3* shaderReference) {
+void VoxelLodMap::visualize(Model* voxelModel, glm::vec3* shaderReference) {
 	if (voxelModel == nullptr) { print(this, "Visualization Error: voxelModel is NULL"); return; }
 
 	voxelModel->setPosition(0, 0, 0);
@@ -153,7 +127,7 @@ void VoxelMap::visualize(Model* voxelModel, glm::vec3* shaderReference) {
 			for (int z = 0; z < depth; z++) {
 
 				int arrayPos = 4 * (x + y * VOX_SIZE + z * VOX_SIZE * VOX_SIZE);
-				
+
 				shaderReference->r = data[arrayPos] / 255.0f;
 				shaderReference->g = data[arrayPos + 1] / 255.0f;
 				shaderReference->b = data[arrayPos + 2] / 255.0f;
@@ -161,7 +135,7 @@ void VoxelMap::visualize(Model* voxelModel, glm::vec3* shaderReference) {
 
 				voxelModel->setPosition(voxelOffset + vC_to_wC(glm::vec3(x, y, z)));
 
-				if(shaderReference->r != dontDraw.r || shaderReference->g != dontDraw.g || shaderReference->b != dontDraw.b) voxelModel->draw();
+				if (shaderReference->r != dontDraw.r || shaderReference->g != dontDraw.g || shaderReference->g != dontDraw.b) voxelModel->draw();
 			}
 		}
 	}

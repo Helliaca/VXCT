@@ -129,6 +129,8 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="core\VoxelMap.cpp" />
+    <ClCompile Include="core\VoxelLodMap.cpp" />
+    <ClCompile Include="SVCall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\base.h" />
@@ -142,14 +144,21 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="SVCall.h" />
     <ClInclude Include="VertexData.h" />
     <ClInclude Include="core\VoxelMap.h" />
+    <ClInclude Include="core\VoxelLodMap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\color.fs" />
     <None Include="shaders\color.vs" />
     <None Include="shaders\emit.fs" />
     <None Include="shaders\emit.vs" />
+    <None Include="shaders\lodTexture.fs" />
+    <None Include="shaders\lodTexture.vs" />
+    <None Include="shaders\tmp.fs" />
+    <None Include="shaders\tmp.gs" />
+    <None Include="shaders\tmp.vs" />
     <None Include="shaders\vox.fs" />
     <None Include="shaders\vox.gs" />
     <None Include="shaders\vox.vs" />

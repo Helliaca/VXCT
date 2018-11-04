@@ -10,6 +10,8 @@
 float currentFrame = (float)glfwGetTime();
 
 const std::vector<GLubyte> texture3D(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
+const std::vector<GLubyte> texture3D_lod1(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
+const std::vector<GLubyte> temporary_stuff(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
 
 bool objs = true;					//Draw Objects
 bool voxs = false;					//Draw Voxels  (Very costly! SfMode recommended)
@@ -150,7 +152,8 @@ void Engine::run() {
 		//Voxel Drawing
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
 		if (voxelMap != nullptr && voxs) {
-			voxelMap->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
+			//voxelMap->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
+			voxelMap_lod1->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
 		}
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
@@ -173,11 +176,13 @@ void Engine::run() {
 
 void Engine::Voxelize(Scene* scene) {
 	//>>initVoxelization
-	voxelMap = new VoxelMap(texture3D);
+	voxelMap = new VoxelMap(texture3D, temporary_stuff);
+	voxelMap_lod1 = new VoxelMap(texture3D_lod1, temporary_stuff);
 
 	G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
 
 	Shader* sh = new Shader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
+	Shader* sh_lod1 = new Shader("../VXCT/shaders/tmp.vs", "../VXCT/shaders/tmp.fs", "../VXCT/shaders/tmp.gs");
 
 	checkErrors("VoxelizeInit");
 
@@ -206,15 +211,33 @@ void Engine::Voxelize(Scene* scene) {
 	
 	scene->draw(sh);
 
-	// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+	// glfw: swap buffers
 	// -------------------------------------------------------------------------------
 	glfwSwapBuffers(window->getGLFWwindow());
-	glfwPollEvents();
+
+	voxelMap->updateMemory();
+
+
+
+	sh_lod1->use();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0); //TODO: why do we do this?
+	glViewport(0, 0, VOX_SIZE, VOX_SIZE);
+	glDisable(GL_CULL_FACE);
+
+	voxelMap_lod1->activate(sh_lod1->ID, "tex3D", 0);
+	glBindImageTexture(0, voxelMap_lod1->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
+
+	voxelMap->activate(sh_lod1->ID, "tex3D_in", 0);
+	//glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
+
+	scene->draw(sh_lod1);
+
+
 
 	//glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); //if we set to false previously, revert.
 	checkErrors("VoxelizeEnd");
 
-	voxelMap->updateMemory();
+	voxelMap_lod1->updateMemory();
 
 	//Revert Settings
 	if(VXCT_CULLING) glEnable(GL_CULL_FACE);

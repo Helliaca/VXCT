@@ -15,7 +15,7 @@
 #define WIN_HEIGHT 600
 #define WIN_NAME "VXCT"
 
-#define VOX_SIZE 128
+#define VOX_SIZE 64
 
 //World Coordinate Bounds (Changing Values might not work)
 #define MIN_X -1.0f
@@ -39,6 +39,9 @@
 
 #define VOXILLUMINSHADER_VS "../VXCT/shaders/voxillumin.vs"
 #define VOXILLUMINSHADER_FS "../VXCT/shaders/voxillumin.fs"
+
+#define LODTEXTURESHADER_VS "../VXCT/shaders/lodTexture.vs"
+#define LODTEXTURESHADER_FS "../VXCT/shaders/lodTexture.fs"
 
 #define OBJ_SPHERE "voxel_test.obj"
 #define OBJ_SCENE "voxel_scene.obj"

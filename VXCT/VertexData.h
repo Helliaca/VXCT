@@ -3,6 +3,12 @@
 #include <vector>
 
 namespace defaultModels {
+
+	const std::vector<float> single_vertex = {
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f
+	};
 	
 	const std::vector<int> cube_indices = {
 		0, 2, 6,

@@ -19,6 +19,9 @@ private:
 	std::mutex settingMutex;
 public:
 	VoxelMap * voxelMap;
+
+	VoxelMap * voxelMap_lod1;
+
 	void Voxelize(Scene* scene);
 	Window* window;
 	Engine();

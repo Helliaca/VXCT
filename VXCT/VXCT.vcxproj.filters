@@ -45,6 +45,12 @@
     <ClCompile Include="core\InitScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core\VoxelLodMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVCall.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Engine.h">
@@ -86,6 +92,12 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="core\VoxelLodMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVCall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\emit.fs" />
@@ -97,5 +109,10 @@
     <None Include="shaders\color.vs" />
     <None Include="shaders\voxillumin.vs" />
     <None Include="shaders\voxillumin.fs" />
+    <None Include="shaders\lodTexture.vs" />
+    <None Include="shaders\lodTexture.fs" />
+    <None Include="shaders\tmp.vs" />
+    <None Include="shaders\tmp.fs" />
+    <None Include="shaders\tmp.gs" />
   </ItemGroup>
 </Project>
