@@ -9,17 +9,28 @@ uniform sampler3D tex3D_in;
 layout(RGBA8) uniform image3D tex3D;
 
 void main() {
-	//>>Voxelization specific
-	ivec3 voxSize = imageSize(tex3D);  
-	vec3 pos_fs_normalized = 0.5f * (pos_fs + vec3(1.0f)); 
-	ivec3 location = ivec3(pos_fs_normalized * voxSize); 
-	//imageStore(tex3D, location, vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	imageStore(tex3D, location, textureLod(tex3D_in, pos_fs_normalized, 4.0f));
+	
+	//Only on model voxels:
+	//ivec3 voxSize = imageSize(tex3D);  
+	//vec3 pos_fs_normalized = 0.5f * (pos_fs + vec3(1.0f)); 
+	//ivec3 location = ivec3(pos_fs_normalized * voxSize); 
+	//imageStore(tex3D, location, textureLod(tex3D_in, pos_fs_normalized, 1.0f));
 
-	//imageStore(tex3D, location, vec4(0.0f, 0.0f, 1.0f, 1.0f)); //All values go to 0 0 0 as of right now
-	//textureLod(tex3D_in, ivec3(0,0,0), 0)
+	
+	//Everywhere
+	ivec3 voxSize = imageSize(tex3D);
+	float voxSize_f = 64.0f;
+	vec3 mapSize = vec3(1.0f, 1.0f, 1.0f);
 
-    //FragColor = vec4(result, 1.0);
+	for(int x=0; x<voxSize.x; x++) {
+		for(int y=0; y<voxSize.y; y++) {
+			for(int z=0; z<voxSize.z; z++) {
+				vec3 location = vec3( x*mapSize.x/voxSize_f, y*mapSize.y/voxSize_f, z*mapSize.z/voxSize_f );
+				imageStore(tex3D, ivec3(x, y, z), textureLod(tex3D_in, location, 1.0f));
+			}
+		}
+	}
+	
 
 
 }

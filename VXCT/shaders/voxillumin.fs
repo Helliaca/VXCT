@@ -34,12 +34,14 @@ vec3 voxelTraceCone(const vec3 from, vec3 direction);
 // Scales and bias a given vector (i.e. from [-1, 1] to [0, 1]).
 vec3 scaleAndBias(const vec3 p) { return 0.5f * p + vec3(0.5f); }
 
-// Returns a vector that is orthogonal to u.
-vec3 orthogonal(vec3 u){
-	u = normalize(u);
-	vec3 v = vec3(0.99146, 0.11664, 0.05832); // Pick any normalized vector.
-	return abs(dot(u, v)) > 0.99999f ? cross(u, vec3(0, 1, 0)) : cross(u, v);
+// Returns a vector that is perpendicular/orthogonal to u (and q).
+vec3 perp(vec3 v, vec3 q=vec3(0.0,0.0,1.0)){
+	v = normalize(v);
+	q = normalize(q);
+	return cross(v, q);
 }
+
+
 
 void main()
 {
@@ -63,7 +65,7 @@ vec3 indirectDiffuse_old(){
 	const float w[3] = {1.0, 1.0, 1.0}; // Cone weights.
 
 	// Find a base for the side cones with the normal as one of its base vectors.
-	const vec3 ortho = normalize(orthogonal(nrm));
+	const vec3 ortho = normalize(perp(nrm));
 	const vec3 ortho2 = normalize(cross(ortho, nrm));
 	
 	// Find base vectors for the corner cones too.
@@ -116,27 +118,47 @@ vec3 indirectDiffuse_old(){
 // The current implementation uses 9 cones. I think 5 cones should be enough, but it might generate
 // more aliasing and bad blur.
 vec3 indirectDiffuse(){
-	const vec3 ORIGIN = pos_fs;
-	const vec3 OFFSET = 0.01 * nrm;
+	const vec3 origin = pos_fs;
+
+	vec3 y = nrm; //Front axis
+	vec3 x = perp(y); //1st side axis
+	vec3 z = perp(y, x); //2nd side axis
 
 	//front cone
-	vec3 ret = voxelTraceCone(ORIGIN, nrm);
+	vec3 ret = voxelTraceCone(origin, y);
 
-	return ret;
-}
+	//Side cones left out due to self-collisions
+	//ret += voxelTraceCone(origin, x);
+	//ret += voxelTraceCone(origin, -x);
+	//ret += voxelTraceCone(origin, z);
+	//ret += voxelTraceCone(origin, -z);
+
+	//Intermediate cones:
+	float deg_mix = 0.5f;
+	ret += voxelTraceCone(origin, mix(y, x, deg_mix));
+	ret += voxelTraceCone(origin, mix(y, -x, deg_mix));
+	ret += voxelTraceCone(origin, mix(y, z, deg_mix));
+	ret += voxelTraceCone(origin, mix(y, -z, deg_mix));
+
+	
+
+	return ret * 1.0f;
+} 
 
 vec3 voxelTraceCone(const vec3 origin, vec3 dir) {
-	float max_dist = 1f;
-	dir = normalize(dir);
+	float max_dist = 0.99f;
+	dir = normalize(dir); //just to be safe
 
-	float current_dist = 0.03f;
+	float current_dist = 0.2f;
 
-	float apperture_angle = 0.523f; //Angle in Radians.
+	//float apperture_angle = 0.523f; //Angle in Radians.
+	float apperture_angle = 0.55f; //Angle in Radians.
+	//float apperture_angle = 0.01f; //Angle in Radians.
 
 	vec3 color = vec3(0.0f);
 	float occlusion = 0.0f;
 
-	float vox_size = 128.0f; //voxel map size
+	float vox_size = 64.0f; //voxel map size
 
 	while(current_dist < max_dist && occlusion < 1) {
 		//Get cone diameter (tan = cathetus / cathetus)
@@ -145,6 +167,7 @@ vec3 voxelTraceCone(const vec3 origin, vec3 dir) {
 		//Get mipmap level which should be sampled according to the cone diameter
 		//log2(vox_size) returns the maximum mipmap level
 		float vlevel = log2(current_coneDiameter * vox_size);
+		vlevel = min( 3.0f, vlevel ); //vlevel hardcap at 3
 
 		vec3 pos_worldspace = origin + dir * current_dist;
 		vec3 pos_texturespace = (pos_worldspace + vec3(1.0f)) * 0.5f; //[-1,1] Coordinates to [0,1]
@@ -154,14 +177,17 @@ vec3 voxelTraceCone(const vec3 origin, vec3 dir) {
 		vec3 color_read = voxel.rgb;
 		float occlusion_read = voxel.a;
 
-		color = occlusion*color + (1 - occlusion) * occlusion_read * color_read;
-		occlusion = occlusion + (1 - occlusion) * occlusion_read;
+		if(occlusion_read>0.01f) { color = color_read; return color; } //Cheap alternative: simply return first color we find
 
-		float dist_factor = 0.3f; //Lower = better results but higher performance hit
-		current_dist += current_coneDiameter * dist_factor; //Is this the right value to add?
+		//color = occlusion*color + (1 - occlusion) * occlusion_read * color_read;
+		//color *= 3; //Enhance color
+		//occlusion = occlusion + (1 - occlusion) * occlusion_read;
+
+		float dist_factor = 0.1f; //Lower = better results but higher performance hit
+		current_dist += current_coneDiameter * dist_factor;
 	}
 
-	return color; //Is this the right thing to return?
+	return color; //TODO: Return vec4 with occlusion (?)
 }
 
 vec3 directLight() {  	
