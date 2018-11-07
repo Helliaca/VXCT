@@ -22,6 +22,8 @@ public:
 
 	VoxelMap * voxelMap_lod1;
 
+	Scene* mainScene;
+
 	void Voxelize(Scene* scene);
 	Window* window;
 	Engine();

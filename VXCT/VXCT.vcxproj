@@ -73,6 +73,10 @@
     <IncludePath>G:\Users\Kahl\source\assimp-3.1.1\include;G:\Users\Kahl\source\glfw-3.2.1\include;G:\Users\Kahl\source\glad\include;$(IncludePath)</IncludePath>
     <LibraryPath>G:\Users\Kahl\source\assimp-3.1.1\libraries;G:\Users\Kahl\source\glfw-3.2.1\libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>G:\Users\Kahl\source\glfw-3.2.1\include;G:\Users\Kahl\source\GLM_9_8_5;G:\Users\Kahl\source\glad\include;$(IncludePath)</IncludePath>
+    <LibraryPath>G:\Users\Kahl\source\glfw-3.2.1\libraries;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -90,7 +94,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>G:\Users\Kahl\source\GLM_9_8_5;G:\Users\Kahl\source\glfw-3.2.1\include;G:\Users\Kahl\source\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -126,6 +134,7 @@
     <ClCompile Include="core\Window.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="RayCast.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="core\VoxelMap.cpp" />
@@ -142,6 +151,7 @@
     <ClInclude Include="core\Window.h" />
     <ClInclude Include="lib\tiny_obj_loader.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="RayCast.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="SVCall.h" />

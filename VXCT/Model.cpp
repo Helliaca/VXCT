@@ -159,7 +159,7 @@ void Model::fromFile(std::string inputfile) {
 		vertexData.push_back(y);
 		vertexData.push_back(z);
 
-		//Get respective normal index
+		//Get respective normal index (Needs to be done like this because tinyobjloader gives us a separate normals_indices and we want them all in one array)
 		for (int j = 0; j < shapes[0].mesh.indices.size(); j++) {
 			if (shapes[0].mesh.indices[j].vertex_index == current_vindex) {
 				int normalindex = shapes[0].mesh.indices[j].normal_index;

@@ -2,6 +2,7 @@
 
 #include "shader.h"
 #include "..\stb_image.h"
+#include <glm\ext.hpp>
 
 #include "..\VertexData.h"
 
@@ -22,6 +23,8 @@ bool sfMode = false;				//Display Frames individually on input
 bool singleFrame = true;			//Show next frame
 bool iLight = false;				//Toggle Indirect Light
 bool overlayWireframe = false;		//Overlay objects with their Wireframe
+
+glm::vec3 tmp_ray_hit = glm::vec3(0.0f);
 
 //=====================================================================
 
@@ -74,7 +77,7 @@ void Engine::run() {
 
 	Shader* voxIlluminShader = new Shader(VOXILLUMINSHADER_VS, VOXILLUMINSHADER_FS);
 
-	Scene* mainScene = InitScene();
+	mainScene = InitScene();
 
 	Model* lamp = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	lamp->addMat4Reference("model", &lamp->model);
@@ -84,7 +87,7 @@ void Engine::run() {
 	lamp->translate(G::lightPos);
 	lamp->scale(0.2f); //A smaller cube
 
-	Model* voxel = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
+	Model* voxel = new Model("voxel", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	voxel->addMat4Reference("model", &voxel->model);
 	voxel->addMat4Reference("view", &G::SceneCamera->viewMatrix);
 	voxel->addMat4Reference("projection", &G::SceneCamera->projMatrix);
@@ -148,6 +151,13 @@ void Engine::run() {
 			}
 		}
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
+
+		//TMP: Draw hit voxel in real time
+		glm::vec3 pos, nrm;
+		this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm);
+		tmp_ray_hit = pos;
+		voxel->setPosition(tmp_ray_hit);
+		voxel->draw();
 
 		//Voxel Drawing
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
@@ -262,6 +272,15 @@ void Engine::console() {
 		else if (input == "iLight") iLight = !iLight;
 		else if (input == "overlayW") overlayWireframe = !overlayWireframe;
 		else if (input == "pos1") G::SceneCamera->setPosition1();
+		else if (input == "ray") {
+			glm::vec3 pos, nrm;
+			if (this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm)) {
+				print(this, "Ray position: " + glm::to_string(pos));
+				tmp_ray_hit = pos;
+				print(this, "Ray normal: " + glm::to_string(nrm));
+			}
+			else print(this, "no hit");
+		}
 		else print(this, "Unknwon Command");
 
 		settingMutex.unlock();

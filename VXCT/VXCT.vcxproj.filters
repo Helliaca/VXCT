@@ -51,6 +51,9 @@
     <ClCompile Include="SVCall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RayCast.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Engine.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RayCast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

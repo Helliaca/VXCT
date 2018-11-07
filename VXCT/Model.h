@@ -7,7 +7,7 @@
 
 enum RenderShader {VOX, EMIT, COLOR};
 
-class Model : IOobject
+class Model : public IOobject
 {
 private:
 
