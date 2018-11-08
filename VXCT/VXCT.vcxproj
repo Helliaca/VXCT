@@ -132,6 +132,7 @@
     <ClCompile Include="core\globals.cpp" />
     <ClCompile Include="core\InitScene.cpp" />
     <ClCompile Include="core\Window.cpp" />
+    <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="RayCast.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="core\VoxelMap.cpp" />
     <ClCompile Include="core\VoxelLodMap.cpp" />
     <ClCompile Include="SVCall.cpp" />
+    <ClCompile Include="VisCone.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\base.h" />
@@ -150,6 +152,7 @@
     <ClInclude Include="core\shader.h" />
     <ClInclude Include="core\Window.h" />
     <ClInclude Include="lib\tiny_obj_loader.h" />
+    <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="RayCast.h" />
     <ClInclude Include="Scene.h" />
@@ -158,12 +161,15 @@
     <ClInclude Include="VertexData.h" />
     <ClInclude Include="core\VoxelMap.h" />
     <ClInclude Include="core\VoxelLodMap.h" />
+    <ClInclude Include="VisCone.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\color.fs" />
     <None Include="shaders\color.vs" />
     <None Include="shaders\emit.fs" />
     <None Include="shaders\emit.vs" />
+    <None Include="shaders\lineshader.fs" />
+    <None Include="shaders\lineshader.vs" />
     <None Include="shaders\lodTexture.fs" />
     <None Include="shaders\lodTexture.vs" />
     <None Include="shaders\tmp.fs" />

@@ -54,6 +54,12 @@
     <ClCompile Include="RayCast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LineRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisCone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Engine.h">
@@ -104,6 +110,12 @@
     <ClInclude Include="RayCast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LineRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VisCone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\emit.fs" />
@@ -120,5 +132,7 @@
     <None Include="shaders\tmp.vs" />
     <None Include="shaders\tmp.fs" />
     <None Include="shaders\tmp.gs" />
+    <None Include="shaders\lineshader.vs" />
+    <None Include="shaders\lineshader.fs" />
   </ItemGroup>
 </Project>

@@ -14,6 +14,8 @@ const std::vector<GLubyte> temporary_stuff(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0
 bool objs = true;					//Draw Objects
 bool voxs = false;					//Draw Voxels  (Very costly! SfMode recommended)
 bool voxelizeOnNextFrame = false;	//voxelize the Scene on the next Frame
+bool rayOnNextFrame = false;		//Shoot raycast on next frame
+bool show_detail_point = false;		//Show detailed info about ray_hit_point
 bool voxsWireframe = false;			//Show voxels in Wireframe Mode
 bool objsWireframe = false;			//Show objects in Wireframe Mode
 bool sfMode = false;				//Display Frames individually on input
@@ -21,7 +23,8 @@ bool singleFrame = true;			//Show next frame
 bool iLight = false;				//Toggle Indirect Light
 bool overlayWireframe = false;		//Overlay objects with their Wireframe
 
-glm::vec3 tmp_ray_hit = glm::vec3(0.0f);
+glm::vec3 ray_hit_point = glm::vec3(0.0f);
+glm::vec3 ray_hit_normal = glm::vec3(0.0f);
 
 //=====================================================================
 
@@ -76,6 +79,8 @@ void Engine::run() {
 
 	mainScene = InitScene();
 
+	DebugLine = new LineRenderer(); //Need to initiate this here because we need an opengl context
+
 	Model* lamp = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	lamp->addMat4Reference("model", &lamp->model);
 	lamp->addMat4Reference("view", &G::SceneCamera->viewMatrix);
@@ -112,7 +117,19 @@ void Engine::run() {
 			checkErrors();
 			voxelizeOnNextFrame = false;
 		}
-		checkErrors("EngineLoop");
+		if (rayOnNextFrame) {
+			glm::vec3 pos, nrm;
+			if (this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm)) {
+				print(this, "Ray position: " + glm::to_string(pos));
+				ray_hit_point = pos;
+				ray_hit_normal = nrm;
+				print(this, "Ray normal: " + glm::to_string(nrm));
+				show_detail_point = true;
+			}
+			else print(this, "no hit");
+			rayOnNextFrame = false;
+		}
+		checkErrors("EngineLoop Pre-Render");
 
 		// per-frame time logic
 		// --------------------
@@ -149,12 +166,18 @@ void Engine::run() {
 		}
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
+		if (show_detail_point) {
+			voxel->setPosition(ray_hit_point);
+			voxel->draw();
+			DebugLine->drawLine(ray_hit_point, ray_hit_normal, 0.2f);
+		}
+
 		//TMP: Draw hit voxel in real time
 		//glm::vec3 pos, nrm;
 		//this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm);
 		//tmp_ray_hit = pos;
-		voxel->setPosition(tmp_ray_hit);
-		voxel->draw();
+		//voxel->setPosition(tmp_ray_hit);
+		//voxel->draw();
 
 		//Voxel Drawing
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
@@ -271,18 +294,10 @@ void Engine::console() {
 		else if (input == "iLight") iLight = !iLight;
 		else if (input == "overlayW") overlayWireframe = !overlayWireframe;
 		else if (input == "pos1") G::SceneCamera->setPosition1();
-		else if (input == "ray") {
-			glm::vec3 pos, nrm;
-			if (this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm)) {
-				print(this, "Ray position: " + glm::to_string(pos));
-				tmp_ray_hit = pos;
-				print(this, "Ray normal: " + glm::to_string(nrm));
-			}
-			else print(this, "no hit");
-		}
+		else if (input == "ray") rayOnNextFrame = true;
 		else print(this, "Unknwon Command");
 
-		//checkErrors("Console Command");
+		//Calling checkErrors or similar methods here will lead to automatic exceptions because it does not share the OpenGL context of the main thread.
 
 		settingMutex.unlock();
 	}

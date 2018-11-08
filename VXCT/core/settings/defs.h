@@ -43,6 +43,9 @@
 #define LODTEXTURESHADER_VS "../VXCT/shaders/lodTexture.vs"
 #define LODTEXTURESHADER_FS "../VXCT/shaders/lodTexture.fs"
 
+#define LINESHADER_VS "../VXCT/shaders/lineshader.vs"
+#define LINESHADER_FS "../VXCT/shaders/lineshader.fs"
+
 #define OBJ_SPHERE "voxel_test.obj"
 #define OBJ_SCENE "voxel_scene.obj"
 
@@ -57,3 +60,5 @@
 #define OBJ_SCENE_WALL4 "voxel_scene_wall4.obj"
 #define OBJ_SCENE_WALL5 "voxel_scene_wall5.obj"
 #define OBJ_SCENE_WALL6 "voxel_scene_wall6.obj"
+
+#define OBJ_VIS_CONE "cone.obj"

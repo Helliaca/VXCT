@@ -6,6 +6,7 @@
 #include "Window.h"
 #include "../Scene.h"
 #include "VoxelMap.h"
+#include "../LineRenderer.h"
 #include <mutex>
 #include <thread>
 
@@ -22,6 +23,8 @@ public:
 	VoxelMap * voxelMap_lod1;
 
 	Scene* mainScene;
+
+	LineRenderer* DebugLine;
 
 	void Voxelize(Scene* scene);
 	Window* window;
