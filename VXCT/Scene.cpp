@@ -2,8 +2,6 @@
 
 #include "RayCast.h"
 
-#include "VertexData.h"
-
 Scene::Scene() : IOobject("unnamedScene")
 {
 }

@@ -1,10 +1,7 @@
 #include "Engine.h"
 
-#include "shader.h"
 #include "..\stb_image.h"
 #include <glm\ext.hpp>
-
-#include "..\VertexData.h"
 
 //=====================================================================
 
@@ -153,9 +150,9 @@ void Engine::run() {
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
 		//TMP: Draw hit voxel in real time
-		glm::vec3 pos, nrm;
-		this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm);
-		tmp_ray_hit = pos;
+		//glm::vec3 pos, nrm;
+		//this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm);
+		//tmp_ray_hit = pos;
 		voxel->setPosition(tmp_ray_hit);
 		voxel->draw();
 
@@ -174,6 +171,8 @@ void Engine::run() {
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window->getGLFWwindow());
 		glfwPollEvents();
+
+		checkErrors("Engine Loop");
 	}
 
 	// de-allocate all resources once they've outlived their purpose:
@@ -261,7 +260,7 @@ void Engine::console() {
 		std::cin >> input;
 
 		settingMutex.lock();
-
+		
 		if (input == "objs") objs = !objs;
 		else if (input == "voxs") voxs = !voxs;
 		else if (input == "vox") voxelizeOnNextFrame = true;
@@ -282,6 +281,8 @@ void Engine::console() {
 			else print(this, "no hit");
 		}
 		else print(this, "Unknwon Command");
+
+		//checkErrors("Console Command");
 
 		settingMutex.unlock();
 	}

@@ -1,9 +1,21 @@
 #pragma once
 
+#include <glad/glad.h>
+#include <GLFW\glfw3.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <vector>
+#include <string>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <string>
-#include "globals.h"
+#include <map>
+
 #include "settings\defs.h"
+#include "../VertexData.h"
 
 class IOobject;
 
@@ -14,12 +26,12 @@ public:
 	std::string name="unnamed";
 	IOobject(std::string name) { this->name = name; }
 
-	void checkErrors(std::string context="") {
+	void checkErrors(std::string context="Unknwon Context") {
 		GLenum err;
 		while ((err = glGetError()) != GL_NO_ERROR)
 		{
 			print(this, "OpenGL Error:");
-			if(context!="") print(this, "\t CONTEXT: " + context);
+			print(this, "\t CONTEXT: " + context);
 			if (err == GL_INVALID_ENUM) print(this, "\t TYPE: Invalid Enum");
 			else if (err == GL_INVALID_VALUE) print(this, "\t TYPE: Invalid Value");
 			else if (err == GL_INVALID_OPERATION) print(this, "\t TYPE: Invalid Operation");

@@ -1,7 +1,5 @@
 #include "globals.h"
 
-#include "settings\defs.h"
-
 namespace G {
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;

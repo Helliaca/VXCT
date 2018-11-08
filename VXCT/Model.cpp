@@ -1,8 +1,6 @@
 #include "Model.h"
 
 
-#include "VertexData.h"
-#include <GLFW\glfw3.h>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "lib\tiny_obj_loader.h"

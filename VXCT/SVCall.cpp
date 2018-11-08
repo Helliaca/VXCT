@@ -1,7 +1,5 @@
 #include "SVCall.h"
 
-#include "VertexData.h"
-
 SVCall::SVCall()
 {
 	glGenVertexArrays(1, &VAO);
