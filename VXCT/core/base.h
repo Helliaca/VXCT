@@ -2,8 +2,23 @@
 
 #include <iostream>
 #include <string>
-#include "globals.h"
+
+#include <glad\glad.h>
+#include <GLFW\glfw3.h>
+
+#include "glm\glm.hpp"
+#include "glm\gtc\matrix_transform.hpp"
+#include "glm\gtc\type_ptr.hpp"
+
 #include "settings\defs.h"
+#include "..\VertexData.h"
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <string>
+#include <map>
+#include <vector>
 
 class IOobject;
 
@@ -29,9 +44,9 @@ public:
 			else if (err == GL_INVALID_FRAMEBUFFER_OPERATION) print(this, "\t TYPE: Invalid Framebuffer Operation");
 			else if (err == GL_CONTEXT_LOST) print(this, "\t TYPE: Context Lost");
 			else print(this, "\t TYPE: Undefined Error");
+			std::cin >> name;
 		}
 	}
-
 };
 
 inline void print(IOobject* source, std::string out) { std::cout << source->name << " >> " << out << std::endl; }

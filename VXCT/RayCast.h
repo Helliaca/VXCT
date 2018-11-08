@@ -12,6 +12,6 @@ private:
 	Model * model;
 	glm::vec3 origin;
 	glm::vec3 dir;
-	bool TriIntersect(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3& out_pos, glm::vec3& out_nrm);
+	bool TriIntersect(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 nrm0, glm::vec3 nrm1, glm::vec3 nrm2, glm::vec3& out_pos, glm::vec3& out_nrm);
 };
 

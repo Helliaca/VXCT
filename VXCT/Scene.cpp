@@ -41,17 +41,18 @@ bool Scene::raycast(glm::vec3 origin, glm::vec3 dir, glm::vec3& out_pos, glm::ve
 		RayCast rc = RayCast(objs[i], origin, dir);
 
 		if (rc.execute(pos, nrm)) {
-			print(this, "Raycast hit object: " + objs[i]->name);
+			print(this, "Raycast hit object: " + objs[i]->name + ", Distance: " + std::to_string(glm::distance(origin, pos)));
 			if (!hit || glm::distance(origin, pos) < glm::distance(origin, closestPos)) {
 				closestPos = pos;
 				closestPos_nrm = nrm;
 			}
 			hit = true;
 		}
+		checkErrors("Scene Obj Raycast");
 	}
 	if (hit) {
-		out_pos = pos;
-		out_nrm = nrm;
+		out_pos = closestPos;
+		out_nrm = closestPos_nrm;
 		return true;
 	}
 	return false;

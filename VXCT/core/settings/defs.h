@@ -43,6 +43,9 @@
 #define LODTEXTURESHADER_VS "../VXCT/shaders/lodTexture.vs"
 #define LODTEXTURESHADER_FS "../VXCT/shaders/lodTexture.fs"
 
+#define LINESHADER_VS "../VXCT/shaders/lineshader.vs"
+#define LINESHADER_FS "../VXCT/shaders/lineshader.fs"
+
 #define OBJ_SPHERE "voxel_test.obj"
 #define OBJ_SCENE "voxel_scene.obj"
 
