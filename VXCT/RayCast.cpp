@@ -27,8 +27,11 @@ bool RayCast::execute(glm::vec3& loc_out, glm::vec3& nrm_out)
 		glm::vec3 vert0 = glm::vec3(model->vertexData[model->indices[i + 0] * 6 + 0], model->vertexData[model->indices[i + 0] * 6 + 1], model->vertexData[model->indices[i + 0] * 6 + 2]);
 		glm::vec3 vert1 = glm::vec3(model->vertexData[model->indices[i + 1] * 6 + 0], model->vertexData[model->indices[i + 1] * 6 + 1], model->vertexData[model->indices[i + 1] * 6 + 2]);
 		glm::vec3 vert2 = glm::vec3(model->vertexData[model->indices[i + 2] * 6 + 0], model->vertexData[model->indices[i + 2] * 6 + 1], model->vertexData[model->indices[i + 2] * 6 + 2]);
+		glm::vec3 nrm0 = glm::vec3(model->vertexData[model->indices[i + 0] * 6 + 3], model->vertexData[model->indices[i + 0] * 6 + 4], model->vertexData[model->indices[i + 0] * 6 + 5]);
+		glm::vec3 nrm1 = glm::vec3(model->vertexData[model->indices[i + 1] * 6 + 3], model->vertexData[model->indices[i + 1] * 6 + 4], model->vertexData[model->indices[i + 1] * 6 + 5]);
+		glm::vec3 nrm2 = glm::vec3(model->vertexData[model->indices[i + 2] * 6 + 3], model->vertexData[model->indices[i + 2] * 6 + 4], model->vertexData[model->indices[i + 2] * 6 + 5]);
 
-		if (TriIntersect(vert0, vert1, vert2, pos, nrm)) {
+		if (TriIntersect(vert0, vert1, vert2, nrm0, nrm1, nrm2, pos, nrm)) {
 			if (!hit || glm::distance(origin, pos) < glm::distance(origin, closestPos)) {
 				closestPos = pos;
 				closestPos_nrm = nrm;
@@ -47,7 +50,7 @@ bool RayCast::execute(glm::vec3& loc_out, glm::vec3& nrm_out)
 
 
 //Möller-Trumbore intersection algorithm, See: https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-bool RayCast::TriIntersect(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3& out_pos, glm::vec3& out_nrm) {
+bool RayCast::TriIntersect(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 nrm0, glm::vec3 nrm1, glm::vec3 nrm2, glm::vec3& out_pos, glm::vec3& out_nrm) {
 	dir = glm::normalize(dir);
 	const float EPSILON = 0.0000001; //Approximation to 0
 
@@ -72,10 +75,9 @@ bool RayCast::TriIntersect(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, gl
 	float t = f * glm::dot(edge2, q);
 	if (t > EPSILON) { //Ray intersection
 		//calc face normal the same way as in vox.gs (!) NOTE: Fragment Normals *can* vary from geometry shader normals.
-		glm::vec3 faceNormal = glm::abs(glm::cross(vert1 - vert0, vert2 - vert0));
-		faceNormal = glm::normalize(faceNormal);
+		glm::vec3 faceNormal = glm::normalize(nrm0 + nrm1 + nrm2);
 		float angle = glm::acos(glm::dot(dir, faceNormal));
-		//if (angle < 1.5708f) return false; //if Angle is smaller than 90 deg we are hitting the back side of the triangle.
+		if (angle < 1.5708f) return false; //if Angle is smaller than 90 deg we are hitting the back side of the triangle.
 		//Set outputs
 		out_pos = origin + dir * t;
 		out_nrm = faceNormal;
