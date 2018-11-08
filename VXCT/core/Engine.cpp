@@ -1,8 +1,10 @@
 #include "Engine.h"
 
+#include "shader.h"
 #include "..\stb_image.h"
 #include <glm\ext.hpp>
 
+#include "..\VertexData.h"
 
 //=====================================================================
 
@@ -76,8 +78,6 @@ void Engine::run() {
 	Shader* voxIlluminShader = new Shader(VOXILLUMINSHADER_VS, VOXILLUMINSHADER_FS);
 
 	mainScene = InitScene();
-
-	//G::DebugLine = new LineRenderer(); //This isnt initiated in globals, because it need glad enabled
 
 	Model* lamp = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	lamp->addMat4Reference("model", &lamp->model);
@@ -153,9 +153,9 @@ void Engine::run() {
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
 		//TMP: Draw hit voxel in real time
-		//glm::vec3 pos, nrm;
-		//this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm);
-		//tmp_ray_hit = pos;
+		glm::vec3 pos, nrm;
+		this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm);
+		tmp_ray_hit = pos;
 		voxel->setPosition(tmp_ray_hit);
 		voxel->draw();
 
@@ -174,8 +174,6 @@ void Engine::run() {
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window->getGLFWwindow());
 		glfwPollEvents();
-
-		checkErrors("EngineLoop");
 	}
 
 	// de-allocate all resources once they've outlived their purpose:
@@ -261,7 +259,7 @@ void Engine::console() {
 	while (true)
 	{
 		std::cin >> input;
-		/*
+
 		settingMutex.lock();
 
 		if (input == "objs") objs = !objs;
@@ -280,18 +278,11 @@ void Engine::console() {
 				print(this, "Ray position: " + glm::to_string(pos));
 				tmp_ray_hit = pos;
 				print(this, "Ray normal: " + glm::to_string(nrm));
-				checkErrors("Raytrace");
-				G::DebugLine->draw();
 			}
 			else print(this, "no hit");
-			checkErrors("Raytrace");
 		}
 		else print(this, "Unknwon Command");
 
-		checkErrors("Console Command");
-
-		settingMutex.unlock();*/
-
-		checkErrors("Console Command");
+		settingMutex.unlock();
 	}
 }

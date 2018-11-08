@@ -3,7 +3,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "globals.h"
+#include "base.h"
 #include "Window.h"
 #include "../Scene.h"
 #include "VoxelMap.h"
