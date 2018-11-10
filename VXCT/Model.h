@@ -5,7 +5,7 @@
 
 #include "core\shader.h"
 
-enum RenderShader {VOX, EMIT, COLOR};
+enum RenderShader {VOX, EMIT, COLOR, EMITRGBA};
 
 class Model : public IOobject
 {
@@ -41,10 +41,14 @@ public:
 	glm::mat4 model; //Model Matrix
 	glm::vec3 color; //Color of the object, used only if reference is applied (same as model matrix)
 	void scale(float scale);
+	void scale(glm::vec3 scale);
 	void translate(glm::vec3 vec);
 	void translate(float x, float y, float z);
+	void lookAt(glm::vec3 target);
 	void setPosition(float x, float y, float z);
 	void setPosition(glm::vec3 pos);
+	void resetPSR(); //Reset position scale and rotation
+	glm::vec3 getPosition();
 	std::vector<float> vertexData; //Includes vertices and Normals
 	std::vector<int> indices;
 	Shader* shader;

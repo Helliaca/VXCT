@@ -64,6 +64,8 @@ void Engine::run() {
 	//glEnable(GL_TEXTURE_3D);
 
 	glEnable(GL_DEPTH_TEST); //turn on z-buffer
+	glEnable(GL_BLEND);		 //turn on blending for transparency
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //choose blending function
 	glfwSetInputMode(window->getGLFWwindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	shaderInfo(); //Display shader info
 
@@ -82,20 +84,26 @@ void Engine::run() {
 	DebugLine = new LineRenderer(); //Need to initiate this here because we need an opengl context
 
 	Model* lamp = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
-	lamp->addMat4Reference("model", &lamp->model);
-	lamp->addMat4Reference("view", &G::SceneCamera->viewMatrix);
-	lamp->addMat4Reference("projection", &G::SceneCamera->projMatrix);
+	lamp->addMat4Reference("model_u", &lamp->model);
+	lamp->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
+	lamp->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	lamp->addVec3Reference("emitColor", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
 	lamp->translate(G::lightPos);
 	lamp->scale(0.2f); //A smaller cube
 
 	Model* voxel = new Model("voxel", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
-	voxel->addMat4Reference("model", &voxel->model);
-	voxel->addMat4Reference("view", &G::SceneCamera->viewMatrix);
-	voxel->addMat4Reference("projection", &G::SceneCamera->projMatrix);
+	voxel->addMat4Reference("model_u", &voxel->model);
+	voxel->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
+	voxel->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	glm::vec3 putColorHere; //The value of this vector will be changed in VoxelMap.visualize()
 	voxel->addVec3Reference("emitColor", &putColorHere); //Might lead to memory leaks as we keep no reference of this variable
 	voxel->scale((MAX_X - MIN_X)/VOX_SIZE); //Note: only MAX/MIN_X is taken into account when sclaing voxel representatives
+
+	visCone = new VisCone();
+	visCone->addMat4Reference("model_u", &visCone->model);
+	visCone->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
+	visCone->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
+	visCone->addVec4Reference("emitColor", &glm::vec4(0.0f, 0.0f, 1.0f, 0.5f));
 
 	consoleThread = std::thread(&Engine::console, this);
 	consoleThread.detach();
@@ -123,6 +131,7 @@ void Engine::run() {
 				print(this, "Ray position: " + glm::to_string(pos));
 				ray_hit_point = pos;
 				ray_hit_normal = nrm;
+				visCone->setPosition(ray_hit_point);
 				print(this, "Ray normal: " + glm::to_string(nrm));
 				show_detail_point = true;
 			}
@@ -170,6 +179,9 @@ void Engine::run() {
 			voxel->setPosition(ray_hit_point);
 			voxel->draw();
 			DebugLine->drawLine(ray_hit_point, ray_hit_normal, 0.2f);
+			visDetail(ray_hit_point, ray_hit_normal);
+			//visCone->setConeParameters(ray_hit_point, ray_hit_normal, 0.55f, 1.0f);
+			//visCone->draw();
 		}
 
 		//TMP: Draw hit voxel in real time
@@ -204,6 +216,33 @@ void Engine::run() {
 
 	glfwTerminate(); //Delete and clean all glfw resources allocated
 	return;
+}
+
+// Returns a vector that is perpendicular/orthogonal to u (and q).
+glm::vec3 perp(glm::vec3 v, glm::vec3 q = glm::vec3(0.0, 0.0, 1.0)) {
+	v = glm::normalize(v);
+	q = glm::normalize(q);
+	return glm::cross(v, q);
+}
+
+void Engine::visDetail(glm::vec3 fragPos, glm::vec3 fragNrm) {
+	float cone_aperture_angle = 0.55f;
+	float deg_mix = 0.5f;
+
+	glm::vec3 y = fragNrm; //Front axis
+	glm::vec3 x = perp(y); //1st side axis
+	glm::vec3 z = perp(y, x); //2nd side axis
+
+	visCone->setConeParameters(fragPos, fragNrm, cone_aperture_angle, 1.0f);
+	visCone->draw();
+	visCone->setConeParameters(fragPos, glm::mix(y, x, deg_mix), cone_aperture_angle, 1.0f);
+	visCone->draw();
+	visCone->setConeParameters(fragPos, glm::mix(y, -x, deg_mix), cone_aperture_angle, 1.0f);
+	visCone->draw();
+	visCone->setConeParameters(fragPos, glm::mix(y, z, deg_mix), cone_aperture_angle, 1.0f);
+	visCone->draw();
+	visCone->setConeParameters(fragPos, glm::mix(y, -z, deg_mix), cone_aperture_angle, 1.0f);
+	visCone->draw();
 }
 
 void Engine::Voxelize(Scene* scene) {

@@ -40,7 +40,7 @@ Scene* Engine::InitScene() {
 	mainScene->addObject(sc_cube1);
 
 	Model* sc_wall1 = new Model("Wall1", RenderShader::COLOR, OBJ_SCENE_WALL1);
-	sc_wall1->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	sc_wall1->color = glm::vec3(0.5f, 0.5f, 0.5f);
 	sc_wall1->addMat4Reference("model_u", &sc_wall1->model);
 	sc_wall1->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	sc_wall1->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
@@ -51,7 +51,7 @@ Scene* Engine::InitScene() {
 	mainScene->addObject(sc_wall1); //top
 
 	Model* sc_wall2 = new Model("Wall2", RenderShader::COLOR, OBJ_SCENE_WALL2);
-	sc_wall2->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	sc_wall2->color = glm::vec3(0.8f, 0.0f, 0.0f);
 	sc_wall2->addMat4Reference("model_u", &sc_wall2->model);
 	sc_wall2->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	sc_wall2->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
@@ -62,7 +62,7 @@ Scene* Engine::InitScene() {
 	mainScene->addObject(sc_wall2); //back
 
 	Model* sc_wall3 = new Model("Wall3", RenderShader::COLOR, OBJ_SCENE_WALL3);
-	sc_wall3->color = glm::vec3(0.0f, 1.0f, 0.0f);
+	sc_wall3->color = glm::vec3(0.0f, 0.8f, 0.0f);
 	sc_wall3->addMat4Reference("model_u", &sc_wall3->model);
 	sc_wall3->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	sc_wall3->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
@@ -73,7 +73,7 @@ Scene* Engine::InitScene() {
 	mainScene->addObject(sc_wall3); //bottom
 
 	Model* sc_wall4 = new Model("Wall4", RenderShader::COLOR, OBJ_SCENE_WALL4);
-	sc_wall4->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	sc_wall4->color = glm::vec3(0.5f, 0.5f, 0.5f);
 	sc_wall4->addMat4Reference("model_u", &sc_wall4->model);
 	sc_wall4->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	sc_wall4->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
@@ -84,7 +84,7 @@ Scene* Engine::InitScene() {
 	mainScene->addObject(sc_wall4); //front
 
 	Model* sc_wall5 = new Model("Wall5", RenderShader::COLOR, OBJ_SCENE_WALL5);
-	sc_wall5->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	sc_wall5->color = glm::vec3(0.5f, 0.5f, 0.5f);
 	sc_wall5->addMat4Reference("model_u", &sc_wall5->model);
 	sc_wall5->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	sc_wall5->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
@@ -95,7 +95,7 @@ Scene* Engine::InitScene() {
 	mainScene->addObject(sc_wall5); //right
 
 	Model* sc_wall6 = new Model("Wall6", RenderShader::COLOR, OBJ_SCENE_WALL6);
-	sc_wall6->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	sc_wall6->color = glm::vec3(0.0f, 0.0f, 0.8f);
 	sc_wall6->addMat4Reference("model_u", &sc_wall6->model);
 	sc_wall6->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	sc_wall6->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);

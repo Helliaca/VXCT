@@ -7,6 +7,7 @@
 #include "../Scene.h"
 #include "VoxelMap.h"
 #include "../LineRenderer.h"
+#include "../VisCone.h"
 #include <mutex>
 #include <thread>
 
@@ -26,7 +27,10 @@ public:
 
 	LineRenderer* DebugLine;
 
+	VisCone* visCone;
+
 	void Voxelize(Scene* scene);
+	void visDetail(glm::vec3 fragPos, glm::vec3 fragNrm);
 	Window* window;
 	Engine();
 	~Engine();

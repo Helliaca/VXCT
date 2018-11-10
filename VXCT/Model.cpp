@@ -58,6 +58,13 @@ void Model::initialize(RenderShader sh) {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 	}
+	else if (sh == RenderShader::EMITRGBA) {
+		shader = new Shader(EMITRGBASHADER_VS, EMITRGBASHADER_FS);
+
+		// note that we update the lamp's position attribute's stride to reflect the updated buffer data
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -78,7 +85,9 @@ void Model::draw() {
 
 	//Set all references
 	for (auto const& x : vec3Refs) shader->setVec3(x.first, *x.second);
+	for (auto const& x : vec4Refs) shader->setVec4(x.first, *x.second);
 	for (auto const& x : mat4Refs) shader->setMat4(x.first, *x.second);
+
 
 	// render
 	glBindVertexArray(VAO);
@@ -94,6 +103,7 @@ void Model::draw(Shader* customShader) {
 
 	//Set all references
 	for (auto const& x : vec3Refs) customShader->setVec3(x.first, *x.second);
+	for (auto const& x : vec4Refs) shader->setVec4(x.first, *x.second);
 	for (auto const& x : mat4Refs) customShader->setMat4(x.first, *x.second);
 
 	// render
@@ -105,6 +115,14 @@ void Model::draw(Shader* customShader) {
 
 void Model::scale(float scale) {
 	model = glm::scale(model, glm::vec3(scale));
+}
+
+void Model::scale(glm::vec3 scale) {
+	model = glm::scale(model, scale);
+}
+
+void Model::resetPSR(){ //Reset position scale and rotation
+	this->model = glm::mat4();
 }
 
 void Model::translate(glm::vec3 vec) {
@@ -123,6 +141,30 @@ void Model::setPosition(float x, float y, float z) { //Set 3rd column of model m
 
 void Model::setPosition(glm::vec3 pos) {
 	setPosition(pos.x, pos.y, pos.z);
+}
+
+glm::vec3 Model::getPosition() {
+	return glm::vec3(model[3].x, model[3].y, model[3].z);
+}
+
+//Note that this will change scale of object
+//Note: assumes that y is forward.
+void Model::lookAt(glm::vec3 target) {
+	glm::vec3 front = glm::normalize(target - this->getPosition());
+	glm::vec3 right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), front));
+	glm::vec3 up = glm::cross(front, right);
+
+	model[0].x = right.x;
+	model[0].y = right.y;
+	model[0].z = right.z;
+
+	model[2].x = up.x;
+	model[2].y = up.y;
+	model[2].z = up.z;
+
+	model[1].x = front.x;
+	model[1].y = front.y;
+	model[1].z = front.z;
 }
 
 void Model::fromFile(std::string inputfile) {

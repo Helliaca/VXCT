@@ -134,5 +134,19 @@
     <None Include="shaders\tmp.gs" />
     <None Include="shaders\lineshader.vs" />
     <None Include="shaders\lineshader.fs" />
+    <None Include="cone.mtl" />
+    <None Include="voxel_scene.mtl" />
+    <None Include="voxel_scene_cube1.mtl" />
+    <None Include="voxel_scene_sphere1.mtl" />
+    <None Include="voxel_scene_sphere2.mtl" />
+    <None Include="voxel_scene_wall1.mtl" />
+    <None Include="voxel_scene_wall2.mtl" />
+    <None Include="voxel_scene_wall3.mtl" />
+    <None Include="voxel_scene_wall4.mtl" />
+    <None Include="voxel_scene_wall5.mtl" />
+    <None Include="voxel_scene_wall6.mtl" />
+    <None Include="voxel_test.mtl" />
+    <None Include="shaders\emit_rgba.vs" />
+    <None Include="shaders\emit_rgba.fs" />
   </ItemGroup>
 </Project>

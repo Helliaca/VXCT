@@ -164,10 +164,13 @@
     <ClInclude Include="VisCone.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cone.mtl" />
     <None Include="shaders\color.fs" />
     <None Include="shaders\color.vs" />
     <None Include="shaders\emit.fs" />
     <None Include="shaders\emit.vs" />
+    <None Include="shaders\emit_rgba.fs" />
+    <None Include="shaders\emit_rgba.vs" />
     <None Include="shaders\lineshader.fs" />
     <None Include="shaders\lineshader.vs" />
     <None Include="shaders\lodTexture.fs" />
@@ -180,6 +183,17 @@
     <None Include="shaders\vox.vs" />
     <None Include="shaders\voxillumin.fs" />
     <None Include="shaders\voxillumin.vs" />
+    <None Include="voxel_scene.mtl" />
+    <None Include="voxel_scene_cube1.mtl" />
+    <None Include="voxel_scene_sphere1.mtl" />
+    <None Include="voxel_scene_sphere2.mtl" />
+    <None Include="voxel_scene_wall1.mtl" />
+    <None Include="voxel_scene_wall2.mtl" />
+    <None Include="voxel_scene_wall3.mtl" />
+    <None Include="voxel_scene_wall4.mtl" />
+    <None Include="voxel_scene_wall5.mtl" />
+    <None Include="voxel_scene_wall6.mtl" />
+    <None Include="voxel_test.mtl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

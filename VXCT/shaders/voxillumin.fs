@@ -49,9 +49,9 @@ void main()
 	const vec3 viewDirection = normalize(pos_fs - viewPos);
 
 	// Indirect diffuse light.
-	FragColor.rgb += indirectDiffuse();
+	FragColor.rgb += indirectDiffuse() * 1.0f;
 
-	//FragColor.rgb += directLight();
+	FragColor.rgb += directLight();
 	
 	//FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
@@ -152,7 +152,7 @@ vec3 voxelTraceCone(const vec3 origin, vec3 dir) {
 	float current_dist = 0.2f;
 
 	//float apperture_angle = 0.523f; //Angle in Radians.
-	float apperture_angle = 0.55f; //Angle in Radians.
+	float apperture_angle = 1.0f; //Angle in Radians.
 	//float apperture_angle = 0.01f; //Angle in Radians.
 
 	vec3 color = vec3(0.0f);
@@ -191,6 +191,10 @@ vec3 voxelTraceCone(const vec3 origin, vec3 dir) {
 }
 
 vec3 directLight() {  	
+	// ambient
+    float ambientStrength = 0.08f;
+    vec3 ambient = ambientStrength * lightColor;
+  	
     // diffuse 
     vec3 lightDir = normalize(lightPos - pos_fs);
     float diff = max(dot(nrm, lightDir), 0.0);
@@ -203,5 +207,5 @@ vec3 directLight() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     vec3 specular = specularStrength * spec * lightColor;  
         
-    return (diffuse + specular) * objectColor;
+    return (ambient + diffuse + specular) * objectColor;
 }
