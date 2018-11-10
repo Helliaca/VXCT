@@ -3,11 +3,11 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "Window.h"
-#include "../Scene.h"
-#include "VoxelMap.h"
-#include "../LineRenderer.h"
-#include "../VisCone.h"
+#include "assets/Window.h"
+#include "assets/Scene.h"
+#include "assets/VoxelMap.h"
+#include "assets/LineRenderer.h"
+#include "assets/VisCone.h"
 #include <mutex>
 #include <thread>
 

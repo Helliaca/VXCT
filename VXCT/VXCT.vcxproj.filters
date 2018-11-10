@@ -21,12 +21,6 @@
     <ClCompile Include="core\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\glad\src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,28 +30,31 @@
     <ClCompile Include="core\globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\VoxelMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\InitScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\VoxelLodMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVCall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RayCast.cpp">
+    <ClCompile Include="core\settings\InitScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LineRenderer.cpp">
+    <ClCompile Include="core\assets\VoxelMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VisCone.cpp">
+    <ClCompile Include="core\assets\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\LineRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\RayCast.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\VisCone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,25 +62,10 @@
     <ClInclude Include="core\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VertexData.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="core\base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\settings\defs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
@@ -92,28 +74,40 @@
     <ClInclude Include="core\globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\VoxelMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\tiny_obj_loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\VoxelLodMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVCall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RayCast.h">
+    <ClInclude Include="core\assets\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LineRenderer.h">
+    <ClInclude Include="core\assets\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VisCone.h">
+    <ClInclude Include="core\assets\VoxelMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\LineRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\RayCast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\settings\VertexData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\VisCone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\tiny_obj_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -134,18 +128,6 @@
     <None Include="shaders\tmp.gs" />
     <None Include="shaders\lineshader.vs" />
     <None Include="shaders\lineshader.fs" />
-    <None Include="cone.mtl" />
-    <None Include="voxel_scene.mtl" />
-    <None Include="voxel_scene_cube1.mtl" />
-    <None Include="voxel_scene_sphere1.mtl" />
-    <None Include="voxel_scene_sphere2.mtl" />
-    <None Include="voxel_scene_wall1.mtl" />
-    <None Include="voxel_scene_wall2.mtl" />
-    <None Include="voxel_scene_wall3.mtl" />
-    <None Include="voxel_scene_wall4.mtl" />
-    <None Include="voxel_scene_wall5.mtl" />
-    <None Include="voxel_scene_wall6.mtl" />
-    <None Include="voxel_test.mtl" />
     <None Include="shaders\emit_rgba.vs" />
     <None Include="shaders\emit_rgba.fs" />
   </ItemGroup>

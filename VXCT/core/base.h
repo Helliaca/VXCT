@@ -15,7 +15,7 @@
 #include <map>
 
 #include "settings\defs.h"
-#include "../VertexData.h"
+#include "settings\VertexData.h"
 
 class IOobject;
 

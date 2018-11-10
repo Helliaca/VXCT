@@ -36,12 +36,6 @@ VoxelMap::VoxelMap(const std::vector<GLubyte> & textureBuffer, const std::vector
 	glBindTexture(GL_TEXTURE_3D, 0); //Unbind Texture
 
 	checkErrors("VoxelMap Initialization");
-
-	//setting lod1Map
-	VoxelLodMap* lod1Map = new VoxelLodMap(lod_textureBuffer, 1.0f);
-
-
-	checkErrors("Setting VoxelLodMap Level1");
 }
 
 
@@ -68,19 +62,6 @@ void VoxelMap::updateMemory() {
 	internalFormat = GL_RGBA8;
 	
 	glBindTexture(GL_TEXTURE_3D, textureID);
-
-	//------------TMP
-	print(this, "Making Single Vertex Call");
-	Shader* tmp = new Shader(LODTEXTURESHADER_VS, LODTEXTURESHADER_FS);
-
-	SVCall* svcall = new SVCall();
-	svcall->callShader = tmp;
-	svcall->callShader->use();
-	this->activate(svcall->callShader->ID, "tex3D", 0);
-	glBindImageTexture(0, this->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
-	svcall->execute();
-	checkErrors("Single Vertex Call");
-	//---------------
 	
 	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_INTERNAL_FORMAT, &internalFormat);
 	

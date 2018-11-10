@@ -49,19 +49,19 @@
 #define LINESHADER_VS "../VXCT/shaders/lineshader.vs"
 #define LINESHADER_FS "../VXCT/shaders/lineshader.fs"
 
-#define OBJ_SPHERE "voxel_test.obj"
-#define OBJ_SCENE "voxel_scene.obj"
+#define OBJ_SPHERE "models/voxel_test.obj"
+#define OBJ_SCENE "models/voxel_scene.obj"
 
 //Base Scene Objects
-#define OBJ_SCENE_SPHERE1 "voxel_scene_sphere1.obj"
-#define OBJ_SCENE_SPHERE2 "voxel_scene_sphere2.obj"
-#define OBJ_SCENE_CUBE1 "voxel_scene_cube1.obj"
+#define OBJ_SCENE_SPHERE1 "models/voxel_scene_sphere1.obj"
+#define OBJ_SCENE_SPHERE2 "models/voxel_scene_sphere2.obj"
+#define OBJ_SCENE_CUBE1 "models/voxel_scene_cube1.obj"
 
-#define OBJ_SCENE_WALL1 "voxel_scene_wall1.obj"
-#define OBJ_SCENE_WALL2 "voxel_scene_wall2.obj"
-#define OBJ_SCENE_WALL3 "voxel_scene_wall3.obj"
-#define OBJ_SCENE_WALL4 "voxel_scene_wall4.obj"
-#define OBJ_SCENE_WALL5 "voxel_scene_wall5.obj"
-#define OBJ_SCENE_WALL6 "voxel_scene_wall6.obj"
+#define OBJ_SCENE_WALL1 "models/voxel_scene_wall1.obj"
+#define OBJ_SCENE_WALL2 "models/voxel_scene_wall2.obj"
+#define OBJ_SCENE_WALL3 "models/voxel_scene_wall3.obj"
+#define OBJ_SCENE_WALL4 "models/voxel_scene_wall4.obj"
+#define OBJ_SCENE_WALL5 "models/voxel_scene_wall5.obj"
+#define OBJ_SCENE_WALL6 "models/voxel_scene_wall6.obj"
 
-#define OBJ_VIS_CONE "cone.obj"
+#define OBJ_VIS_CONE "models/cone.obj"

@@ -1,8 +1,6 @@
 #pragma once
 
-//#include "globals.h"
-//#include "base.h"
-#include "VoxelLodMap.h"
+#include "Model.h"
 
 class VoxelMap : IOobject
 {
@@ -18,6 +16,5 @@ public:
 	void updateMemory();
 	void visualize(Model* voxelModel, glm::vec3* shaderReference);
 	void visualizeLod(Model* voxelModel, glm::vec3* shaderReference, int LOD, bool scaleModel);
-	std::vector<VoxelLodMap*> LodMaps;
 };
 

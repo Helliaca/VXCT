@@ -3,7 +3,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "camera.h"
+#include "assets/camera.h"
 
 namespace G {
 	extern float deltaTime;

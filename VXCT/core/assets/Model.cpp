@@ -3,7 +3,7 @@
 
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "lib\tiny_obj_loader.h"
+#include "..\..\tools\tiny_obj_loader.h"
 
 Model::Model(std::string name, RenderShader sh=RenderShader::EMIT, std::string inputfile="") : IOobject(name)
 {
