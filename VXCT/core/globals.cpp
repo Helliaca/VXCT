@@ -9,7 +9,5 @@ namespace G {
 	bool firstMouse = true;
 
 	Camera* SceneCamera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
-
-	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+	PointLight* SceneLight = new PointLight(glm::vec3(0.0f, 0.4f, 0.4f), glm::vec3(1.0f, 1.0f, 1.0f));
 }

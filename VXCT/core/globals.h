@@ -4,6 +4,8 @@
 #define GLOBALS_H
 
 #include "assets/camera.h"
+#include "assets\PointLight.h"
+#include "assets\Material.h"
 
 namespace G {
 	extern float deltaTime;
@@ -12,9 +14,7 @@ namespace G {
 	extern float lastY;
 	extern bool firstMouse;
 	extern Camera* SceneCamera;
-
-	extern glm::vec3 lightPos;
-	extern glm::vec3 lightColor;
+	extern PointLight* SceneLight;
 }
 
 #endif

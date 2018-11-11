@@ -5,33 +5,46 @@ out vec4 FragColor;
 in vec3 pos_fs;
 in vec3 nrm_fs;
 
-uniform vec3 lightPos; 
+struct PointLight {
+	vec3 position;
+	vec3 color;
+	float att_constant;
+	float att_linear;
+	float att_quadratic;
+};
+
+struct Material {
+	vec3 color;
+	float ambient_str;
+	float diffuse_str;
+	float specular_str;
+	float shininess;
+};
+
+uniform PointLight light;
+uniform Material material; 
 uniform vec3 viewPos; 
-uniform vec3 lightColor;
-uniform vec3 objectColor;
 layout(RGBA8) uniform image3D tex3D;
 
 void main() {
 
 	//>>Diffuse Lighting Calculation
     // ambient
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * lightColor;
+    vec3 ambient = material.ambient_str * light.color;
   	
     // diffuse 
     vec3 norm = normalize(nrm_fs);
-    vec3 lightDir = normalize(lightPos - pos_fs);
+    vec3 lightDir = normalize(light.position - pos_fs);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor;
+    vec3 diffuse = material.diffuse_str * diff * light.color;
     
     // specular
-    float specularStrength = 0.5;
     vec3 viewDir = normalize(viewPos - pos_fs);
     vec3 reflectDir = reflect(-lightDir, norm);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * lightColor;  
+    vec3 specular = material.specular_str * spec *light.color;  
         
-    vec3 result = (ambient + diffuse + specular) * objectColor;
+    vec3 result = (ambient + diffuse + specular) * material.color;
 
 	//>>Voxelization specific
 	ivec3 voxSize = imageSize(tex3D);  //get Voxelization Size

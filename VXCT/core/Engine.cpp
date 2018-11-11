@@ -88,8 +88,11 @@ void Engine::run() {
 	lamp->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	lamp->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	lamp->addVec3Reference("emitColor", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
-	lamp->translate(G::lightPos);
+	glm::vec3 lampPos = G::SceneLight->position;
+	lampPos.y += 0.09; //squished lamp needs to be higher than actual light;
+	lamp->setPosition(lampPos);
 	lamp->scale(0.2f); //A smaller cube
+	lamp->scale(glm::vec3(1.0f, 0.1f, 1.0f)); //squish it so it appears like a ceiling lamp
 
 	Model* voxel = new Model("voxel", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	voxel->addMat4Reference("model_u", &voxel->model);
@@ -194,8 +197,8 @@ void Engine::run() {
 		//Voxel Drawing
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
 		if (voxelMap != nullptr && voxs) {
-			//voxelMap->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
-			voxelMap_lod1->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
+			voxelMap->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
+			//voxelMap_lod1->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
 		}
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
@@ -332,7 +335,8 @@ void Engine::console() {
 		else if (input == "sf" && sfMode) singleFrame = true;
 		else if (input == "iLight") iLight = !iLight;
 		else if (input == "overlayW") overlayWireframe = !overlayWireframe;
-		else if (input == "pos1") G::SceneCamera->setPosition1();
+		else if (input == "pos1") G::SceneCamera->setPosition(1);
+		else if (input == "pos2") G::SceneCamera->setPosition(2);
 		else if (input == "ray") rayOnNextFrame = true;
 		else print(this, "Unknwon Command");
 

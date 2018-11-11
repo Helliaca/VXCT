@@ -57,6 +57,12 @@
     <ClCompile Include="core\assets\VisCone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core\assets\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Engine.h">
@@ -108,6 +114,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tools\tiny_obj_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\PointLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

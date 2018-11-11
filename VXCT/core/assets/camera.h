@@ -119,12 +119,21 @@ public:
 			Zoom = 45.0f;
 	}
 
-	void setPosition1() {
-		Position.x = 1.26f;
-		Position.y = 0.10f;
-		Position.z = 1.73f;
-		Yaw = -126;
-		Pitch = - 4;
+	void setPosition(int pos) {
+		if (pos == 1) {
+			Position.x = 1.26f;
+			Position.y = 0.10f;
+			Position.z = 1.73f;
+			Yaw = -126;
+			Pitch = -4;
+		}
+		else if (pos == 2) {
+			Position.x = 0.0f;
+			Position.y = 0.0f;
+			Position.z = 1.8f;
+			Yaw = -90;
+			Pitch = -0;
+		}
 
 		updateCameraVectors();
 	}

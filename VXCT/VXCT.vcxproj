@@ -137,6 +137,8 @@
     <ClCompile Include="core\assets\Model.cpp" />
     <ClCompile Include="core\assets\RayCast.cpp" />
     <ClCompile Include="core\assets\Scene.cpp" />
+    <ClCompile Include="core\assets\Material.cpp" />
+    <ClCompile Include="core\assets\PointLight.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="core\assets\VoxelMap.cpp" />
     <ClCompile Include="SVCall.cpp" />
@@ -150,6 +152,8 @@
     <ClInclude Include="core\settings\defs.h" />
     <ClInclude Include="core\assets\shader.h" />
     <ClInclude Include="core\assets\Window.h" />
+    <ClInclude Include="core\assets\Material.h" />
+    <ClInclude Include="core\assets\PointLight.h" />
     <ClInclude Include="tools\tiny_obj_loader.h" />
     <ClInclude Include="core\assets\LineRenderer.h" />
     <ClInclude Include="core\assets\Model.h" />

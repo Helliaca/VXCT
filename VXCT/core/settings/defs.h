@@ -65,3 +65,5 @@
 #define OBJ_SCENE_WALL6 "models/voxel_scene_wall6.obj"
 
 #define OBJ_VIS_CONE "models/cone.obj"
+
+#define OBJ_SCENE_BUNNY "models/stan_bunny.obj"

@@ -9,6 +9,7 @@ Model::Model(std::string name, RenderShader sh=RenderShader::EMIT, std::string i
 {
 	if (inputfile!="") { this->fromFile(inputfile); }
 	initialize(sh);
+	this->material = new Material();
 }
 
 Model::Model(std::string name = "unnamedModel", RenderShader sh = RenderShader::EMIT, std::vector<int>indices = {}, std::vector<float>vertexData = {}) : IOobject(name)
@@ -16,6 +17,7 @@ Model::Model(std::string name = "unnamedModel", RenderShader sh = RenderShader::
 	this->vertexData = vertexData;
 	this->indices = indices;
 	initialize(sh);
+	this->material = new Material();
 }
 
 void Model::initialize(RenderShader sh) {
@@ -87,6 +89,8 @@ void Model::draw() {
 	for (auto const& x : vec3Refs) shader->setVec3(x.first, *x.second);
 	for (auto const& x : vec4Refs) shader->setVec4(x.first, *x.second);
 	for (auto const& x : mat4Refs) shader->setMat4(x.first, *x.second);
+	for (auto const& x : plightRefs) shader->setPointLight(x.first, *x.second);
+	for (auto const& x : materialRefs) shader->setMaterial(x.first, *x.second);
 
 
 	// render
@@ -103,8 +107,10 @@ void Model::draw(Shader* customShader) {
 
 	//Set all references
 	for (auto const& x : vec3Refs) customShader->setVec3(x.first, *x.second);
-	for (auto const& x : vec4Refs) shader->setVec4(x.first, *x.second);
+	for (auto const& x : vec4Refs) customShader->setVec4(x.first, *x.second);
 	for (auto const& x : mat4Refs) customShader->setMat4(x.first, *x.second);
+	for (auto const& x : plightRefs) customShader->setPointLight(x.first, *x.second);
+	for (auto const& x : materialRefs) customShader->setMaterial(x.first, *x.second);
 
 	// render
 	glBindVertexArray(VAO);

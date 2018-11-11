@@ -21,6 +21,12 @@ private:
 	std::map<std::string, glm::mat4*> mat4Refs;
 	typedef std::pair<std::string, glm::mat4*> Mat4Entry;
 
+	std::map<std::string, PointLight*> plightRefs;
+	typedef std::pair<std::string, PointLight*> PlightEntry;
+
+	std::map<std::string, Material*> materialRefs;
+	typedef std::pair<std::string, Material*> MaterialEntry;
+
 public:
 
 	void addVec3Reference(std::string name, glm::vec3* ref) {
@@ -38,8 +44,17 @@ public:
 		mat4Refs.insert(Mat4Entry(name, ref));
 	}
 
+	void addPlightReference(std::string name, PointLight* ref) {
+		print(this, "Registered Reference: " + name);
+		plightRefs.insert(PlightEntry(name, ref));
+	}
+
+	void addMaterialReference(std::string name, Material* ref) {
+		print(this, "Registered Reference: " + name);
+		materialRefs.insert(MaterialEntry(name, ref));
+	}
+
 	glm::mat4 model; //Model Matrix
-	glm::vec3 color; //Color of the object, used only if reference is applied (same as model matrix)
 	void scale(float scale);
 	void scale(glm::vec3 scale);
 	void translate(glm::vec3 vec);
@@ -52,6 +67,7 @@ public:
 	std::vector<float> vertexData; //Includes vertices and Normals
 	std::vector<int> indices;
 	Shader* shader;
+	Material* material;
 	unsigned int VBO, VAO, EBO;
 	void draw();
 	void draw(Shader* customShader);

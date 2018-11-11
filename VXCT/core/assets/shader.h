@@ -154,8 +154,27 @@ public:
 	// ------------------------------------------------------------------------
 	void setMat4(const std::string &name, const glm::mat4 &mat) const
 	{
-		//std::cout << name << " :: " << mat[0].x << mat[0].y << mat[0].z << std::endl;
 		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+	}
+	// ------------------------------------------------------------------------
+	void setPointLight(const std::string &name, PointLight &light_obj) const
+	{
+		const PointLight_struct light = light_obj.to_struct();
+		this->setVec3(name + ".position", light.position);
+		this->setVec3(name + ".color", light.color);
+		this->setFloat(name + ".att_constant", light.att_constant);
+		this->setFloat(name + ".att_linear", light.att_linear);
+		this->setFloat(name + ".att_quadratic", light.att_quadratic);
+	}
+	// ------------------------------------------------------------------------
+	void setMaterial(const std::string &name, Material &material_obj) const
+	{
+		const Material_struct mat = material_obj.to_struct();
+		this->setVec3(name + ".color", mat.color);
+		this->setFloat(name + ".shininess", mat.shininess);
+		this->setFloat(name + ".ambient_str", mat.ambient_str);
+		this->setFloat(name + ".diffuse_str", mat.diffuse_str);
+		this->setFloat(name + ".specular_str", mat.specular_str);
 	}
 
 private:
