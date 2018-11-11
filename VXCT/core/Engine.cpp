@@ -66,6 +66,7 @@ void Engine::run() {
 	glEnable(GL_DEPTH_TEST); //turn on z-buffer
 	glEnable(GL_BLEND);		 //turn on blending for transparency
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //choose blending function
+	
 	glfwSetInputMode(window->getGLFWwindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	shaderInfo(); //Display shader info
 

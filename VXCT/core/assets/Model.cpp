@@ -4,6 +4,10 @@
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "..\..\tools\tiny_obj_loader.h"
+#include <assimp\Importer.hpp>
+#include <assimp\scene.h>
+#include <assimp\postprocess.h>
+//#include "../../tools/ObjLoader.h"
 
 Model::Model(std::string name, RenderShader sh=RenderShader::EMIT, std::string inputfile="") : IOobject(name)
 {
@@ -174,12 +178,16 @@ void Model::lookAt(glm::vec3 target) {
 }
 
 void Model::fromFile(std::string inputfile) {
+	/*
+	//DEPRECATED TINYOBJLOADER IMPLEMENTATION.
+
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
 
 	std::string err;
-	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, inputfile.c_str());
+	std::string warn;
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, &warn, inputfile.c_str());
 
 	if (!err.empty()) print(this, "Error reading File: " + err);
 
@@ -225,4 +233,31 @@ void Model::fromFile(std::string inputfile) {
 	//Format conversion done
 
 	print(this, "File loaded. Size of vertexData: " + vertexData.size());
+	*/
+
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(inputfile, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+	{
+		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+		return;
+	}
+	//directory = path.substr(0, path.find_last_of('/'));
+	aiMesh* mesh = scene->mMeshes[0];
+	for (int i = 0; i < mesh->mNumVertices; i++) {
+		vertexData.push_back(mesh->mVertices[i].x);
+		vertexData.push_back(mesh->mVertices[i].y);
+		vertexData.push_back(mesh->mVertices[i].z);
+
+		vertexData.push_back(mesh->mNormals[i].x);
+		vertexData.push_back(mesh->mNormals[i].y);
+		vertexData.push_back(mesh->mNormals[i].z);
+	}
+	for (int i = 0; i < mesh->mNumFaces; i++) {
+		for (int j = 0; j < mesh->mFaces[i].mNumIndices; j++) {
+			indices.push_back(mesh->mFaces[i].mIndices[j]);
+		}
+	}
+	
+
 }

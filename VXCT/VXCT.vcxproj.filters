@@ -113,9 +113,6 @@
     <ClInclude Include="core\assets\VisCone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tools\tiny_obj_loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="core\assets\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>

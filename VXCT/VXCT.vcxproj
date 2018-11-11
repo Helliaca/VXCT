@@ -154,7 +154,6 @@
     <ClInclude Include="core\assets\Window.h" />
     <ClInclude Include="core\assets\Material.h" />
     <ClInclude Include="core\assets\PointLight.h" />
-    <ClInclude Include="tools\tiny_obj_loader.h" />
     <ClInclude Include="core\assets\LineRenderer.h" />
     <ClInclude Include="core\assets\Model.h" />
     <ClInclude Include="core\assets\RayCast.h" />
