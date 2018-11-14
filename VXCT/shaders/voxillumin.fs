@@ -42,6 +42,7 @@ vec3 directLight();
 #define MIPMAP_HARDCAP 5.4f
 
 vec3 voxelTraceCone(const vec3 from, vec3 direction);
+vec3 voxelTraceSpecularCone(const vec3 from, vec3 direction);
 float voxelTraceOcclusionCone(const vec3 from, vec3 direction, float max_dist);
 
 // Scales and bias a given vector (i.e. from [-1, 1] to [0, 1]).
@@ -70,6 +71,10 @@ void main()
 	// shadows
 	//FragColor = vec4(1.0f); //un-comment for showing only shadows
 	FragColor.rgb *= 1.0f - voxelTraceOcclusionCone(pos_fs, light.position - pos_fs, length(light.position - pos_fs));
+
+	// specular
+	const vec3 reflectDir = normalize(reflect(viewDirection, nrm));
+	FragColor.rgb += voxelTraceSpecularCone(pos_fs, reflectDir);
 }
 
 // Calculates indirect diffuse light using voxel cone tracing.
@@ -139,6 +144,48 @@ float voxelTraceOcclusionCone(const vec3 origin, vec3 dir, float max_dist=1.0f) 
 	}
 
 	return occlusion;
+}
+
+vec3 voxelTraceSpecularCone(const vec3 origin, vec3 dir) {
+	float max_dist = 1.0f;
+	dir = normalize(dir);
+
+	float current_dist = 0.1f;
+
+	float apperture_angle = 0.05f; //Angle in Radians. Will affect softness of specular reflections
+
+	vec3 color = vec3(0.0f);
+	float occlusion = 0.0f;
+
+	float vox_size = 64.0f; //voxel map size
+
+	while(current_dist < max_dist && occlusion < 1) {
+		//Get cone diameter (tan = cathetus / cathetus)
+		float current_coneDiameter = 2.0f * current_dist * tan(apperture_angle * 0.5f);
+
+		//Get mipmap level which should be sampled according to the cone diameter
+		//log2(vox_size) returns the maximum mipmap level
+		float vlevel = log2(current_coneDiameter * vox_size);
+		vlevel = min( 3.0f, vlevel ); //vlevel hardcap at 3
+
+		vec3 pos_worldspace = origin + dir * current_dist;
+		vec3 pos_texturespace = (pos_worldspace + vec3(1.0f)) * 0.5f; //[-1,1] Coordinates to [0,1]
+
+		vec4 voxel = textureLod(tex3D, pos_texturespace, vlevel);
+
+		vec3 color_read = voxel.rgb;
+		float occlusion_read = voxel.a;
+
+		//if(occlusion_read>0.01f) { color = color_read; return color; } //Cheap alternative: simply return first color we find
+
+		color = occlusion*color + (1 - occlusion) * occlusion_read * color_read;
+		occlusion = occlusion + (1 - occlusion) * occlusion_read;
+
+		float dist_factor = 1.0f; //Lower = better results but higher performance hit
+		current_dist += current_coneDiameter * dist_factor;
+	}
+
+	return material.specular_str * color;
 }
 
 vec3 voxelTraceCone(const vec3 origin, vec3 dir) {

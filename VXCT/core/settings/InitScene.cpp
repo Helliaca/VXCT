@@ -12,6 +12,8 @@ Scene* Engine::InitScene() {
 	sc_sphere1->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	sc_sphere1->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_sphere1->addPlightReference("light", G::SceneLight);
+	sc_sphere1->material->shininess = 62.0f;
+	sc_sphere1->material->specular_str = 1.0f;
 	sc_sphere1->addMaterialReference("material", sc_sphere1->material);
 	mainScene->addObject(sc_sphere1);
 
@@ -21,6 +23,8 @@ Scene* Engine::InitScene() {
 	sc_sphere2->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	sc_sphere2->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_sphere2->addPlightReference("light", G::SceneLight);
+	sc_sphere1->material->shininess = 62.0f;
+	sc_sphere1->material->specular_str = 1.0f;
 	sc_sphere2->addMaterialReference("material", sc_sphere2->material);
 	mainScene->addObject(sc_sphere2);
 
@@ -49,8 +53,8 @@ Scene* Engine::InitScene() {
 	sc_wall1->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	sc_wall1->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_wall1->addPlightReference("light", G::SceneLight);
-	sc_wall1->material->shininess = 64.0f;
-	sc_wall1->material->specular_str = 0.3f;
+	sc_wall1->material->shininess = 1.0f;
+	sc_wall1->material->specular_str = 0.1f;
 	sc_wall1->addMaterialReference("material", sc_wall1->material);
 	mainScene->addObject(sc_wall1); //top
 
@@ -60,8 +64,8 @@ Scene* Engine::InitScene() {
 	sc_wall2->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	sc_wall2->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_wall2->addPlightReference("light", G::SceneLight);
-	sc_wall2->material->shininess = 64.0f;
-	sc_wall2->material->specular_str = 0.3f;
+	sc_wall2->material->shininess = 1.0f;
+	sc_wall2->material->specular_str = 0.1f;
 	sc_wall2->addMaterialReference("material", sc_wall2->material);
 	mainScene->addObject(sc_wall2); //back
 
@@ -71,8 +75,8 @@ Scene* Engine::InitScene() {
 	sc_wall3->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	sc_wall3->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_wall3->addPlightReference("light", G::SceneLight);
-	sc_wall3->material->shininess = 64.0f;
-	sc_wall3->material->specular_str = 0.3f;
+	sc_wall3->material->shininess = 1.0f;
+	sc_wall3->material->specular_str = 0.1f;
 	sc_wall3->addMaterialReference("material", sc_wall3->material);
 	mainScene->addObject(sc_wall3); //bottom
 
@@ -82,8 +86,8 @@ Scene* Engine::InitScene() {
 	sc_wall4->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	sc_wall4->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_wall4->addPlightReference("light", G::SceneLight);
-	sc_wall4->material->shininess = 64.0f;
-	sc_wall4->material->specular_str = 0.3f;
+	sc_wall4->material->shininess = 1.0f;
+	sc_wall4->material->specular_str = 0.1f;
 	sc_wall4->addMaterialReference("material", sc_wall4->material);
 	//mainScene->addObject(sc_wall4); //front
 
@@ -94,8 +98,8 @@ Scene* Engine::InitScene() {
 	sc_wall5->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	sc_wall5->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_wall5->addPlightReference("light", G::SceneLight);
-	sc_wall5->material->shininess = 64.0f;
-	sc_wall5->material->specular_str = 0.3f;
+	sc_wall5->material->shininess = 1.0f;
+	sc_wall5->material->specular_str = 0.1f;
 	sc_wall5->addMaterialReference("material", sc_wall5->material);
 	mainScene->addObject(sc_wall5); //right
 
@@ -106,8 +110,8 @@ Scene* Engine::InitScene() {
 	sc_wall6->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	sc_wall6->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_wall6->addPlightReference("light", G::SceneLight);
-	sc_wall6->material->shininess = 64.0f;
-	sc_wall6->material->specular_str = 0.3f;
+	sc_wall6->material->shininess = 1.0f;
+	sc_wall6->material->specular_str = 0.1f;
 	sc_wall6->addMaterialReference("material", sc_wall6->material);
 	mainScene->addObject(sc_wall6); //left
 
