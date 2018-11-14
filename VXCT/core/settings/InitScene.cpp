@@ -13,7 +13,7 @@ Scene* Engine::InitScene() {
 	sc_sphere1->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_sphere1->addPlightReference("light", G::SceneLight);
 	sc_sphere1->addMaterialReference("material", sc_sphere1->material);
-	//mainScene->addObject(sc_sphere1);
+	mainScene->addObject(sc_sphere1);
 
 	Model* sc_sphere2 = new Model("Sphere2", RenderShader::COLOR, OBJ_SCENE_SPHERE2);
 	sc_sphere2->addMat4Reference("model_u", &sc_sphere2->model);
@@ -22,7 +22,7 @@ Scene* Engine::InitScene() {
 	sc_sphere2->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_sphere2->addPlightReference("light", G::SceneLight);
 	sc_sphere2->addMaterialReference("material", sc_sphere2->material);
-	//mainScene->addObject(sc_sphere2);
+	mainScene->addObject(sc_sphere2);
 
 	Model* sc_cube1 = new Model("Cube1", RenderShader::COLOR, OBJ_SCENE_CUBE1);
 	sc_cube1->addMat4Reference("model_u", &sc_cube1->model);
@@ -41,7 +41,7 @@ Scene* Engine::InitScene() {
 	sc_bunny->addPlightReference("light", G::SceneLight);
 	sc_bunny->addMaterialReference("material", sc_bunny->material);
 	sc_bunny->setPosition(glm::vec3(0.0, -0.5, 0.0));
-	mainScene->addObject(sc_bunny);
+	//mainScene->addObject(sc_bunny);
 
 	Model* sc_wall1 = new Model("Wall1", RenderShader::COLOR, OBJ_SCENE_WALL1);
 	sc_wall1->addMat4Reference("model_u", &sc_wall1->model);

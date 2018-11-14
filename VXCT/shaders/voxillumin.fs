@@ -42,6 +42,7 @@ vec3 directLight();
 #define MIPMAP_HARDCAP 5.4f
 
 vec3 voxelTraceCone(const vec3 from, vec3 direction);
+float voxelTraceOcclusionCone(const vec3 from, vec3 direction, float max_dist);
 
 // Scales and bias a given vector (i.e. from [-1, 1] to [0, 1]).
 vec3 scaleAndBias(const vec3 p) { return 0.5f * p + vec3(0.5f); }
@@ -61,10 +62,14 @@ void main()
 	const vec3 viewDirection = normalize(pos_fs - viewPos);
 
 	// Indirect diffuse light
-	FragColor.rgb += indirectDiffuse() * 1.0f;
+	//FragColor.rgb += indirectDiffuse() * 1.0f;
 
 	// Direct phong light
-	//FragColor.rgb += directLight();
+	FragColor.rgb += directLight();
+
+	// shadows
+	//FragColor = vec4(1.0f); //un-comment for showing only shadows
+	FragColor.rgb *= 1.0f - voxelTraceOcclusionCone(pos_fs, light.position - pos_fs, length(light.position - pos_fs));
 }
 
 // Calculates indirect diffuse light using voxel cone tracing.
@@ -98,6 +103,43 @@ vec3 indirectDiffuse(){
 
 	return ret * 1.0f;
 } 
+
+float voxelTraceOcclusionCone(const vec3 origin, vec3 dir, float max_dist=1.0f) {
+	dir = normalize(dir);
+
+	float current_dist = 0.10f;
+
+	float apperture_angle = 0.25f; //Angle in Radians. Will affect softness of shadows
+
+	float occlusion = 0.0f;
+
+	float vox_size = 64.0f; //voxel map size
+
+	while(current_dist < max_dist && occlusion < 1) {
+		//Get cone diameter (tan = cathetus / cathetus)
+		float current_coneDiameter = 2.0f * current_dist * tan(apperture_angle * 0.5f);
+
+		//Get mipmap level which should be sampled according to the cone diameter
+		//log2(vox_size) returns the maximum mipmap level
+		float vlevel = log2(current_coneDiameter * vox_size);
+		vlevel = min( 3.0f, vlevel ); //vlevel hardcap at 3
+
+		vec3 pos_worldspace = origin + dir * current_dist;
+		vec3 pos_texturespace = (pos_worldspace + vec3(1.0f)) * 0.5f; //[-1,1] Coordinates to [0,1]
+
+		vec4 voxel = textureLod(tex3D, pos_texturespace, vlevel);
+
+		float shadow_str = 1.5f;
+		float occlusion_read = voxel.a * smoothstep(0.0f, max_dist, sqrt(current_dist)*shadow_str); //Using sqrt as all distances are <1.0; Gives us sqrt-falloff by distance
+
+		occlusion = occlusion + (1 - occlusion) * occlusion_read;
+
+		float dist_factor = 1.0f; //Lower = better results but higher performance hit
+		current_dist += current_coneDiameter * dist_factor;
+	}
+
+	return occlusion;
+}
 
 vec3 voxelTraceCone(const vec3 origin, vec3 dir) {
 	float max_dist = 1.0f;
@@ -158,9 +200,6 @@ vec3 directLight() {
     vec3 reflectDir = reflect(-lightDir, nrm);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular = material.specular_str * spec * light.color;  
-        
-    return (ambient + diffuse + specular) * material.color;
-
 
 
 	// Attenuation
