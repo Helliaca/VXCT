@@ -176,6 +176,32 @@ public:
 		this->setFloat(name + ".diffuse_str", mat.diffuse_str);
 		this->setFloat(name + ".specular_str", mat.specular_str);
 	}
+	// ------------------------------------------------------------------------
+	void setVsettings(const std::string &name, VoxSettings &vsettings_obj) const
+	{
+		const VoxSettings_struct vs = vsettings_obj.to_struct();
+		this->setFloat(name + ".diffuse_dist_factor", vs.diffuse_dist_factor);
+		this->setFloat(name + ".diffuse_apperture", vs.diffuse_apperture);
+		this->setFloat(name + ".diffuse_offset", vs.diffuse_offset);
+
+		this->setFloat(name + ".occlusion_dist_factor", vs.occlusion_dist_factor);
+		this->setFloat(name + ".occlusion_apperture", vs.occlusion_apperture);
+		this->setFloat(name + ".occlusion_offset", vs.occlusion_offset);
+
+		this->setFloat(name + ".specular_dist_factor", vs.specular_dist_factor);
+		this->setFloat(name + ".specular_apperture", vs.specular_apperture);
+		this->setFloat(name + ".specular_offset", vs.specular_offset);
+
+		this->setFloat(name + ".shadow_str", vs.shadow_str);
+
+		this->setBool(name + ".phong", vs.phong);
+		this->setBool(name + ".phong_ambient", vs.phong_ambient);
+		this->setBool(name + ".phong_diffuse", vs.phong_diffuse);
+		this->setBool(name + ".phong_specular", vs.phong_specular);
+		this->setBool(name + ".vox_diffuse", vs.vox_diffuse);
+		this->setBool(name + ".vox_shadows", vs.vox_shadows);
+		this->setBool(name + ".vox_specular", vs.vox_specular);
+	}
 
 private:
 	// utility function for checking shader compilation/linking errors.

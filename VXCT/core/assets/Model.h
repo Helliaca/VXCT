@@ -27,6 +27,9 @@ private:
 	std::map<std::string, Material*> materialRefs;
 	typedef std::pair<std::string, Material*> MaterialEntry;
 
+	std::map<std::string, VoxSettings*> vsettingsRefs;
+	typedef std::pair<std::string, VoxSettings*> VsettingsEntry;
+
 public:
 
 	void addVec3Reference(std::string name, glm::vec3* ref) {
@@ -52,6 +55,11 @@ public:
 	void addMaterialReference(std::string name, Material* ref) {
 		print(this, "Registered Reference: " + name);
 		materialRefs.insert(MaterialEntry(name, ref));
+	}
+
+	void addVsettingsReference(std::string name,VoxSettings* ref) {
+		print(this, "Registered Reference: " + name);
+		vsettingsRefs.insert(VsettingsEntry(name, ref));
 	}
 
 	glm::mat4 model; //Model Matrix

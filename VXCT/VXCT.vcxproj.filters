@@ -63,6 +63,9 @@
     <ClCompile Include="core\assets\PointLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core\assets\VoxSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Engine.h">
@@ -117,6 +120,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\assets\PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\VoxSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

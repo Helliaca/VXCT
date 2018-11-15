@@ -15,7 +15,8 @@ Scene* Engine::InitScene() {
 	sc_sphere1->material->shininess = 62.0f;
 	sc_sphere1->material->specular_str = 1.0f;
 	sc_sphere1->addMaterialReference("material", sc_sphere1->material);
-	mainScene->addObject(sc_sphere1);
+	sc_sphere1->addVsettingsReference("settings", G::VoxLightSettings);
+	//mainScene->addObject(sc_sphere1);
 
 	Model* sc_sphere2 = new Model("Sphere2", RenderShader::COLOR, OBJ_SCENE_SPHERE2);
 	sc_sphere2->addMat4Reference("model_u", &sc_sphere2->model);
@@ -26,7 +27,8 @@ Scene* Engine::InitScene() {
 	sc_sphere1->material->shininess = 62.0f;
 	sc_sphere1->material->specular_str = 1.0f;
 	sc_sphere2->addMaterialReference("material", sc_sphere2->material);
-	mainScene->addObject(sc_sphere2);
+	sc_sphere2->addVsettingsReference("settings", G::VoxLightSettings);
+	//mainScene->addObject(sc_sphere2);
 
 	Model* sc_cube1 = new Model("Cube1", RenderShader::COLOR, OBJ_SCENE_CUBE1);
 	sc_cube1->addMat4Reference("model_u", &sc_cube1->model);
@@ -35,6 +37,7 @@ Scene* Engine::InitScene() {
 	sc_cube1->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_cube1->addPlightReference("light", G::SceneLight);
 	sc_cube1->addMaterialReference("material", sc_cube1->material);
+	sc_cube1->addVsettingsReference("settings", G::VoxLightSettings);
 	//mainScene->addObject(sc_cube1);
 
 	Model* sc_bunny = new Model("Bunny", RenderShader::COLOR, OBJ_SCENE_BUNNY);
@@ -44,8 +47,9 @@ Scene* Engine::InitScene() {
 	sc_bunny->addVec3Reference("viewPos", &G::SceneCamera->Position);
 	sc_bunny->addPlightReference("light", G::SceneLight);
 	sc_bunny->addMaterialReference("material", sc_bunny->material);
+	sc_bunny->addVsettingsReference("settings", G::VoxLightSettings);
 	sc_bunny->setPosition(glm::vec3(0.0, -0.5, 0.0));
-	//mainScene->addObject(sc_bunny);
+	mainScene->addObject(sc_bunny);
 
 	Model* sc_wall1 = new Model("Wall1", RenderShader::COLOR, OBJ_SCENE_WALL1);
 	sc_wall1->addMat4Reference("model_u", &sc_wall1->model);
@@ -56,6 +60,7 @@ Scene* Engine::InitScene() {
 	sc_wall1->material->shininess = 1.0f;
 	sc_wall1->material->specular_str = 0.1f;
 	sc_wall1->addMaterialReference("material", sc_wall1->material);
+	sc_wall1->addVsettingsReference("settings", G::VoxLightSettings);
 	mainScene->addObject(sc_wall1); //top
 
 	Model* sc_wall2 = new Model("Wall2", RenderShader::COLOR, OBJ_SCENE_WALL2);
@@ -67,6 +72,7 @@ Scene* Engine::InitScene() {
 	sc_wall2->material->shininess = 1.0f;
 	sc_wall2->material->specular_str = 0.1f;
 	sc_wall2->addMaterialReference("material", sc_wall2->material);
+	sc_wall2->addVsettingsReference("settings", G::VoxLightSettings);
 	mainScene->addObject(sc_wall2); //back
 
 	Model* sc_wall3 = new Model("Wall3", RenderShader::COLOR, OBJ_SCENE_WALL3);
@@ -78,6 +84,7 @@ Scene* Engine::InitScene() {
 	sc_wall3->material->shininess = 1.0f;
 	sc_wall3->material->specular_str = 0.1f;
 	sc_wall3->addMaterialReference("material", sc_wall3->material);
+	sc_wall3->addVsettingsReference("settings", G::VoxLightSettings);
 	mainScene->addObject(sc_wall3); //bottom
 
 	Model* sc_wall4 = new Model("Wall4", RenderShader::COLOR, OBJ_SCENE_WALL4);
@@ -89,7 +96,8 @@ Scene* Engine::InitScene() {
 	sc_wall4->material->shininess = 1.0f;
 	sc_wall4->material->specular_str = 0.1f;
 	sc_wall4->addMaterialReference("material", sc_wall4->material);
-	//mainScene->addObject(sc_wall4); //front
+	sc_wall4->addVsettingsReference("settings", G::VoxLightSettings);
+	mainScene->addObject(sc_wall4); //front
 
 	Model* sc_wall5 = new Model("Wall5", RenderShader::COLOR, OBJ_SCENE_WALL5);
 	sc_wall5->material->color = glm::vec3(0.4f, 1.0f, 0.4f);
@@ -101,6 +109,7 @@ Scene* Engine::InitScene() {
 	sc_wall5->material->shininess = 1.0f;
 	sc_wall5->material->specular_str = 0.1f;
 	sc_wall5->addMaterialReference("material", sc_wall5->material);
+	sc_wall5->addVsettingsReference("settings", G::VoxLightSettings);
 	mainScene->addObject(sc_wall5); //right
 
 	Model* sc_wall6 = new Model("Wall6", RenderShader::COLOR, OBJ_SCENE_WALL6);
@@ -113,6 +122,7 @@ Scene* Engine::InitScene() {
 	sc_wall6->material->shininess = 1.0f;
 	sc_wall6->material->specular_str = 0.1f;
 	sc_wall6->addMaterialReference("material", sc_wall6->material);
+	sc_wall6->addVsettingsReference("settings", G::VoxLightSettings);
 	mainScene->addObject(sc_wall6); //left
 
 	return mainScene;

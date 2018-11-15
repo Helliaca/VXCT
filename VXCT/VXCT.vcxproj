@@ -143,6 +143,7 @@
     <ClCompile Include="core\assets\VoxelMap.cpp" />
     <ClCompile Include="SVCall.cpp" />
     <ClCompile Include="core\assets\VisCone.cpp" />
+    <ClCompile Include="core\assets\VoxSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\base.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="core\settings\VertexData.h" />
     <ClInclude Include="core\assets\VoxelMap.h" />
     <ClInclude Include="core\assets\VisCone.h" />
+    <ClInclude Include="core\assets\VoxSettings.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\color.fs" />

@@ -6,7 +6,6 @@
 #include <assimp\Importer.hpp>
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
-//#include "../../tools/ObjLoader.h"
 
 Model::Model(std::string name, RenderShader sh=RenderShader::EMIT, std::string inputfile="") : IOobject(name)
 {
@@ -94,6 +93,7 @@ void Model::draw() {
 	for (auto const& x : mat4Refs) shader->setMat4(x.first, *x.second);
 	for (auto const& x : plightRefs) shader->setPointLight(x.first, *x.second);
 	for (auto const& x : materialRefs) shader->setMaterial(x.first, *x.second);
+	for (auto const& x : vsettingsRefs) shader->setVsettings(x.first, *x.second);
 
 
 	// render
@@ -114,6 +114,7 @@ void Model::draw(Shader* customShader) {
 	for (auto const& x : mat4Refs) customShader->setMat4(x.first, *x.second);
 	for (auto const& x : plightRefs) customShader->setPointLight(x.first, *x.second);
 	for (auto const& x : materialRefs) customShader->setMaterial(x.first, *x.second);
+	for (auto const& x : vsettingsRefs) customShader->setVsettings(x.first, *x.second);
 
 	// render
 	glBindVertexArray(VAO);

@@ -19,7 +19,7 @@ void main() {
 	
 	//Everywhere
 	ivec3 voxSize = imageSize(tex3D);
-	float voxSize_f = 64.0f;
+	float voxSize_f = textureSize(tex3D_in, 0).x; //Assuming that all dimensions of voxel map are the same as x at LOD 0.
 	vec3 mapSize = vec3(1.0f, 1.0f, 1.0f);
 
 	for(int x=0; x<voxSize.x; x++) {

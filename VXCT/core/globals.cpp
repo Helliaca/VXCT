@@ -10,4 +10,5 @@ namespace G {
 
 	Camera* SceneCamera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 	PointLight* SceneLight = new PointLight(glm::vec3(0.0f, 0.4f, 0.4f), glm::vec3(1.0f, 1.0f, 1.0f));
+	VoxSettings* VoxLightSettings = new VoxSettings();
 }

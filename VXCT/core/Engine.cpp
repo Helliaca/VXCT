@@ -2,6 +2,7 @@
 
 #include "..\stb_image.h"
 #include <glm\ext.hpp>
+#include <iterator>
 
 //=====================================================================
 
@@ -50,7 +51,7 @@ void Engine::loadGlad() { //only needs to be called once.
 	//Initialize GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
+		print(this, "Failed to initialize GLAD");
 		return;
 	}
 }
@@ -320,29 +321,65 @@ void Engine::Voxelize(Scene* scene) {
 }
 
 void Engine::console() {
-	std::string input;
+	std::string in;
 	while (true)
 	{
-		std::cin >> input;
+		std::getline(std::cin, in);
+		std::istringstream iss(in);
+		std::vector<std::string> input(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
 
 		settingMutex.lock();
-		
-		if (input == "objs") objs = !objs;
-		else if (input == "voxs") voxs = !voxs;
-		else if (input == "vox") voxelizeOnNextFrame = true;
-		else if (input == "voxsW") voxsWireframe = !voxsWireframe;
-		else if (input == "objsW") objsWireframe = !objsWireframe;
-		else if (input == "sfMode") sfMode = !sfMode;
-		else if (input == "sf" && sfMode) singleFrame = true;
-		else if (input == "iLight") iLight = !iLight;
-		else if (input == "overlayW") overlayWireframe = !overlayWireframe;
-		else if (input == "pos1") G::SceneCamera->setPosition(1);
-		else if (input == "pos2") G::SceneCamera->setPosition(2);
-		else if (input == "ray") rayOnNextFrame = true;
-		else print(this, "Unknwon Command");
+
+		if (input.size() == 2) {
+			if (input[0] == "diffuse_dist_factor" || input[0] == "ddf") { G::VoxLightSettings->diffuse_dist_factor = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "occlusion_dist_factor" || input[0] == "odf") { G::VoxLightSettings->occlusion_dist_factor = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "specular_dist_factor" || input[0] == "sdf") { G::VoxLightSettings->specular_dist_factor = strtof(input[1].c_str(), 0); }
+
+			else if (input[0] == "diffuse_offset" || input[0] == "do") { G::VoxLightSettings->diffuse_offset = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "occlusion_offset" || input[0] == "oo") { G::VoxLightSettings->occlusion_offset = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "specular_offset" || input[0] == "so") { G::VoxLightSettings->specular_offset = strtof(input[1].c_str(), 0); }
+
+			else if (input[0] == "diffuse_apperture" || input[0] == "da") { G::VoxLightSettings->diffuse_apperture = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "occlusion_apperture" || input[0] == "oa") { G::VoxLightSettings->occlusion_apperture = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "specular_apperture" || input[0] == "sa") { G::VoxLightSettings->specular_apperture = strtof(input[1].c_str(), 0); }
+
+			else if (input[0] == "shadow_str" || input[0] == "ss") { G::VoxLightSettings->shadow_str = strtof(input[1].c_str(), 0); }
+			else print(this, "Unknwon Command");
+		}
+		else {
+			if (input[0] == "objs") objs = !objs;
+			else if (input[0] == "voxs") voxs = !voxs;
+			else if (input[0] == "vox") voxelizeOnNextFrame = true;
+			else if (input[0] == "voxsW") voxsWireframe = !voxsWireframe;
+			else if (input[0] == "objsW") objsWireframe = !objsWireframe;
+			else if (input[0] == "sfMode") sfMode = !sfMode;
+			else if (input[0] == "sf" && sfMode) singleFrame = true;
+			else if (input[0] == "iLight") iLight = !iLight;
+			else if (input[0] == "overlayW") overlayWireframe = !overlayWireframe;
+			else if (input[0] == "pos1") G::SceneCamera->setPosition(1);
+			else if (input[0] == "pos2") G::SceneCamera->setPosition(2);
+			else if (input[0] == "ray") rayOnNextFrame = true;
+
+			else if (input[0] == "phong") G::VoxLightSettings->phong = !G::VoxLightSettings->phong;
+			else if (input[0] == "phong_ambient") G::VoxLightSettings->phong_ambient = !G::VoxLightSettings->phong_ambient;
+			else if (input[0] == "phong_diffuse") G::VoxLightSettings->phong_diffuse = !G::VoxLightSettings->phong_diffuse;
+			else if (input[0] == "phong_specular") G::VoxLightSettings->phong_specular = !G::VoxLightSettings->phong_specular;
+
+			else if (input[0] == "vox_diffuse" || input[0] == "vdiff") G::VoxLightSettings->vox_diffuse = !G::VoxLightSettings->vox_diffuse;
+			else if (input[0] == "vox_specular" || input[0] == "vspec") G::VoxLightSettings->vox_specular = !G::VoxLightSettings->vox_specular;
+			else if (input[0] == "vox_shadows" || input[0] == "vshad") G::VoxLightSettings->vox_shadows = !G::VoxLightSettings->vox_shadows;
+
+			else if (input[0] == "phong_only") { G::VoxLightSettings->vox_diffuse = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->vox_specular = false; G::VoxLightSettings->phong = true; }
+			else if (input[0] == "shadows_only") { G::VoxLightSettings->vox_diffuse = G::VoxLightSettings->phong = G::VoxLightSettings->vox_specular = false; G::VoxLightSettings->vox_shadows = true; }
+			else if (input[0] == "specular_only") { G::VoxLightSettings->vox_diffuse = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->phong = false; G::VoxLightSettings->vox_specular = true; }
+			else if (input[0] == "diffuse_only") { G::VoxLightSettings->phong = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->vox_specular = false; G::VoxLightSettings->vox_diffuse = true; }
+
+			else print(this, "Unknwon Command");
+		}
 
 		//Calling checkErrors or similar methods here will lead to automatic exceptions because it does not share the OpenGL context of the main thread.
 
 		settingMutex.unlock();
 	}
 }
+
