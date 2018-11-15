@@ -49,7 +49,18 @@ Scene* Engine::InitScene() {
 	sc_bunny->addMaterialReference("material", sc_bunny->material);
 	sc_bunny->addVsettingsReference("settings", G::VoxLightSettings);
 	sc_bunny->setPosition(glm::vec3(0.0, -0.5, 0.0));
-	mainScene->addObject(sc_bunny);
+	//mainScene->addObject(sc_bunny);
+
+	Model* sc_lucy = new Model("Bunny", RenderShader::COLOR, OBJ_SCENE_LUCY);
+	sc_lucy->addMat4Reference("model_u", &sc_lucy->model);
+	sc_lucy->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
+	sc_lucy->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
+	sc_lucy->addVec3Reference("viewPos", &G::SceneCamera->Position);
+	sc_lucy->addPlightReference("light", G::SceneLight);
+	sc_lucy->addMaterialReference("material", sc_lucy->material);
+	sc_lucy->addVsettingsReference("settings", G::VoxLightSettings);
+	sc_lucy->setPosition(glm::vec3(0.0, -0.5, 0.0));
+	mainScene->addObject(sc_lucy);
 
 	Model* sc_wall1 = new Model("Wall1", RenderShader::COLOR, OBJ_SCENE_WALL1);
 	sc_wall1->addMat4Reference("model_u", &sc_wall1->model);
