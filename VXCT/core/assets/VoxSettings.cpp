@@ -5,23 +5,24 @@
 VoxSettings::VoxSettings()
 {
 	diffuse_dist_factor = 1.0f;
-	occlusion_dist_factor = 0.6f;
+	occlusion_dist_factor = 0.35f;
 	specular_dist_factor = 1.0f;
 
 	diffuse_offset = 0.05f;
 	occlusion_offset = 0.08f;
-	specular_offset = 0.10f;
+	specular_offset = 0.15f;
 
 	diffuse_apperture = 0.7f;
-	occlusion_apperture = 0.25f;
-	specular_apperture = 0.02f;
+	occlusion_apperture = 0.4f;
+	specular_apperture = 0.04f;
 
-	shadow_str = 1.5f;
+	shadow_str = 1.8f;
+	shininess_falloff = 5.0f;
 
 	phong = true;
 	phong_ambient = true;
 	phong_diffuse = true;
-	phong_specular = true;
+	phong_specular = false; //turning this off, since cone-trace specular seems good enough on its own
 	vox_diffuse = true;
 	vox_shadows = true;
 	vox_specular = true;
@@ -54,6 +55,7 @@ VoxSettings_struct VoxSettings::to_struct()
 	ret.specular_apperture = specular_apperture;
 
 	ret.shadow_str = shadow_str;
+	ret.shininess_falloff = shininess_falloff;
 
 	ret.phong = phong;
 	ret.phong_ambient = phong_ambient;

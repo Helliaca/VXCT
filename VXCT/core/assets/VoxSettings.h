@@ -16,6 +16,7 @@ struct VoxSettings_struct {
 	float specular_apperture;
 
 	float shadow_str;
+	float shininess_falloff;
 
 	bool phong;
 	bool phong_ambient;
@@ -44,6 +45,7 @@ public:
 	float specular_apperture;
 
 	float shadow_str;
+	float shininess_falloff;
 
 	bool phong;
 	bool phong_ambient;

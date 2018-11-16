@@ -193,6 +193,7 @@ public:
 		this->setFloat(name + ".specular_offset", vs.specular_offset);
 
 		this->setFloat(name + ".shadow_str", vs.shadow_str);
+		this->setFloat(name + ".shininess_falloff", vs.shininess_falloff);
 
 		this->setBool(name + ".phong", vs.phong);
 		this->setBool(name + ".phong_ambient", vs.phong_ambient);

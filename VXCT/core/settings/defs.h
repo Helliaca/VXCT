@@ -68,5 +68,5 @@
 
 #define OBJ_SCENE_BUNNY "models/stan_bunny.obj"
 
-//#define OBJ_SCENE_LUCY "models/stan_lucy_smooth.obj"
-#define OBJ_SCENE_LUCY "models/stan_lucy_lowpoly_smooth.obj" //Low poly version to decrease loading time
+#define OBJ_SCENE_LUCY "models/stan_lucy_smooth.obj"
+//#define OBJ_SCENE_LUCY "models/stan_lucy_lowpoly_smooth.obj" //Low poly version to decrease loading time

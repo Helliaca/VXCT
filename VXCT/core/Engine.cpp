@@ -167,6 +167,7 @@ void Engine::run() {
 		lamp->draw();
 		if (objs) {
 			if (iLight) {
+				//voxelMap->activate(voxIlluminShader->ID, "tex3D_in", 0);
 				//voxelMap->activate(voxIlluminShader->ID, "tex3D", 0); //This line leads to errors, is it necessary?
 				//glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8); //Is this necessary?
 				mainScene->draw(voxIlluminShader);
@@ -253,7 +254,7 @@ void Engine::visDetail(glm::vec3 fragPos, glm::vec3 fragNrm) {
 void Engine::Voxelize(Scene* scene) {
 	//>>initVoxelization
 	voxelMap = new VoxelMap(texture3D, temporary_stuff);
-	voxelMap_lod1 = new VoxelMap(texture3D_lod1, temporary_stuff);
+	//voxelMap_lod1 = new VoxelMap(texture3D_lod1, temporary_stuff);
 
 	G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
 
@@ -294,7 +295,7 @@ void Engine::Voxelize(Scene* scene) {
 	voxelMap->updateMemory();
 
 
-
+	/*
 	sh_lod1->use();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0); //TODO: why do we do this?
 	glViewport(0, 0, VOX_SIZE, VOX_SIZE);
@@ -314,6 +315,7 @@ void Engine::Voxelize(Scene* scene) {
 	checkErrors("VoxelizeEnd");
 
 	voxelMap_lod1->updateMemory();
+	*/
 
 	//Revert Settings
 	if(VXCT_CULLING) glEnable(GL_CULL_FACE);
@@ -344,6 +346,21 @@ void Engine::console() {
 			else if (input[0] == "specular_apperture" || input[0] == "sa") { G::VoxLightSettings->specular_apperture = strtof(input[1].c_str(), 0); }
 
 			else if (input[0] == "shadow_str" || input[0] == "ss") { G::VoxLightSettings->shadow_str = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "shininess_falloff" || input[0] == "sf") { G::VoxLightSettings->shininess_falloff = strtof(input[1].c_str(), 0); }
+			else print(this, "Unknwon Command");
+		}
+		//eg. setmat Sphere1 shininess 0.1
+		else if (input.size() == 4) {
+			if (input[0] == "setmat") {
+				for (int i = 0; i < mainScene->objs.size(); i++) {
+					if (mainScene->objs[i]->name == input[1]) {
+						if(input[2] == "shininess") { mainScene->objs[i]->material->shininess = strtof(input[3].c_str(), 0); }
+						if (input[2] == "ambient_str") { mainScene->objs[i]->material->ambient_str = strtof(input[3].c_str(), 0); }
+						if (input[2] == "diffuse_str") { mainScene->objs[i]->material->diffuse_str = strtof(input[3].c_str(), 0); }
+						if (input[2] == "specular_str") { mainScene->objs[i]->material->specular_str = strtof(input[3].c_str(), 0); }
+					}
+				}
+			}
 			else print(this, "Unknwon Command");
 		}
 		else {
@@ -373,6 +390,7 @@ void Engine::console() {
 			else if (input[0] == "shadows_only") { G::VoxLightSettings->vox_diffuse = G::VoxLightSettings->phong = G::VoxLightSettings->vox_specular = false; G::VoxLightSettings->vox_shadows = true; }
 			else if (input[0] == "specular_only") { G::VoxLightSettings->vox_diffuse = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->phong = false; G::VoxLightSettings->vox_specular = true; }
 			else if (input[0] == "diffuse_only") { G::VoxLightSettings->phong = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->vox_specular = false; G::VoxLightSettings->vox_diffuse = true; }
+			else if (input[0] == "all") { G::VoxLightSettings->phong = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->vox_specular = G::VoxLightSettings->vox_diffuse = true; }
 
 			else print(this, "Unknwon Command");
 		}
@@ -382,4 +400,3 @@ void Engine::console() {
 		settingMutex.unlock();
 	}
 }
-

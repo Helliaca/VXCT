@@ -35,6 +35,7 @@ struct VoxSettings {
 	float specular_apperture;
 
 	float shadow_str;
+	float shininess_falloff;
 
 	bool phong;
 	bool phong_ambient;
@@ -44,6 +45,8 @@ struct VoxSettings {
 	bool vox_shadows;
 	bool vox_specular;
 };
+
+const float PI = 3.14159;
 
 
 uniform vec3 viewPos;
@@ -85,13 +88,13 @@ void main()
 	// Indirect diffuse light
 	if(settings.vox_diffuse) FragColor.rgb += indirectDiffuse() * 1.0f;
 
-	// shadows
-	if(settings.vox_shadows && !settings.vox_diffuse && !settings.vox_specular && !settings.phong) FragColor = vec4(1.0f); //for showing only shadows
-	if(settings.vox_shadows) FragColor.rgb *= 1.0f - voxelTraceOcclusionCone(pos_fs, light.position - pos_fs, length(light.position - pos_fs));
-
 	// specular
 	const vec3 reflectDir = normalize(reflect(viewDirection, nrm));
 	if(settings.vox_specular) FragColor.rgb += voxelTraceSpecularCone(pos_fs, reflectDir);
+
+	// shadows
+	if(settings.vox_shadows && !settings.vox_diffuse && !settings.vox_specular && !settings.phong) FragColor = vec4(1.0f); //for showing only shadows
+	if(settings.vox_shadows) FragColor.rgb *= 1.0f - voxelTraceOcclusionCone(pos_fs, light.position - pos_fs, length(light.position - pos_fs));
 }
 
 // Calculates indirect diffuse light using voxel cone tracing.
@@ -196,7 +199,14 @@ vec3 voxelTraceSpecularCone(const vec3 origin, vec3 dir) {
 		current_dist += current_coneDiameter * settings.specular_dist_factor;
 	}
 
-	return material.specular_str * color;
+	//Angular shininess
+	vec3 frag_to_light = normalize(light.position - pos_fs);
+	float angle_pr = material.shininess * 0.008f * PI; //Playing room for angle to be in without loosing brightness. 0.008 is a value chosen to give sensible values for material.shininess in range [0, 256]
+	float angle = max(0.0f, acos(dot(dir, frag_to_light)) - angle_pr);
+	float angle_str = pow (1 - (angle / PI), settings.shininess_falloff);
+	//angle_str = 1.0f; //Un-comment to turn angular shininess off
+
+	return material.specular_str * color * angle_str;
 }
 
 vec3 voxelTraceCone(const vec3 origin, vec3 dir) {

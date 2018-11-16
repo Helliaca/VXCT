@@ -82,15 +82,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
 //Function to handle all user input
 void Window::processInput() {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		G::SceneCamera->ProcessKeyboard(FORWARD, G::deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		G::SceneCamera->ProcessKeyboard(BACKWARD, G::deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		G::SceneCamera->ProcessKeyboard(LEFT, G::deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		G::SceneCamera->ProcessKeyboard(RIGHT, G::deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) G::SceneCamera->ProcessKeyboard(FORWARD, G::deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) G::SceneCamera->ProcessKeyboard(BACKWARD, G::deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) G::SceneCamera->ProcessKeyboard(LEFT, G::deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) G::SceneCamera->ProcessKeyboard(RIGHT, G::deltaTime);
 }

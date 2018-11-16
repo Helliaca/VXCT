@@ -21,7 +21,7 @@ private:
 public:
 	VoxelMap * voxelMap;
 
-	VoxelMap * voxelMap_lod1;
+	//VoxelMap * voxelMap_lod1;
 
 	Scene* mainScene;
 
