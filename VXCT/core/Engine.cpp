@@ -22,8 +22,9 @@ bool objsWireframe = false;			//Show objects in Wireframe Mode
 bool sfMode = false;				//Display Frames individually on input
 bool singleFrame = true;			//Show next frame
 bool iLight = false;				//Toggle Indirect Light
+bool LocLod = false;				//Toggle Localized LOD mode
 bool overlayWireframe = false;		//Overlay objects with their Wireframe
-int drawLod = 0;
+int drawLod = 0;					//LOD level to draw mipmaps of
 
 glm::vec3 ray_hit_point = glm::vec3(0.0f);
 glm::vec3 ray_hit_normal = glm::vec3(0.0f);
@@ -81,6 +82,7 @@ void Engine::run() {
 	//==================================================================================
 
 	Shader* voxIlluminShader = new Shader(VOXILLUMINSHADER_VS, VOXILLUMINSHADER_FS);
+	Shader* locLodShader = new Shader(LODTEXTURESHADER_VS, LODTEXTURESHADER_FS);
 
 	mainScene = InitScene();
 
@@ -166,18 +168,23 @@ void Engine::run() {
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
 		lamp->draw();
 		if (objs) {
-			if (iLight) {
+			if (LocLod) {
+				locLodShader->use();
+				locLodShader->setInt("lod_level", drawLod);
+				mainScene->draw(locLodShader);
+			}
+			else if (iLight) {
 				//voxelMap->activate(voxIlluminShader->ID, "tex3D_in", 0);
 				//voxelMap->activate(voxIlluminShader->ID, "tex3D", 0); //This line leads to errors, is it necessary?
 				//glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8); //Is this necessary?
 				mainScene->draw(voxIlluminShader);
 			}
-			else mainScene->draw();
-			if (overlayWireframe) {
+			else if (overlayWireframe) {
 				window->setPolygonMode(PolygonMode::W_WIREFRAME);
 				mainScene->draw();
 				window->setPolygonMode(PolygonMode::W_FILL);
 			}
+			else mainScene->draw();
 		}
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
@@ -377,6 +384,7 @@ void Engine::console() {
 			else if (input[0] == "pos1") G::SceneCamera->setPosition(1);
 			else if (input[0] == "pos2") G::SceneCamera->setPosition(2);
 			else if (input[0] == "ray") rayOnNextFrame = true;
+			else if (input[0] == "loclod") LocLod = !LocLod;
 
 			else if (input[0] == "phong") G::VoxLightSettings->phong = !G::VoxLightSettings->phong;
 			else if (input[0] == "phong_ambient") G::VoxLightSettings->phong_ambient = !G::VoxLightSettings->phong_ambient;

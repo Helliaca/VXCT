@@ -63,9 +63,6 @@
     <ClCompile Include="core\assets\VoxSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\assets\SVCall.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Engine.h">
@@ -122,9 +119,6 @@
     <ClInclude Include="core\assets\VoxSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\assets\SVCall.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\emit.fs" />
@@ -138,9 +132,6 @@
     <None Include="shaders\voxillumin.fs" />
     <None Include="shaders\lodTexture.vs" />
     <None Include="shaders\lodTexture.fs" />
-    <None Include="shaders\tmp.vs" />
-    <None Include="shaders\tmp.fs" />
-    <None Include="shaders\tmp.gs" />
     <None Include="shaders\lineshader.vs" />
     <None Include="shaders\lineshader.fs" />
     <None Include="shaders\emit_rgba.vs" />
