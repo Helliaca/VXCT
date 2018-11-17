@@ -265,7 +265,6 @@ void Engine::Voxelize(Scene* scene) {
 	G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
 
 	Shader* sh = new Shader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
-	Shader* sh_lod1 = new Shader("../VXCT/shaders/tmp.vs", "../VXCT/shaders/tmp.fs", "../VXCT/shaders/tmp.gs");
 
 	checkErrors("VoxelizeInit");
 
