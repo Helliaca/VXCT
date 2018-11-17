@@ -60,3 +60,11 @@ inline glm::vec3 vC_to_wC(glm::vec3 pos) {
 	float z = (pos.z / VOX_SIZE) * (MAX_Z - MIN_Z) + MIN_Z;
 	return glm::vec3(x, y, z);
 }
+
+//Voxel Coordiante to World Coordinate with custom voxelMap size (used for LOD)
+inline glm::vec3 vC_to_wC(glm::vec3 pos, int voxelMap_size) {
+	float x = (pos.x / voxelMap_size) * (MAX_X - MIN_X) + MIN_X;
+	float y = (pos.y / voxelMap_size) * (MAX_Y - MIN_Y) + MIN_Y;
+	float z = (pos.z / voxelMap_size) * (MAX_Z - MIN_Z) + MIN_Z;
+	return glm::vec3(x, y, z);
+}

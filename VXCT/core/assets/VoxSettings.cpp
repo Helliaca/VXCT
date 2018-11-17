@@ -4,15 +4,15 @@
 
 VoxSettings::VoxSettings()
 {
-	diffuse_dist_factor = 1.0f;
+	diffuse_dist_factor = 0.1f;
 	occlusion_dist_factor = 0.35f;
 	specular_dist_factor = 1.0f;
 
-	diffuse_offset = 0.05f;
+	diffuse_offset = 0.19f;
 	occlusion_offset = 0.08f;
 	specular_offset = 0.15f;
 
-	diffuse_apperture = 0.7f;
+	diffuse_apperture = 0.55f;
 	occlusion_apperture = 0.4f;
 	specular_apperture = 0.04f;
 
@@ -26,12 +26,6 @@ VoxSettings::VoxSettings()
 	vox_diffuse = true;
 	vox_shadows = true;
 	vox_specular = true;
-
-	if (true) {
-		diffuse_dist_factor = 0.1f;
-		diffuse_apperture = 0.55f;
-		diffuse_offset = 0.19f;
-	}
 }
 
 

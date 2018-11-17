@@ -23,6 +23,7 @@ bool sfMode = false;				//Display Frames individually on input
 bool singleFrame = true;			//Show next frame
 bool iLight = false;				//Toggle Indirect Light
 bool overlayWireframe = false;		//Overlay objects with their Wireframe
+int drawLod = 0;
 
 glm::vec3 ray_hit_point = glm::vec3(0.0f);
 glm::vec3 ray_hit_normal = glm::vec3(0.0f);
@@ -102,7 +103,6 @@ void Engine::run() {
 	voxel->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	glm::vec3 putColorHere; //The value of this vector will be changed in VoxelMap.visualize()
 	voxel->addVec3Reference("emitColor", &putColorHere); //Might lead to memory leaks as we keep no reference of this variable
-	voxel->scale((MAX_X - MIN_X)/VOX_SIZE); //Note: only MAX/MIN_X is taken into account when sclaing voxel representatives
 
 	visCone = new VisCone();
 	visCone->addMat4Reference("model_u", &visCone->model);
@@ -200,8 +200,7 @@ void Engine::run() {
 		//Voxel Drawing
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
 		if (voxelMap != nullptr && voxs) {
-			voxelMap->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
-			//voxelMap_lod1->visualize(voxel, &putColorHere); //Uncomment to re-enable voxel visualization.
+			voxelMap->visualize(voxel, &putColorHere, drawLod);
 		}
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
@@ -347,6 +346,8 @@ void Engine::console() {
 
 			else if (input[0] == "shadow_str" || input[0] == "ss") { G::VoxLightSettings->shadow_str = strtof(input[1].c_str(), 0); }
 			else if (input[0] == "shininess_falloff" || input[0] == "sf") { G::VoxLightSettings->shininess_falloff = strtof(input[1].c_str(), 0); }
+
+			else if (input[0] == "lod") { drawLod = (int)strtof(input[1].c_str(), 0); }
 			else print(this, "Unknwon Command");
 		}
 		//eg. setmat Sphere1 shininess 0.1
@@ -391,6 +392,10 @@ void Engine::console() {
 			else if (input[0] == "specular_only") { G::VoxLightSettings->vox_diffuse = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->phong = false; G::VoxLightSettings->vox_specular = true; }
 			else if (input[0] == "diffuse_only") { G::VoxLightSettings->phong = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->vox_specular = false; G::VoxLightSettings->vox_diffuse = true; }
 			else if (input[0] == "all") { G::VoxLightSettings->phong = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->vox_specular = G::VoxLightSettings->vox_diffuse = true; }
+
+			else if (input[0] == "diffuse_offset" || input[0] == "do") { print(this, "Diffuse Offset : " + std::to_string(G::VoxLightSettings->diffuse_offset)); }
+			else if (input[0] == "occlusion_offset" || input[0] == "oo") { print(this, "Occlusion Offset : " + std::to_string(G::VoxLightSettings->occlusion_offset)); }
+			else if (input[0] == "specular_offset" || input[0] == "so") { print(this, "Specular Offset : " + std::to_string(G::VoxLightSettings->specular_offset)); }
 
 			else print(this, "Unknwon Command");
 		}

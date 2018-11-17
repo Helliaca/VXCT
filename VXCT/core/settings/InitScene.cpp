@@ -110,7 +110,7 @@ Scene* Engine::InitScene() {
 	sc_wall4->material->specular_str = 0.01f;
 	sc_wall4->addMaterialReference("material", sc_wall4->material);
 	sc_wall4->addVsettingsReference("settings", G::VoxLightSettings);
-	mainScene->addObject(sc_wall4); //front
+	//mainScene->addObject(sc_wall4); //front
 
 	Model* sc_wall5 = new Model("Wall5", RenderShader::COLOR, OBJ_SCENE_WALL5);
 	sc_wall5->material->color = glm::vec3(0.4f, 1.0f, 0.4f);
