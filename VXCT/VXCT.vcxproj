@@ -133,16 +133,19 @@
     <ClCompile Include="core\settings\InitScene.cpp" />
     <ClCompile Include="core\assets\Window.cpp" />
     <ClCompile Include="core\assets\LineRenderer.cpp" />
+    <ClCompile Include="core\assets\FrameTimeCounter.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="core\assets\Model.cpp" />
     <ClCompile Include="core\assets\RayCast.cpp" />
     <ClCompile Include="core\assets\Scene.cpp" />
     <ClCompile Include="core\assets\Material.cpp" />
     <ClCompile Include="core\assets\PointLight.cpp" />
+    <ClCompile Include="core\assets\SceneParser.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="core\assets\VoxelMap.cpp" />
     <ClCompile Include="core\assets\VisCone.cpp" />
     <ClCompile Include="core\assets\VoxSettings.cpp" />
+    <ClCompile Include="core\assets\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\base.h" />
@@ -158,11 +161,14 @@
     <ClInclude Include="core\assets\Model.h" />
     <ClInclude Include="core\assets\RayCast.h" />
     <ClInclude Include="core\assets\Scene.h" />
+    <ClInclude Include="core\assets\FrameTimeCounter.h" />
+    <ClInclude Include="core\assets\SceneParser.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="core\settings\VertexData.h" />
     <ClInclude Include="core\assets\VoxelMap.h" />
     <ClInclude Include="core\assets\VisCone.h" />
     <ClInclude Include="core\assets\VoxSettings.h" />
+    <ClInclude Include="core\assets\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\color.fs" />

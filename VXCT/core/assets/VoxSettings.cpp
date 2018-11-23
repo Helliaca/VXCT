@@ -4,9 +4,10 @@
 
 VoxSettings::VoxSettings()
 {
+	//These values are chosen to work for 64x64x64 voxelMaps
 	diffuse_dist_factor = 0.1f;
 	occlusion_dist_factor = 0.35f;
-	specular_dist_factor = 1.0f;
+	specular_dist_factor = 0.8f;
 
 	diffuse_offset = 0.19f;
 	occlusion_offset = 0.08f;
@@ -16,8 +17,8 @@ VoxSettings::VoxSettings()
 	occlusion_apperture = 0.4f;
 	specular_apperture = 0.04f;
 
-	shadow_str = 1.8f;
-	shininess_falloff = 5.0f;
+	shadow_str = 1.5f;
+	shininess_falloff = 3.0f;
 
 	phong = true;
 	phong_ambient = true;
@@ -26,6 +27,13 @@ VoxSettings::VoxSettings()
 	vox_diffuse = true;
 	vox_shadows = true;
 	vox_specular = true;
+
+	//Different voxelmap sizes require different values.
+	if (VOX_SIZE == 128) {
+		diffuse_dist_factor = 0.01f;
+		specular_apperture = 0.02f;
+		specular_dist_factor = 0.3f;
+	}
 }
 
 

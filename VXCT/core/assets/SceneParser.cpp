@@ -1,0 +1,263 @@
+#include "SceneParser.h"
+
+#include <istream>
+#include <iterator>
+#include <map>
+
+std::map<std::string, sp_nodetype> TT_ids{
+	{ "scene", sp_nodetype::SCENE },
+	{ "model", sp_nodetype::MODEL },
+	{ "position", sp_nodetype::POSITION },
+	{ "x", sp_nodetype::X },
+	{ "y", sp_nodetype::Y },
+	{ "z", sp_nodetype::Z },
+	{ "scale", sp_nodetype::SCALE },
+	{ "name", sp_nodetype::NAME },
+	{ "active", sp_nodetype::ACTIVE },
+	{ "path", sp_nodetype::PATH },
+	{ "material", sp_nodetype::MATERIAL },
+	{ "shininess", sp_nodetype::SHININESS },
+	{ "specular_str", sp_nodetype::SPECULAR_STR },
+	{ "shader", sp_nodetype::SHADER },
+	{ "color", sp_nodetype::COLOR },
+	{ "r", sp_nodetype::R },
+	{ "g", sp_nodetype::G },
+	{ "b", sp_nodetype::B },
+};
+
+std::map<sp_nodetype, sp_datatype> Datatypes_ids{
+	{ sp_nodetype::MODEL, sp_datatype::NODE },
+	{ sp_nodetype::SCENE, sp_datatype::NODE },
+	{ sp_nodetype::POSITION, sp_datatype::NODE },
+	{ sp_nodetype::X, sp_datatype::FLOAT },
+	{ sp_nodetype::Y, sp_datatype::FLOAT },
+	{ sp_nodetype::Z, sp_datatype::FLOAT },
+	{ sp_nodetype::SCALE, sp_datatype::FLOAT },
+	{ sp_nodetype::NAME, sp_datatype::STRING },
+	{ sp_nodetype::ACTIVE, sp_datatype::BOOL },
+	{ sp_nodetype::PATH, sp_datatype::STRING },
+	{ sp_nodetype::MATERIAL, sp_datatype::NODE },
+	{ sp_nodetype::SHININESS, sp_datatype::FLOAT },
+	{ sp_nodetype::SPECULAR_STR, sp_datatype::FLOAT },
+	{ sp_nodetype::SHADER, sp_datatype::STRING },
+	{ sp_nodetype::COLOR, sp_datatype::NODE },
+	{ sp_nodetype::R, sp_datatype::FLOAT },
+	{ sp_nodetype::G, sp_datatype::FLOAT },
+	{ sp_nodetype::B, sp_datatype::FLOAT },
+};
+
+sp_nodetype NodeTypes_lookup(std::string str) {
+	std::map<std::string, sp_nodetype>::iterator it = TT_ids.find(str);
+	if (it == TT_ids.end()) {
+		std::cout << "Could not find token: " << str << std::endl; 
+		return sp_nodetype::ERR;
+	}
+	else return it->second;
+}
+
+sp_datatype DataTypes_lookup(sp_nodetype nt) {
+	std::map<sp_nodetype, sp_datatype>::iterator it = Datatypes_ids.find(nt);
+	if (it == Datatypes_ids.end()) {
+		std::cout << "Could not find appropriate datatype for node type." << std::endl; 
+		return sp_datatype::NONE;
+	}
+	else return it->second;
+}
+
+std::vector<std::string> getFirstComplexNode(std::vector<std::string> tokens, int offset);
+std::vector<sp_node*> parse_iterate(std::vector<std::string> tokens);
+void processComplexNode_toscene(Scene* scene, sp_node* node);
+bool hasChildNodeOfType(sp_node* node, sp_nodetype type);
+sp_node* getChildOfType(sp_node* node, sp_nodetype type);
+
+void sp_node::setData(std::string str) { this->s = str; }
+void sp_node::setData(float f) { this->f = f; }
+void sp_node::setData(bool b) { this->b = b; }
+
+sp_node::sp_node() {}
+sp_node::~sp_node() {}
+
+float sp_node::GetData_f() { return this->f; }
+std::string sp_node::GetData_s() { return this->s; }
+bool sp_node::GetData_b() { return this->b; }
+
+SceneParser::SceneParser() : IOobject("SceneParser")
+{
+}
+
+
+SceneParser::~SceneParser()
+{
+}
+
+void SceneParser::parse(std::string path) {
+	std::ifstream inFile;
+	inFile.open(path); //open file
+
+	std::stringstream strStream;
+	strStream << inFile.rdbuf(); //get all text
+	std::string input = strStream.str(); //copy into input
+
+	//Separate into tokens
+	std::istringstream iss(input);
+	std::vector<std::string> tokens(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
+
+	root = new sp_node();
+	root->children = parse_iterate(tokens);
+	print(this, "Parsing Complete");
+}
+
+
+std::vector<sp_node*> parse_iterate(std::vector<std::string> tokens) {
+	for (int i = 0; i < tokens.size(); i++) {
+		std::cout << tokens[i] << " ";
+	}
+	std::cout << std::endl;
+
+
+	std::vector<sp_node*> ret;
+
+	int depth = 0;
+	for (int i = 0; i < tokens.size(); i++) {
+		if (tokens[i] == "=" && depth == 0) {
+			std::string identifier = tokens[i - 1];
+
+			sp_node* new_node = new sp_node();
+
+			new_node->type = NodeTypes_lookup(identifier);
+			new_node->datatype = DataTypes_lookup(new_node->type);
+			std::cout << "Parsing: " << identifier << std::endl;
+
+			switch (new_node->datatype)
+			{
+			case sp_datatype::NODE: {
+				new_node->children = parse_iterate(getFirstComplexNode(tokens, i + 1));
+				break;
+			}
+			case sp_datatype::FLOAT: {
+				new_node->setData((float)strtof(tokens[i + 1].c_str(), 0));
+				break;
+			}
+			case sp_datatype::STRING: {
+				new_node->setData(tokens[i + 1]);
+				break;
+			}
+			case sp_datatype::BOOL: {
+				new_node->setData(tokens[i + 1] == "true");
+				break;
+			}
+			default:
+				break;
+			}
+
+
+			ret.push_back(new_node);
+		}
+		if (tokens[i] == "{") depth++;
+		if (tokens[i] == "}") depth--;
+	}
+	return ret;
+}
+
+std::vector<std::string> getFirstComplexNode(std::vector<std::string> tokens, int offset) {
+	int i_start = -1;
+	int i_end = -1;
+	int depth = 0;
+	for (int i = offset; i < tokens.size(); i++) {
+		if (tokens[i] == "{") {
+			if (depth == 0 && i_start<0) {
+				i_start = i;
+			}
+			depth++;
+		}
+		else if (tokens[i] == "}") {
+			depth--;
+			if (depth == 0 && i_end<0) {
+				i_end = i;
+				break;
+			}
+		}
+	}
+	if (i_start == -1) std::cout << "Error reading file: Missing { token." << std::endl;
+	if (i_end == -1) std::cout << "Error reading file: Missing } token." << std::endl;
+	std::vector<std::string>::const_iterator first = tokens.begin() + i_start + 1;
+	std::vector<std::string>::const_iterator last = tokens.begin() + i_end;
+	std::vector<std::string> ret(first, last);
+	return ret;
+}
+
+Scene* SceneParser::to_scene() {
+	if (root->children.size() > 1) print(this, "WARN: More than one scene was declared, but only the first one will be used.");
+
+	Scene* ret = new Scene();
+	sp_node *scene_node = root->children[0];
+	processComplexNode_toscene(ret, scene_node);
+	for (int i = 0; i < scene_node->children.size(); i++) processComplexNode_toscene(ret, scene_node->children[i]);
+	return ret;
+}
+
+void processComplexNode_toscene(Scene* scene, sp_node* node) {
+	switch (node->type)
+	{
+	case sp_nodetype::SCENE: {
+		if (hasChildNodeOfType(node, sp_nodetype::NAME)) scene->name = getChildOfType(node, sp_nodetype::NAME)->GetData_s();
+		break; }
+	case sp_nodetype::MODEL: {
+		if (hasChildNodeOfType(node, sp_nodetype::ACTIVE) && !getChildOfType(node, sp_nodetype::ACTIVE)->GetData_b()) return;
+		std::string path = OBJ_SCENE_CUBE1;
+		std::string tmp_shader="COLOR";
+		RenderShader shader = RenderShader::COLOR;
+		std::string name = "UnnamedModel";
+		if (hasChildNodeOfType(node, sp_nodetype::NAME)) name = getChildOfType(node, sp_nodetype::NAME)->GetData_s();
+		if (hasChildNodeOfType(node, sp_nodetype::PATH)) path = getChildOfType(node, sp_nodetype::PATH)->GetData_s();
+		if (hasChildNodeOfType(node, sp_nodetype::SHADER)) tmp_shader = getChildOfType(node, sp_nodetype::SHADER)->GetData_s();
+		if (tmp_shader == "COLOR") shader = RenderShader::COLOR;
+		if (tmp_shader == "EMIT") shader = RenderShader::EMIT;
+		if (tmp_shader == "EMITRGBA") shader = RenderShader::EMITRGBA;
+		if (tmp_shader == "VOX") shader = RenderShader::VOX;
+		Model* new_model = new Model(name, shader, path);
+		new_model->addMat4Reference("model_u", &new_model->model);
+		new_model->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
+		new_model->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
+		new_model->addVec3Reference("viewPos", &G::SceneCamera->Position);
+		new_model->addPlightReference("light", G::SceneLight);
+		if (hasChildNodeOfType(node, sp_nodetype::MATERIAL)) {
+			sp_node* material_node = getChildOfType(node, sp_nodetype::MATERIAL);
+			if (hasChildNodeOfType(material_node, sp_nodetype::AMBIENT_STR)) new_model->material->ambient_str = getChildOfType(material_node, sp_nodetype::AMBIENT_STR)->GetData_f();
+			if (hasChildNodeOfType(material_node, sp_nodetype::DIFFUSE_STR)) new_model->material->diffuse_str = getChildOfType(material_node, sp_nodetype::DIFFUSE_STR)->GetData_f();
+			if (hasChildNodeOfType(material_node, sp_nodetype::SPECULAR_STR)) new_model->material->specular_str = getChildOfType(material_node, sp_nodetype::SPECULAR_STR)->GetData_f();
+			if (hasChildNodeOfType(material_node, sp_nodetype::SHININESS)) new_model->material->shininess = getChildOfType(material_node, sp_nodetype::SHININESS)->GetData_f();
+			if (hasChildNodeOfType(material_node, sp_nodetype::COLOR)) {
+				sp_node* color_node = getChildOfType(material_node, sp_nodetype::COLOR);
+				new_model->material->color.r = getChildOfType(color_node, sp_nodetype::R)->GetData_f();
+				new_model->material->color.g = getChildOfType(color_node, sp_nodetype::G)->GetData_f();
+				new_model->material->color.b = getChildOfType(color_node, sp_nodetype::B)->GetData_f();
+			}
+		}
+		new_model->addMaterialReference("material", new_model->material);
+		new_model->addVsettingsReference("settings", G::VoxLightSettings);
+		if (hasChildNodeOfType(node, sp_nodetype::POSITION)) {
+			sp_node* pos_node = getChildOfType(node, sp_nodetype::POSITION);
+			glm::vec3 offset;
+			offset.x = getChildOfType(pos_node, sp_nodetype::X)->GetData_f();
+			offset.y = getChildOfType(pos_node, sp_nodetype::Y)->GetData_f();
+			offset.z = getChildOfType(pos_node, sp_nodetype::Z)->GetData_f();
+			new_model->setPosition(offset);
+		}
+		scene->addObject(new_model);
+		break; }
+	default:
+		break;
+	}
+}
+
+bool hasChildNodeOfType(sp_node* node, sp_nodetype type) {
+	for (int i = 0; i < node->children.size(); i++) if (node->children[i]->type == type) return true;
+	return false;
+}
+
+sp_node* getChildOfType(sp_node* node, sp_nodetype type) {
+	if (node->children.size() <= 0) return NULL;
+	for (int i = 0; i < node->children.size(); i++) if (node->children[i]->type == type) return node->children[i];
+	return node->children[0];
+}

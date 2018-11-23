@@ -17,6 +17,9 @@
 
 #define VOX_SIZE 64
 
+//Amount of frames to save in FrameTimeCounter
+#define FRAMETIMES_SAVE 1000
+
 //World Coordinate Bounds (Changing Values might not work)
 #define MIN_X -1.0f
 #define MIN_Y -1.0f
@@ -27,6 +30,8 @@
 #define MAX_Z 1.0f
 
 //Paths
+#define SCENE_TXT "../VXCT/scene/scene.txt"
+
 #define COLORSHADER_VS "../VXCT/shaders/color.vs"
 #define COLORSHADER_FS "../VXCT/shaders/color.fs"
 
@@ -68,5 +73,5 @@
 
 #define OBJ_SCENE_BUNNY "models/stan_bunny.obj"
 
-#define OBJ_SCENE_LUCY "models/stan_lucy_smooth.obj"
-//#define OBJ_SCENE_LUCY "models/stan_lucy_lowpoly_smooth.obj" //Low poly version to decrease loading time
+//#define OBJ_SCENE_LUCY "models/stan_lucy_smooth.obj"
+#define OBJ_SCENE_LUCY "models/stan_lucy_lowpoly_smooth.obj" //Low poly version to decrease loading time

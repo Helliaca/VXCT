@@ -1,7 +1,7 @@
 #include "Engine.h"
 
-#include "..\stb_image.h"
-#include <glm\ext.hpp>
+#include "../stb_image.h"
+#include <glm/ext.hpp>
 #include <iterator>
 
 //=====================================================================
@@ -41,7 +41,7 @@ void shaderInfo() {
 
 //=====================================================================
 
-Engine::Engine() : IOobject("unnamedEngine") {
+Engine::Engine() : IOobject("mainEngine") {
 
 }
 
@@ -79,12 +79,17 @@ void Engine::run() {
 		glFrontFace(GL_CW); //Set front face to clockwise (GL_CCW for counterclockwise)
 	}
 
+	frametimecounter = new FrameTimeCounter(FRAMETIMES_SAVE);
+
 	//==================================================================================
 
 	Shader* voxIlluminShader = new Shader(VOXILLUMINSHADER_VS, VOXILLUMINSHADER_FS);
 	Shader* locLodShader = new Shader(LODTEXTURESHADER_VS, LODTEXTURESHADER_FS);
 
-	mainScene = InitScene();
+	//mainScene = InitScene();
+	SceneParser* sceneParser = new SceneParser();
+	sceneParser->parse(SCENE_TXT);
+	mainScene = sceneParser->to_scene();
 
 	DebugLine = new LineRenderer(); //Need to initiate this here because we need an opengl context
 
@@ -111,6 +116,8 @@ void Engine::run() {
 	visCone->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 	visCone->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	visCone->addVec4Reference("emitColor", &glm::vec4(0.0f, 0.0f, 1.0f, 0.5f));
+
+	frametimecounter->start();
 
 	consoleThread = std::thread(&Engine::console, this);
 	consoleThread.detach();
@@ -218,6 +225,8 @@ void Engine::run() {
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window->getGLFWwindow());
 		glfwPollEvents();
+
+		frametimecounter->nextFrame();
 
 		checkErrors("Engine Loop");
 	}
@@ -354,6 +363,7 @@ void Engine::console() {
 			else if (input[0] == "shininess_falloff" || input[0] == "sf") { G::VoxLightSettings->shininess_falloff = strtof(input[1].c_str(), 0); }
 
 			else if (input[0] == "lod") { drawLod = (int)strtof(input[1].c_str(), 0); }
+			else if (input[0] == "lastframes") { frametimecounter->printLastFrames(strtof(input[1].c_str(), 0)); }
 			else print(this, "Unknwon Command");
 		}
 		//eg. setmat Sphere1 shininess 0.1
@@ -384,6 +394,8 @@ void Engine::console() {
 			else if (input[0] == "pos2") G::SceneCamera->setPosition(2);
 			else if (input[0] == "ray") rayOnNextFrame = true;
 			else if (input[0] == "loclod") LocLod = !LocLod;
+			else if (input[0] == "avgf") frametimecounter->printAvg();
+			else if (input[0] == "clearf") frametimecounter->clear();
 
 			else if (input[0] == "phong") G::VoxLightSettings->phong = !G::VoxLightSettings->phong;
 			else if (input[0] == "phong_ambient") G::VoxLightSettings->phong_ambient = !G::VoxLightSettings->phong_ambient;

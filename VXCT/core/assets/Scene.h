@@ -2,7 +2,7 @@
 
 #include "Model.h"
 
-class Scene : IOobject
+class Scene : public IOobject
 {
 public:
 	/*
