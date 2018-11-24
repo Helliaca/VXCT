@@ -25,6 +25,8 @@ bool iLight = false;				//Toggle Indirect Light
 bool LocLod = false;				//Toggle Localized LOD mode
 bool overlayWireframe = false;		//Overlay objects with their Wireframe
 int drawLod = 0;					//LOD level to draw mipmaps of
+bool loadSceneOnNextFrame = false;	//Load a Scene next frame
+std::string scene_load_dir = "";	//Scene File path to load if the value above is true
 
 glm::vec3 ray_hit_point = glm::vec3(0.0f);
 glm::vec3 ray_hit_normal = glm::vec3(0.0f);
@@ -151,6 +153,12 @@ void Engine::run() {
 			}
 			else print(this, "no hit");
 			rayOnNextFrame = false;
+		}
+		if (loadSceneOnNextFrame) {
+			SceneParser* sp = new SceneParser();
+			sp->parse(scene_load_dir);
+			mainScene = sp->to_scene();
+			loadSceneOnNextFrame = false;
 		}
 		checkErrors("EngineLoop Pre-Render");
 
@@ -364,6 +372,8 @@ void Engine::console() {
 
 			else if (input[0] == "lod") { drawLod = (int)strtof(input[1].c_str(), 0); }
 			else if (input[0] == "lastframes") { frametimecounter->printLastFrames(strtof(input[1].c_str(), 0)); }
+
+			else if (input[0] == "load") { loadSceneOnNextFrame = true; scene_load_dir = SCENE_DIR + input[1] + ".txt"; }
 			else print(this, "Unknwon Command");
 		}
 		//eg. setmat Sphere1 shininess 0.1

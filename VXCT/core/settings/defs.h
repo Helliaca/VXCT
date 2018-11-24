@@ -30,7 +30,8 @@
 #define MAX_Z 1.0f
 
 //Paths
-#define SCENE_TXT "../VXCT/scene/scene.txt"
+#define SCENE_TXT "../VXCT/scenes/scene.txt"
+#define SCENE_DIR "../VXCT/scenes/"
 
 #define COLORSHADER_VS "../VXCT/shaders/color.vs"
 #define COLORSHADER_FS "../VXCT/shaders/color.fs"
