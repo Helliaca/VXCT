@@ -4,6 +4,7 @@
 #include <iterator>
 #include <map>
 
+//Maps Node type to identifier that characterizes it in scene.txt
 std::map<std::string, sp_nodetype> TT_ids{
 	{ "scene", sp_nodetype::SCENE },
 	{ "model", sp_nodetype::MODEL },
@@ -23,8 +24,12 @@ std::map<std::string, sp_nodetype> TT_ids{
 	{ "r", sp_nodetype::R },
 	{ "g", sp_nodetype::G },
 	{ "b", sp_nodetype::B },
+	{ "scale_x", sp_nodetype::SCALE_X },
+	{ "scale_y", sp_nodetype::SCALE_Y },
+	{ "scale_z", sp_nodetype::SCALE_Z },
 };
 
+//Maps Node type to data type that is stored on this node.
 std::map<sp_nodetype, sp_datatype> Datatypes_ids{
 	{ sp_nodetype::MODEL, sp_datatype::NODE },
 	{ sp_nodetype::SCENE, sp_datatype::NODE },
@@ -44,31 +49,28 @@ std::map<sp_nodetype, sp_datatype> Datatypes_ids{
 	{ sp_nodetype::R, sp_datatype::FLOAT },
 	{ sp_nodetype::G, sp_datatype::FLOAT },
 	{ sp_nodetype::B, sp_datatype::FLOAT },
+	{ sp_nodetype::SCALE_X, sp_datatype::FLOAT },
+	{ sp_nodetype::SCALE_Y, sp_datatype::FLOAT },
+	{ sp_nodetype::SCALE_Z, sp_datatype::FLOAT },
 };
 
-sp_nodetype NodeTypes_lookup(std::string str) {
+sp_nodetype SceneParser::NodeTypes_lookup(std::string str) {
 	std::map<std::string, sp_nodetype>::iterator it = TT_ids.find(str);
 	if (it == TT_ids.end()) {
-		std::cout << "Could not find token: " << str << std::endl; 
+		print(this, "ERR: Invalid token not in lookup-table: " + str);
 		return sp_nodetype::ERR;
 	}
 	else return it->second;
 }
 
-sp_datatype DataTypes_lookup(sp_nodetype nt) {
+sp_datatype SceneParser::DataTypes_lookup(sp_nodetype nt) {
 	std::map<sp_nodetype, sp_datatype>::iterator it = Datatypes_ids.find(nt);
 	if (it == Datatypes_ids.end()) {
-		std::cout << "Could not find appropriate datatype for node type." << std::endl; 
+		print(this, "ERR: Invalid token type not in lookup-table.");
 		return sp_datatype::NONE;
 	}
 	else return it->second;
 }
-
-std::vector<std::string> getFirstComplexNode(std::vector<std::string> tokens, int offset);
-std::vector<sp_node*> parse_iterate(std::vector<std::string> tokens);
-void processComplexNode_toscene(Scene* scene, sp_node* node);
-bool hasChildNodeOfType(sp_node* node, sp_nodetype type);
-sp_node* getChildOfType(sp_node* node, sp_nodetype type);
 
 void sp_node::setData(std::string str) { this->s = str; }
 void sp_node::setData(float f) { this->f = f; }
@@ -104,17 +106,11 @@ void SceneParser::parse(std::string path) {
 
 	root = new sp_node();
 	root->children = parse_iterate(tokens);
-	print(this, "Parsing Complete");
+	print(this, "Parsing Complete: " + path);
 }
 
 
-std::vector<sp_node*> parse_iterate(std::vector<std::string> tokens) {
-	for (int i = 0; i < tokens.size(); i++) {
-		std::cout << tokens[i] << " ";
-	}
-	std::cout << std::endl;
-
-
+std::vector<sp_node*> SceneParser::parse_iterate(std::vector<std::string> tokens) {
 	std::vector<sp_node*> ret;
 
 	int depth = 0;
@@ -126,7 +122,6 @@ std::vector<sp_node*> parse_iterate(std::vector<std::string> tokens) {
 
 			new_node->type = NodeTypes_lookup(identifier);
 			new_node->datatype = DataTypes_lookup(new_node->type);
-			std::cout << "Parsing: " << identifier << std::endl;
 
 			switch (new_node->datatype)
 			{
@@ -147,6 +142,7 @@ std::vector<sp_node*> parse_iterate(std::vector<std::string> tokens) {
 				break;
 			}
 			default:
+				print(this, "Invalid token: " + tokens[i]);
 				break;
 			}
 
@@ -159,7 +155,7 @@ std::vector<sp_node*> parse_iterate(std::vector<std::string> tokens) {
 	return ret;
 }
 
-std::vector<std::string> getFirstComplexNode(std::vector<std::string> tokens, int offset) {
+std::vector<std::string> SceneParser::getFirstComplexNode(std::vector<std::string> tokens, int offset) {
 	int i_start = -1;
 	int i_end = -1;
 	int depth = 0;
@@ -178,8 +174,8 @@ std::vector<std::string> getFirstComplexNode(std::vector<std::string> tokens, in
 			}
 		}
 	}
-	if (i_start == -1) std::cout << "Error reading file: Missing { token." << std::endl;
-	if (i_end == -1) std::cout << "Error reading file: Missing } token." << std::endl;
+	if (i_start == -1) print(this, "ERR: Expected '{'");
+	if (i_end == -1) std::cout << "ERR: Expected '}'" << std::endl;
 	std::vector<std::string>::const_iterator first = tokens.begin() + i_start + 1;
 	std::vector<std::string>::const_iterator last = tokens.begin() + i_end;
 	std::vector<std::string> ret(first, last);
@@ -196,14 +192,18 @@ Scene* SceneParser::to_scene() {
 	return ret;
 }
 
-void processComplexNode_toscene(Scene* scene, sp_node* node) {
+void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 	switch (node->type)
 	{
 	case sp_nodetype::SCENE: {
 		if (hasChildNodeOfType(node, sp_nodetype::NAME)) scene->name = getChildOfType(node, sp_nodetype::NAME)->GetData_s();
 		break; }
+
 	case sp_nodetype::MODEL: {
+		//active
 		if (hasChildNodeOfType(node, sp_nodetype::ACTIVE) && !getChildOfType(node, sp_nodetype::ACTIVE)->GetData_b()) return;
+
+		//path, shader, name
 		std::string path = OBJ_SCENE_CUBE1;
 		std::string tmp_shader="COLOR";
 		RenderShader shader = RenderShader::COLOR;
@@ -215,12 +215,16 @@ void processComplexNode_toscene(Scene* scene, sp_node* node) {
 		if (tmp_shader == "EMIT") shader = RenderShader::EMIT;
 		if (tmp_shader == "EMITRGBA") shader = RenderShader::EMITRGBA;
 		if (tmp_shader == "VOX") shader = RenderShader::VOX;
+
+		//set shader unifrom references
 		Model* new_model = new Model(name, shader, path);
 		new_model->addMat4Reference("model_u", &new_model->model);
 		new_model->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 		new_model->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 		new_model->addVec3Reference("viewPos", &G::SceneCamera->Position);
 		new_model->addPlightReference("light", G::SceneLight);
+
+		//Material + color
 		if (hasChildNodeOfType(node, sp_nodetype::MATERIAL)) {
 			sp_node* material_node = getChildOfType(node, sp_nodetype::MATERIAL);
 			if (hasChildNodeOfType(material_node, sp_nodetype::AMBIENT_STR)) new_model->material->ambient_str = getChildOfType(material_node, sp_nodetype::AMBIENT_STR)->GetData_f();
@@ -236,6 +240,8 @@ void processComplexNode_toscene(Scene* scene, sp_node* node) {
 		}
 		new_model->addMaterialReference("material", new_model->material);
 		new_model->addVsettingsReference("settings", G::VoxLightSettings);
+
+		//Position
 		if (hasChildNodeOfType(node, sp_nodetype::POSITION)) {
 			sp_node* pos_node = getChildOfType(node, sp_nodetype::POSITION);
 			glm::vec3 offset;
@@ -244,6 +250,14 @@ void processComplexNode_toscene(Scene* scene, sp_node* node) {
 			offset.z = getChildOfType(pos_node, sp_nodetype::Z)->GetData_f();
 			new_model->setPosition(offset);
 		}
+
+		//Scale
+		if (hasChildNodeOfType(node, sp_nodetype::SCALE)) new_model->scale(getChildOfType(node, sp_nodetype::SCALE)->GetData_f());
+		glm::vec3 localScale = glm::vec3(1.0f);
+		if (hasChildNodeOfType(node, sp_nodetype::SCALE_X)) localScale.x = getChildOfType(node, sp_nodetype::SCALE_X)->GetData_f();
+		if (hasChildNodeOfType(node, sp_nodetype::SCALE_Y)) localScale.y = getChildOfType(node, sp_nodetype::SCALE_Y)->GetData_f();
+		if (hasChildNodeOfType(node, sp_nodetype::SCALE_Z)) localScale.z = getChildOfType(node, sp_nodetype::SCALE_Z)->GetData_f();
+
 		scene->addObject(new_model);
 		break; }
 	default:
@@ -251,13 +265,20 @@ void processComplexNode_toscene(Scene* scene, sp_node* node) {
 	}
 }
 
-bool hasChildNodeOfType(sp_node* node, sp_nodetype type) {
+bool SceneParser::hasChildNodeOfType(sp_node* node, sp_nodetype type) {
 	for (int i = 0; i < node->children.size(); i++) if (node->children[i]->type == type) return true;
 	return false;
 }
 
-sp_node* getChildOfType(sp_node* node, sp_nodetype type) {
+sp_node* SceneParser::getChildOfType(sp_node* node, sp_nodetype type) {
 	if (node->children.size() <= 0) return NULL;
 	for (int i = 0; i < node->children.size(); i++) if (node->children[i]->type == type) return node->children[i];
+	print(this, "ERR: Expected token: " + Node_to_string(type));
 	return node->children[0];
+}
+
+std::string SceneParser::Node_to_string(sp_nodetype t) {
+	for (std::map<std::string, sp_nodetype>::iterator it = TT_ids.begin(); it != TT_ids.end(); it++) {
+		if (it->second == t) return it->first;
+	}
 }
