@@ -27,6 +27,9 @@ std::map<std::string, sp_nodetype> TT_ids{
 	{ "scale_x", sp_nodetype::SCALE_X },
 	{ "scale_y", sp_nodetype::SCALE_Y },
 	{ "scale_z", sp_nodetype::SCALE_Z },
+	{ "primitive", sp_nodetype::PRIMITIVE },
+	{ "static", sp_nodetype::STATIC },
+	{ "light", sp_nodetype::LIGHT },
 };
 
 //Maps Node type to data type that is stored on this node.
@@ -52,6 +55,9 @@ std::map<sp_nodetype, sp_datatype> Datatypes_ids{
 	{ sp_nodetype::SCALE_X, sp_datatype::FLOAT },
 	{ sp_nodetype::SCALE_Y, sp_datatype::FLOAT },
 	{ sp_nodetype::SCALE_Z, sp_datatype::FLOAT },
+	{ sp_nodetype::PRIMITIVE, sp_datatype::STRING },
+	{ sp_nodetype::STATIC, sp_datatype::BOOL },
+	{ sp_nodetype::LIGHT, sp_datatype::NODE },
 };
 
 sp_nodetype SceneParser::NodeTypes_lookup(std::string str) {
@@ -199,6 +205,26 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 		if (hasChildNodeOfType(node, sp_nodetype::NAME)) scene->name = getChildOfType(node, sp_nodetype::NAME)->GetData_s();
 		break; }
 
+	case sp_nodetype::LIGHT: {
+		G::SceneLight = new PointLight();
+		if (hasChildNodeOfType(node, sp_nodetype::POSITION)) {
+			sp_node* pos_node = getChildOfType(node, sp_nodetype::POSITION);
+			glm::vec3 offset;
+			offset.x = getChildOfType(pos_node, sp_nodetype::X)->GetData_f();
+			offset.y = getChildOfType(pos_node, sp_nodetype::Y)->GetData_f();
+			offset.z = getChildOfType(pos_node, sp_nodetype::Z)->GetData_f();
+			G::SceneLight->position = offset;
+		}
+		if (hasChildNodeOfType(node, sp_nodetype::COLOR)) {
+			sp_node* pos_node = getChildOfType(node, sp_nodetype::COLOR);
+			glm::vec3 c;
+			c.x = getChildOfType(pos_node, sp_nodetype::R)->GetData_f();
+			c.y = getChildOfType(pos_node, sp_nodetype::G)->GetData_f();
+			c.z = getChildOfType(pos_node, sp_nodetype::B)->GetData_f();
+			G::SceneLight->color = c;
+		}
+		break; }
+
 	case sp_nodetype::MODEL: {
 		//active
 		if (hasChildNodeOfType(node, sp_nodetype::ACTIVE) && !getChildOfType(node, sp_nodetype::ACTIVE)->GetData_b()) return;
@@ -209,15 +235,25 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 		RenderShader shader = RenderShader::COLOR;
 		std::string name = "UnnamedModel";
 		if (hasChildNodeOfType(node, sp_nodetype::NAME)) name = getChildOfType(node, sp_nodetype::NAME)->GetData_s();
-		if (hasChildNodeOfType(node, sp_nodetype::PATH)) path = getChildOfType(node, sp_nodetype::PATH)->GetData_s();
 		if (hasChildNodeOfType(node, sp_nodetype::SHADER)) tmp_shader = getChildOfType(node, sp_nodetype::SHADER)->GetData_s();
 		if (tmp_shader == "COLOR") shader = RenderShader::COLOR;
 		if (tmp_shader == "EMIT") shader = RenderShader::EMIT;
 		if (tmp_shader == "EMITRGBA") shader = RenderShader::EMITRGBA;
 		if (tmp_shader == "VOX") shader = RenderShader::VOX;
 
+		Model* new_model;
+		if (hasChildNodeOfType(node, sp_nodetype::PATH)) {
+			path = getChildOfType(node, sp_nodetype::PATH)->GetData_s();
+			new_model = new Model(name, shader, path);
+		}
+		else if (hasChildNodeOfType(node, sp_nodetype::PRIMITIVE)) {
+			std::string primitive_type = getChildOfType(node, sp_nodetype::PRIMITIVE)->GetData_s();
+			if (primitive_type == "cube") new_model = new Model(name, shader, defaultModels::cube_indices, defaultModels::cube_vertexData);
+			else { print(this, "Primitive type not recognized: " + primitive_type); return; }
+		}
+		else { print(this, "Model has neither path nor primitive: " + name); return; }
+
 		//set shader unifrom references
-		Model* new_model = new Model(name, shader, path);
 		new_model->addMat4Reference("model_u", &new_model->model);
 		new_model->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 		new_model->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
@@ -257,6 +293,10 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 		if (hasChildNodeOfType(node, sp_nodetype::SCALE_X)) localScale.x = getChildOfType(node, sp_nodetype::SCALE_X)->GetData_f();
 		if (hasChildNodeOfType(node, sp_nodetype::SCALE_Y)) localScale.y = getChildOfType(node, sp_nodetype::SCALE_Y)->GetData_f();
 		if (hasChildNodeOfType(node, sp_nodetype::SCALE_Z)) localScale.z = getChildOfType(node, sp_nodetype::SCALE_Z)->GetData_f();
+		new_model->scale(localScale);
+
+		//Static
+		if (hasChildNodeOfType(node, sp_nodetype::STATIC)) new_model->is_static = getChildOfType(node, sp_nodetype::STATIC)->GetData_b();
 
 		scene->addObject(new_model);
 		break; }

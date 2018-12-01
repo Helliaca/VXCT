@@ -62,6 +62,8 @@ public:
 		vsettingsRefs.insert(VsettingsEntry(name, ref));
 	}
 
+	bool is_static; //Determines whether if the model is tied to the given shader, or other shaders can be used (eg. voxelization shader)
+
 	glm::mat4 model; //Model Matrix
 	void scale(float scale);
 	void scale(glm::vec3 scale);

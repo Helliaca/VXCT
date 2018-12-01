@@ -23,7 +23,8 @@ void Scene::draw() {
 
 void Scene::draw(Shader* customShader) {
 	for (std::vector<int>::size_type i = 0; i != objs.size(); i++) {
-		objs[i]->draw(customShader);
+		if(!objs[i]->is_static) objs[i]->draw(customShader);
+		else objs[i]->draw();
 	}
 }
 

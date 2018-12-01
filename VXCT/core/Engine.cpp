@@ -95,16 +95,16 @@ void Engine::run() {
 
 	DebugLine = new LineRenderer(); //Need to initiate this here because we need an opengl context
 
-	Model* lamp = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
-	lamp->addMat4Reference("model_u", &lamp->model);
-	lamp->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
-	lamp->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
-	lamp->addVec3Reference("emitColor", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
-	glm::vec3 lampPos = G::SceneLight->position;
-	lampPos.y += 0.09; //squished lamp needs to be higher than actual light;
-	lamp->setPosition(lampPos);
-	lamp->scale(0.2f); //A smaller cube
-	lamp->scale(glm::vec3(1.0f, 0.1f, 1.0f)); //squish it so it appears like a ceiling lamp
+	//Model* lamp = new Model("lamp", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
+	//lamp->addMat4Reference("model_u", &lamp->model);
+	//lamp->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
+	//lamp->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
+	//lamp->addVec3Reference("color", &glm::vec3(1.0f, 1.0f, 1.0f)); //Might lead to memory leaks as we keep no reference of this variable
+	//glm::vec3 lampPos = G::SceneLight->position;
+	//lampPos.y += 0.09; //squished lamp needs to be higher than actual light;
+	//lamp->setPosition(lampPos);
+	//lamp->scale(0.2f); //A smaller cube
+	//lamp->scale(glm::vec3(1.0f, 0.1f, 1.0f)); //squish it so it appears like a ceiling lamp
 
 	Model* voxel = new Model("voxel", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	voxel->addMat4Reference("model_u", &voxel->model);
@@ -181,7 +181,7 @@ void Engine::run() {
 
 		//Object Drawing
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
-		lamp->draw();
+		//lamp->draw();
 		if (objs) {
 			if (LocLod) {
 				locLodShader->use();
@@ -240,7 +240,7 @@ void Engine::run() {
 	}
 
 	// de-allocate all resources once they've outlived their purpose:
-	delete(lamp);
+	//delete(lamp);
 	//delete(mainCube);
 
 	glfwTerminate(); //Delete and clean all glfw resources allocated

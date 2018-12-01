@@ -12,6 +12,7 @@ Model::Model(std::string name, RenderShader sh=RenderShader::EMIT, std::string i
 	if (inputfile!="") { this->fromFile(inputfile); }
 	initialize(sh);
 	this->material = new Material();
+	is_static = false;
 }
 
 Model::Model(std::string name = "unnamedModel", RenderShader sh = RenderShader::EMIT, std::vector<int>indices = {}, std::vector<float>vertexData = {}) : IOobject(name)
@@ -20,6 +21,7 @@ Model::Model(std::string name = "unnamedModel", RenderShader sh = RenderShader::
 	this->indices = indices;
 	initialize(sh);
 	this->material = new Material();
+	is_static = false;
 }
 
 void Model::initialize(RenderShader sh) {
