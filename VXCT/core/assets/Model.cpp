@@ -93,36 +93,23 @@ void Model::draw() {
 	for (auto const& x : vec3Refs) shader->setVec3(x.first, *x.second);
 	for (auto const& x : vec4Refs) shader->setVec4(x.first, *x.second);
 	for (auto const& x : mat4Refs) shader->setMat4(x.first, *x.second);
-	for (auto const& x : plightRefs) shader->setPointLight(x.first, *x.second);
+	for (auto const& x : lightingRefs) shader->setLighting(x.first, *x.second);
 	for (auto const& x : materialRefs) shader->setMaterial(x.first, *x.second);
 	for (auto const& x : vsettingsRefs) shader->setVsettings(x.first, *x.second);
 
 
 	// render
 	glBindVertexArray(VAO);
-	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDrawElements(GL_TRIANGLES, vertexData.size(), GL_UNSIGNED_INT, 0);
 
 	checkErrors("Draw");
 }
 
 void Model::draw(Shader* customShader) {
-
-	customShader->use();
-
-	//Set all references
-	for (auto const& x : vec3Refs) customShader->setVec3(x.first, *x.second);
-	for (auto const& x : vec4Refs) customShader->setVec4(x.first, *x.second);
-	for (auto const& x : mat4Refs) customShader->setMat4(x.first, *x.second);
-	for (auto const& x : plightRefs) customShader->setPointLight(x.first, *x.second);
-	for (auto const& x : materialRefs) customShader->setMaterial(x.first, *x.second);
-	for (auto const& x : vsettingsRefs) customShader->setVsettings(x.first, *x.second);
-
-	// render
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, vertexData.size(), GL_UNSIGNED_INT, 0);
-
-	checkErrors("Draw(CustomShader)");
+	Shader* tmp = this->shader;
+	this->shader = customShader;
+	this->draw();
+	this->shader = tmp;
 }
 
 void Model::scale(float scale) {

@@ -130,10 +130,10 @@
     <ClCompile Include="..\..\..\glad\src\glad.c" />
     <ClCompile Include="core\Engine.cpp" />
     <ClCompile Include="core\globals.cpp" />
-    <ClCompile Include="core\settings\InitScene.cpp" />
     <ClCompile Include="core\assets\Window.cpp" />
     <ClCompile Include="core\assets\LineRenderer.cpp" />
     <ClCompile Include="core\assets\FrameTimeCounter.cpp" />
+    <ClCompile Include="core\assets\Lighting.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="core\assets\Model.cpp" />
     <ClCompile Include="core\assets\RayCast.cpp" />
@@ -163,6 +163,7 @@
     <ClInclude Include="core\assets\Scene.h" />
     <ClInclude Include="core\assets\FrameTimeCounter.h" />
     <ClInclude Include="core\assets\SceneParser.h" />
+    <ClInclude Include="core\assets\Lighting.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="core\settings\VertexData.h" />
     <ClInclude Include="core\assets\VoxelMap.h" />

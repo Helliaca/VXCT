@@ -206,14 +206,14 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 		break; }
 
 	case sp_nodetype::LIGHT: {
-		G::SceneLight = new PointLight();
+		PointLight* l = new PointLight();
 		if (hasChildNodeOfType(node, sp_nodetype::POSITION)) {
 			sp_node* pos_node = getChildOfType(node, sp_nodetype::POSITION);
 			glm::vec3 offset;
 			offset.x = getChildOfType(pos_node, sp_nodetype::X)->GetData_f();
 			offset.y = getChildOfType(pos_node, sp_nodetype::Y)->GetData_f();
 			offset.z = getChildOfType(pos_node, sp_nodetype::Z)->GetData_f();
-			G::SceneLight->position = offset;
+			l->position = offset;
 		}
 		if (hasChildNodeOfType(node, sp_nodetype::COLOR)) {
 			sp_node* pos_node = getChildOfType(node, sp_nodetype::COLOR);
@@ -221,8 +221,9 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 			c.x = getChildOfType(pos_node, sp_nodetype::R)->GetData_f();
 			c.y = getChildOfType(pos_node, sp_nodetype::G)->GetData_f();
 			c.z = getChildOfType(pos_node, sp_nodetype::B)->GetData_f();
-			G::SceneLight->color = c;
+			l->color = c;
 		}
+		G::SceneLighting->add_pointLight(l);
 		break; }
 
 	case sp_nodetype::MODEL: {
@@ -258,7 +259,7 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 		new_model->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 		new_model->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
 		new_model->addVec3Reference("viewPos", &G::SceneCamera->Position);
-		new_model->addPlightReference("light", G::SceneLight);
+		new_model->addlightingReference("lighting", G::SceneLighting);
 
 		//Material + color
 		if (hasChildNodeOfType(node, sp_nodetype::MATERIAL)) {

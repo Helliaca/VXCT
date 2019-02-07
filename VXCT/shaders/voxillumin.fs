@@ -48,10 +48,12 @@ struct VoxSettings {
 
 const float PI = 3.14159;
 
+#define MAX_LIGHTS 10
+uniform PointLight[MAX_LIGHTS] lighting;
+uniform int lighting_size;
 
 uniform vec3 viewPos;
 uniform VoxSettings settings;
-uniform PointLight light;
 uniform Material material;
 uniform sampler3D tex3D;
 
@@ -75,26 +77,41 @@ vec3 perp(vec3 v, vec3 q=vec3(0.0,0.0,1.0)){
 	return cross(v, q);
 }
 
-
+PointLight light = lighting[0];
 
 void main()
 {
-	FragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	const vec3 viewDirection = normalize(pos_fs - viewPos);
+	vec4 result = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	float min_occ = 1.0f;
 
-	// Direct phong light
-	if(settings.phong) FragColor.rgb += directLight();
+	for(int i=0; i<MAX_LIGHTS && i<lighting_size; i++) {
+		light = lighting[i];
+
+		vec4 tmp_l = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		// Direct phong light
+		if(settings.phong) tmp_l.rgb += directLight();
+
+		// specular
+		const vec3 reflectDir = normalize(reflect(viewDirection, nrm));
+		if(settings.vox_specular) tmp_l.rgb += voxelTraceSpecularCone(pos_fs, reflectDir);
+
+		// shadows
+		float occ = voxelTraceOcclusionCone(pos_fs, light.position - pos_fs, length(light.position - pos_fs));
+		if(occ<min_occ) min_occ = occ;
+
+		if(settings.vox_shadows && !settings.vox_diffuse && !settings.vox_specular && !settings.phong) tmp_l = vec4(1.0f); //for showing only shadows
+		if(settings.vox_shadows) tmp_l.rgb *= 1.0f - occ;
+
+		result += tmp_l;
+	}
 
 	// Indirect diffuse light
-	if(settings.vox_diffuse) FragColor.rgb += indirectDiffuse() * 1.0f;
+	if(settings.vox_diffuse) result.rgb += indirectDiffuse() * (1.0f - min_occ);
+	//Note: we are keeping the indirect light artifically lower with minimum occlusion because
+	//the voxelTraceCone function doesnt factor in occlusion.
 
-	// specular
-	const vec3 reflectDir = normalize(reflect(viewDirection, nrm));
-	if(settings.vox_specular) FragColor.rgb += voxelTraceSpecularCone(pos_fs, reflectDir);
-
-	// shadows
-	if(settings.vox_shadows && !settings.vox_diffuse && !settings.vox_specular && !settings.phong) FragColor = vec4(1.0f); //for showing only shadows
-	if(settings.vox_shadows) FragColor.rgb *= 1.0f - voxelTraceOcclusionCone(pos_fs, light.position - pos_fs, length(light.position - pos_fs));
+	FragColor = result;
 }
 
 // Calculates indirect diffuse light using voxel cone tracing.
@@ -241,12 +258,14 @@ vec3 voxelTraceCone(const vec3 origin, vec3 dir) {
 
 		//color = occlusion*color + (1 - occlusion) * occlusion_read * color_read;
 		//color *= 3; //Enhance color
-		//occlusion = occlusion + (1 - occlusion) * occlusion_read;
+		//occlusion = 3 * (occlusion + (1 - occlusion) * occlusion_read);
+
+		occlusion = occlusion + (1 - occlusion) * occlusion_read;
 
 		current_dist += current_coneDiameter * settings.diffuse_dist_factor;
 	}
 
-	return color; //TODO: Return vec4 with occlusion (?)
+	return color;
 }
 
 vec3 directLight() {

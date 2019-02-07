@@ -21,8 +21,8 @@ private:
 	std::map<std::string, glm::mat4*> mat4Refs;
 	typedef std::pair<std::string, glm::mat4*> Mat4Entry;
 
-	std::map<std::string, PointLight*> plightRefs;
-	typedef std::pair<std::string, PointLight*> PlightEntry;
+	std::map<std::string, Lighting*> lightingRefs;
+	typedef std::pair<std::string, Lighting*> LightingEntry;
 
 	std::map<std::string, Material*> materialRefs;
 	typedef std::pair<std::string, Material*> MaterialEntry;
@@ -47,9 +47,9 @@ public:
 		mat4Refs.insert(Mat4Entry(name, ref));
 	}
 
-	void addPlightReference(std::string name, PointLight* ref) {
+	void addlightingReference(std::string name, Lighting* ref) {
 		print(this, "Registered Reference: " + name);
-		plightRefs.insert(PlightEntry(name, ref));
+		lightingRefs.insert(LightingEntry(name, ref));
 	}
 
 	void addMaterialReference(std::string name, Material* ref) {

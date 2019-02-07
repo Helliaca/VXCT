@@ -157,6 +157,14 @@ public:
 		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	}
 	// ------------------------------------------------------------------------
+	void setLighting(const std::string &name, Lighting &light_obj) const 
+	{
+		this->setInt(name + "_size", light_obj.pointLights.size()); //Note: size of lighting is defined as name_size (int) and must be defined so in all shaders.
+		for (unsigned i = 0; i < light_obj.pointLights.size(); i++) {
+			this->setPointLight(name + "[" + std::to_string(i) + "]", *light_obj.pointLights[i]);
+		}
+	}
+	// ------------------------------------------------------------------------
 	void setPointLight(const std::string &name, PointLight &light_obj) const
 	{
 		const PointLight_struct light = light_obj.to_struct();
