@@ -145,8 +145,7 @@ void Engine::run() {
 		}
 		if (loadSceneOnNextFrame) {
 			SceneParser* sp = new SceneParser();
-			sp->parse(scene_load_dir);
-			mainScene = sp->to_scene();
+			if(sp->parse(scene_load_dir)) mainScene = sp->to_scene();
 			loadSceneOnNextFrame = false;
 		}
 		checkErrors("EngineLoop Pre-Render");
@@ -379,7 +378,7 @@ void Engine::console() {
 			}
 			else print(this, "Unknwon Command");
 		}
-		else {
+		else  if (input.size() == 1) {
 			if (input[0] == "objs") objs = !objs;
 			else if (input[0] == "voxs") voxs = !voxs;
 			else if (input[0] == "vox") voxelizeOnNextFrame = true;

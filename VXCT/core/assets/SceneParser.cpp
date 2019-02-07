@@ -91,6 +91,7 @@ bool sp_node::GetData_b() { return this->b; }
 
 SceneParser::SceneParser() : IOobject("SceneParser")
 {
+	parsed = false;
 }
 
 
@@ -98,9 +99,21 @@ SceneParser::~SceneParser()
 {
 }
 
-void SceneParser::parse(std::string path) {
+bool SceneParser::parse(std::string path) {
 	std::ifstream inFile;
-	inFile.open(path); //open file
+
+	//throw exception if failbit gets set
+	std::ios_base::iostate exceptionMask = inFile.exceptions() | std::ios::failbit;
+	inFile.exceptions(exceptionMask);
+
+	//try opening file
+	try {
+		inFile.open(path); //open file
+	}
+	catch (std::ios_base::failure& e) {
+		print(this, "ERR: Could not open file: " + path);
+		return false;
+	}
 
 	std::stringstream strStream;
 	strStream << inFile.rdbuf(); //get all text
@@ -113,6 +126,7 @@ void SceneParser::parse(std::string path) {
 	root = new sp_node();
 	root->children = parse_iterate(tokens);
 	print(this, "Parsing Complete: " + path);
+	return true;
 }
 
 
@@ -191,6 +205,7 @@ std::vector<std::string> SceneParser::getFirstComplexNode(std::vector<std::strin
 Scene* SceneParser::to_scene() {
 	if (root->children.size() > 1) print(this, "WARN: More than one scene was declared, but only the first one will be used.");
 
+	G::SceneLighting = new Lighting(); //flush old lightsources.
 	Scene* ret = new Scene();
 	sp_node *scene_node = root->children[0];
 	processComplexNode_toscene(ret, scene_node);

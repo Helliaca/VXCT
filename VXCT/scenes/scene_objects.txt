@@ -111,4 +111,21 @@ scene = {
 			specular_str = 0.01f
 		}
 	}
+	model = {
+		name = LampModel
+		active = true
+		primitive = cube
+		position = { x = 0.0f y = 0.49f z = 0.4f }
+		scale = 0.2f
+		shader = EMIT
+		scale_y = 0.1f
+		static = true
+		material = {
+			color = { r = 1.0f g = 1.0f b = 1.0f }
+		}
+	}
+	light = {
+		position = { x = 0.0f y = 0.4f z = 0.4f }
+		color = { r = 1.0f g = 1.0f b = 1.0f }
+	}
 }

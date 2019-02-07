@@ -32,7 +32,7 @@ public:
 	SceneParser();
 	~SceneParser();
 	sp_node* root;
-	void parse(std::string path);
+	bool parse(std::string path);
 	Scene* to_scene();
 private:
 	sp_nodetype NodeTypes_lookup(std::string str);
@@ -43,4 +43,5 @@ private:
 	bool hasChildNodeOfType(sp_node* node, sp_nodetype type);
 	sp_node* getChildOfType(sp_node* node, sp_nodetype type);
 	std::string Node_to_string(sp_nodetype t);
+	bool parsed;
 };
