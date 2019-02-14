@@ -59,10 +59,12 @@ void VoxelMap::activate(const int shaderProgramID, const std::string glSamplerNa
 	glUniform1i(glGetUniformLocation(shaderProgramID, glSamplerName.c_str()), textureUnit);
 }
 
-void VoxelMap::updateMemory() {
-	retrieveData(0);
-
+void VoxelMap::updateMemory(bool toCPU=true) {
 	glGenerateMipmap(GL_TEXTURE_3D); //Re-generate mimaps after having drawn to them. Note: Imagelod will not work without running this.
+
+	if (toCPU == false) return;
+
+	retrieveData(0);
 
 	print(this, "Voxelization Complete:");
 	print(this, "\tVoxelMap size (bytes): " + std::to_string(numBytes));

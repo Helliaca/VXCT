@@ -15,10 +15,9 @@ public:
 	~VoxelMap();
 	void clear();
 	void activate(const int shaderProgramID, const std::string glSamplerName, const int textureUnit);
-	void updateMemory();
+	void updateMemory(bool toCPU);
 	void visualize(Model* voxelModel, glm::vec3* shaderReference, int lod_level);
 	void retrieveData(int level);
 private:
-	void visualizeLod(Model* voxelModel, glm::vec3* shaderReference);
 };
 

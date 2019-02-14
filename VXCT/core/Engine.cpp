@@ -9,8 +9,7 @@
 float currentFrame = (float)glfwGetTime();
 
 const std::vector<GLubyte> texture3D(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
-const std::vector<GLubyte> texture3D_lod1(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
-const std::vector<GLubyte> temporary_stuff(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
+const std::vector<GLubyte> texture3D_lod(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
 
 bool objs = true;					//Draw Objects
 bool voxs = false;					//Draw Voxels  (Very costly! SfMode recommended)
@@ -26,7 +25,7 @@ bool LocLod = false;				//Toggle Localized LOD mode
 bool overlayWireframe = false;		//Overlay objects with their Wireframe
 int drawLod = 0;					//LOD level to draw mipmaps of
 bool loadSceneOnNextFrame = false;	//Load a Scene next frame
-bool dynamic = false;				//Revoxelize after every voxelize_freq time
+bool dynamic_scene = false;				//Revoxelize after every voxelize_freq time
 float voxelize_freq = 0.5;			//Revoxelization frequency for dynamic scenes
 std::string scene_load_dir = "";	//Scene File path to load if the value above is true
 
@@ -84,6 +83,7 @@ void Engine::run() {
 	}
 
 	frametimecounter = new FrameTimeCounter(FRAMETIMES_SAVE);
+	revox_timer = new Timer();
 
 	//==================================================================================
 
@@ -110,7 +110,11 @@ void Engine::run() {
 	visCone->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
 	visCone->addVec4Reference("emitColor", &glm::vec4(0.0f, 0.0f, 1.0f, 0.5f));
 
+	//Create voxel map
+	voxelMap = new VoxelMap(texture3D, texture3D_lod);
+
 	frametimecounter->start();
+	revox_timer->start();
 
 	consoleThread = std::thread(&Engine::console, this);
 	consoleThread.detach();
@@ -127,10 +131,11 @@ void Engine::run() {
 			}
 			else singleFrame = false;
 		}
-		if (voxelizeOnNextFrame) {
+		if (voxelizeOnNextFrame || (dynamic_scene && revox_timer->elapsedTime()>voxelize_freq)) {
 			Voxelize(mainScene);
 			checkErrors();
 			voxelizeOnNextFrame = false;
+			revox_timer->start();
 		}
 		if (rayOnNextFrame) {
 			glm::vec3 pos, nrm;
@@ -266,7 +271,7 @@ void Engine::visDetail(glm::vec3 fragPos, glm::vec3 fragNrm) {
 
 void Engine::Voxelize(Scene* scene) {
 	//>>initVoxelization
-	voxelMap = new VoxelMap(texture3D, temporary_stuff);
+	//voxelMap = new VoxelMap(texture3D, temporary_stuff);
 	//voxelMap_lod1 = new VoxelMap(texture3D_lod1, temporary_stuff);
 
 	G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
@@ -279,14 +284,14 @@ void Engine::Voxelize(Scene* scene) {
 
 	//if clearVoxelization: voxelMap->clear();
 	sh->use();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0); //TODO: why do we do this?
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	//Settings
 	glViewport(0, 0, VOX_SIZE, VOX_SIZE);
-	//glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); //?
+	//glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDisable(GL_CULL_FACE);
-	//glDisable(GL_DEPTH_TEST); //?
-	//glDisable(GL_BLEND); //?
+	//glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_BLEND);
 
 	//Texture/Map
 	voxelMap->activate(sh->ID, "tex3D", 0);
@@ -302,9 +307,9 @@ void Engine::Voxelize(Scene* scene) {
 
 	// glfw: swap buffers
 	// -------------------------------------------------------------------------------
-	glfwSwapBuffers(window->getGLFWwindow());
+	//glfwSwapBuffers(window->getGLFWwindow());
 
-	voxelMap->updateMemory();
+	voxelMap->updateMemory(!dynamic_scene);
 
 
 	/*
@@ -364,6 +369,7 @@ void Engine::console() {
 			else if (input[0] == "lastframes") { frametimecounter->printLastFrames(strtof(input[1].c_str(), 0)); }
 
 			else if (input[0] == "load") { loadSceneOnNextFrame = true; scene_load_dir = SCENE_DIR + input[1] + ".txt"; }
+			else if (input[0] == "vox_freq") { voxelize_freq = strtof(input[1].c_str(), 0); }
 			else print(this, "Unknwon Command");
 		}
 		//eg. setmat Sphere1 shininess 0.1
@@ -396,6 +402,7 @@ void Engine::console() {
 			else if (input[0] == "loclod") LocLod = !LocLod;
 			else if (input[0] == "avgf") frametimecounter->printAvg();
 			else if (input[0] == "clearf") frametimecounter->clear();
+			else if (input[0] == "dynamic") { dynamic_scene = !dynamic_scene; print(this, dynamic_scene?"Dynamic revoxelization: ON":"Dynamic revoxelization: OFF"); }
 
 			else if (input[0] == "phong") G::VoxLightSettings->phong = !G::VoxLightSettings->phong;
 			else if (input[0] == "phong_ambient") G::VoxLightSettings->phong_ambient = !G::VoxLightSettings->phong_ambient;

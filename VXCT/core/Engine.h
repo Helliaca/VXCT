@@ -32,6 +32,8 @@ public:
 
 	FrameTimeCounter* frametimecounter;
 
+	Timer* revox_timer;
+
 	void Voxelize(Scene* scene);
 	void visDetail(glm::vec3 fragPos, glm::vec3 fragNrm);
 	Window* window;
