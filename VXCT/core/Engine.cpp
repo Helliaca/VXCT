@@ -89,6 +89,7 @@ void Engine::run() {
 
 	Shader* voxIlluminShader = new Shader(VOXILLUMINSHADER_VS, VOXILLUMINSHADER_FS);
 	Shader* locLodShader = new Shader(LODTEXTURESHADER_VS, LODTEXTURESHADER_FS);
+	voxelization_shader = new Shader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
 
 	//mainScene = InitScene();
 	SceneParser* sceneParser = new SceneParser();
@@ -273,17 +274,15 @@ void Engine::Voxelize(Scene* scene) {
 	//>>initVoxelization
 	//voxelMap = new VoxelMap(texture3D, temporary_stuff);
 	//voxelMap_lod1 = new VoxelMap(texture3D_lod1, temporary_stuff);
-
+	
 	G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
-
-	Shader* sh = new Shader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
-
+	
 	checkErrors("VoxelizeInit");
-
+	
 	//>>voxelize
-
+	
 	//if clearVoxelization: voxelMap->clear();
-	sh->use();
+	voxelization_shader->use();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	//Settings
@@ -291,48 +290,19 @@ void Engine::Voxelize(Scene* scene) {
 	//glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDisable(GL_CULL_FACE);
 	//glDisable(GL_DEPTH_TEST);
-	//glDisable(GL_BLEND);
-
+	glDisable(GL_BLEND);
+	
 	//Texture/Map
-	voxelMap->activate(sh->ID, "tex3D", 0);
+	voxelMap->activate(voxelization_shader->ID, "tex3D", 0);
 	glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
 	
 	checkErrors("VoxelizePreDraw");
-	// render
-	// ------
-	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	scene->draw(sh);
+	scene->draw(voxelization_shader);
 
-	// glfw: swap buffers
-	// -------------------------------------------------------------------------------
 	//glfwSwapBuffers(window->getGLFWwindow());
 
 	voxelMap->updateMemory(!dynamic_scene);
-
-
-	/*
-	sh_lod1->use();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0); //TODO: why do we do this?
-	glViewport(0, 0, VOX_SIZE, VOX_SIZE);
-	glDisable(GL_CULL_FACE);
-
-	voxelMap_lod1->activate(sh_lod1->ID, "tex3D", 0);
-	glBindImageTexture(0, voxelMap_lod1->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
-
-	voxelMap->activate(sh_lod1->ID, "tex3D_in", 0);
-	//glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
-
-	scene->draw(sh_lod1);
-
-
-
-	//glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); //if we set to false previously, revert.
-	checkErrors("VoxelizeEnd");
-
-	voxelMap_lod1->updateMemory();
-	*/
 
 	//Revert Settings
 	if(VXCT_CULLING) glEnable(GL_CULL_FACE);

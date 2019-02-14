@@ -53,7 +53,6 @@ void VoxelMap::clear() {
 }
 
 void VoxelMap::activate(const int shaderProgramID, const std::string glSamplerName, const int textureUnit) {
-	//?
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(GL_TEXTURE_3D, textureID);
 	glUniform1i(glGetUniformLocation(shaderProgramID, glSamplerName.c_str()), textureUnit);

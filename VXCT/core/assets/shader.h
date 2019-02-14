@@ -8,6 +8,8 @@ class Shader : IOobject
 public:
 	unsigned int ID;
 
+	~Shader() {}
+
 
 	Shader(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath = nullptr) : IOobject("unnamedShader")
 	{

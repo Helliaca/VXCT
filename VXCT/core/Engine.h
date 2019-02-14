@@ -34,6 +34,8 @@ public:
 
 	Timer* revox_timer;
 
+	Shader* voxelization_shader;
+
 	void Voxelize(Scene* scene);
 	void visDetail(glm::vec3 fragPos, glm::vec3 fragNrm);
 	Window* window;
