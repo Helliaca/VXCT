@@ -26,6 +26,8 @@ bool LocLod = false;				//Toggle Localized LOD mode
 bool overlayWireframe = false;		//Overlay objects with their Wireframe
 int drawLod = 0;					//LOD level to draw mipmaps of
 bool loadSceneOnNextFrame = false;	//Load a Scene next frame
+bool dynamic = false;				//Revoxelize after every voxelize_freq time
+float voxelize_freq = 0.5;			//Revoxelization frequency for dynamic scenes
 std::string scene_load_dir = "";	//Scene File path to load if the value above is true
 
 glm::vec3 ray_hit_point = glm::vec3(0.0f);

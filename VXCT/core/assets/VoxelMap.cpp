@@ -133,49 +133,27 @@ void VoxelMap::visualize(Model* voxelModel, glm::vec3* shaderReference, int lod_
 	voxelModel->resetPSR();
 	voxelModel->setPosition(0, 0, 0);
 	voxelModel->scale((MAX_X - MIN_X) / voxelmap_size); //Note: only MAX/MIN_X is taken into account when sclaing voxel representatives
-	glm::vec3 dontDraw(0, 0, 0); //Color values for which we dont draw a voxel
+	float dontDraw = 0.0; //Alpha threshold for which not to draw a voxel
 	glm::vec3 voxelOffset(1.0f / voxelmap_size, 1.0f / voxelmap_size, 1.0f / voxelmap_size); //Origin of our voxel-cube model is centered, thus we need to offset to set it to the actual position of the voxel
+
+	int arrayPos = 0; //Declaring these variables outside the upcoming loop gives us a (quite small) performance boost
+	float alpha = 0;
 
 	for (int x = 0; x < w; x++) {
 		for (int y = 0; y < h; y++) {
 			for (int z = 0; z < d; z++) {
 
-				int arrayPos = 4 * (x + y * voxelmap_size + z * voxelmap_size * voxelmap_size);
+				arrayPos = 4 * (x + y * voxelmap_size + z * voxelmap_size * voxelmap_size); //4 due to rgba
 				
-				shaderReference->r = draw_data[arrayPos] / 255.0f;
-				shaderReference->g = draw_data[arrayPos + 1] / 255.0f;
-				shaderReference->b = draw_data[arrayPos + 2] / 255.0f;
-				//shaderReference->a = draw_data[arrayPos + 3];
+				alpha = draw_data[arrayPos + 3]; //get alpha value
 
-				voxelModel->setPosition(voxelOffset + vC_to_wC(glm::vec3(x, y, z), voxelmap_size));
-
-				if(shaderReference->r != dontDraw.r || shaderReference->g != dontDraw.g || shaderReference->b != dontDraw.b) voxelModel->draw();
-			}
-		}
-	}
-}
-
-void VoxelMap::visualizeLod(Model* voxelModel, glm::vec3* shaderReference) {
-	voxelModel->resetPSR();
-	voxelModel->scale((MAX_X - MIN_X) / VOX_SIZE); //Note: only MAX/MIN_X is taken into account when sclaing voxel representatives
-	voxelModel->setPosition(0, 0, 0);
-	glm::vec3 dontDraw(0, 0, 0); //Color values for which we dont draw a voxel
-	glm::vec3 voxelOffset(1.0f / VOX_SIZE, 1.0f / VOX_SIZE, 1.0f / VOX_SIZE); //Origin of our voxel-cube model is centered, thus we need to offset to set it to the actual position of the voxel
-
-	for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height; y++) {
-			for (int z = 0; z < depth; z++) {
-
-				int arrayPos = 4 * (x + y * VOX_SIZE + z * VOX_SIZE * VOX_SIZE);
-
-				shaderReference->r = data[arrayPos] / 255.0f;
-				shaderReference->g = data[arrayPos + 1] / 255.0f;
-				shaderReference->b = data[arrayPos + 2] / 255.0f;
-				//shaderReference->a = data[arrayPos + 3];
-
-				voxelModel->setPosition(voxelOffset + vC_to_wC(glm::vec3(x, y, z)));
-
-				if (shaderReference->r != dontDraw.r || shaderReference->g != dontDraw.g || shaderReference->b != dontDraw.b) voxelModel->draw();
+				if (alpha > dontDraw) {
+					shaderReference->r = draw_data[arrayPos] / 255.0f;
+					shaderReference->g = draw_data[arrayPos + 1] / 255.0f;
+					shaderReference->b = draw_data[arrayPos + 2] / 255.0f;
+					voxelModel->setPosition(voxelOffset + vC_to_wC(glm::vec3(x, y, z), voxelmap_size));
+					voxelModel->draw();
+				}
 			}
 		}
 	}
