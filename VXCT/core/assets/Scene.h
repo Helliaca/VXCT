@@ -6,7 +6,6 @@ class Scene : public IOobject
 {
 public:
 	std::vector<Model*> objs;
-	std::vector<PointLight*> lights;
 	Scene();
 	~Scene();
 	void addObject(Model* obj);

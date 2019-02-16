@@ -3,7 +3,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "assets\camera.h"
+#include "assets\Camera.h"
 #include "assets\Material.h"
 #include "assets\VoxSettings.h"
 #include "assets\Lighting.h"

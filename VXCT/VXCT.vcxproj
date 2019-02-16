@@ -128,6 +128,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\glad\src\glad.c" />
+    <ClCompile Include="core\assets\Camera.cpp" />
+    <ClCompile Include="core\assets\Shader.cpp" />
     <ClCompile Include="core\Engine.cpp" />
     <ClCompile Include="core\globals.cpp" />
     <ClCompile Include="core\assets\Window.cpp" />
@@ -148,12 +150,12 @@
     <ClCompile Include="core\assets\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\assets\Camera.h" />
     <ClInclude Include="core\base.h" />
-    <ClInclude Include="core\assets\camera.h" />
     <ClInclude Include="core\Engine.h" />
     <ClInclude Include="core\globals.h" />
     <ClInclude Include="core\settings\defs.h" />
-    <ClInclude Include="core\assets\shader.h" />
+    <ClInclude Include="core\assets\Shader.h" />
     <ClInclude Include="core\assets\Window.h" />
     <ClInclude Include="core\assets\Material.h" />
     <ClInclude Include="core\assets\PointLight.h" />

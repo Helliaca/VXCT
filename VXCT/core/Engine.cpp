@@ -164,8 +164,6 @@ void Engine::run() {
 		G::deltaTime = currentFrame - G::lastFrame;
 		G::lastFrame = currentFrame;
 
-		G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
-
 		// input
 		// -----
 		if(!sfMode) window->processInput(); //Dont move Camera if in sfMode
@@ -274,8 +272,6 @@ void Engine::Voxelize(Scene* scene) {
 	//>>initVoxelization
 	//voxelMap = new VoxelMap(texture3D, temporary_stuff);
 	//voxelMap_lod1 = new VoxelMap(texture3D_lod1, temporary_stuff);
-	
-	G::SceneCamera->Update(); //Update view and projection matrices in SceneCamera before drawing anything
 	
 	checkErrors("VoxelizeInit");
 	

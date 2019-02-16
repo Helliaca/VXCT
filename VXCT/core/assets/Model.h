@@ -3,7 +3,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "shader.h"
+#include "Shader.h"
 
 enum RenderShader {VOX, EMIT, COLOR, EMITRGBA};
 
