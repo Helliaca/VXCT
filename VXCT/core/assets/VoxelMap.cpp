@@ -2,7 +2,7 @@
 
 
 
-VoxelMap::VoxelMap(const std::vector<GLubyte> & textureBuffer, const std::vector<GLubyte> & lod_textureBuffer) : IOobject("Unnamed VoxelMap")
+VoxelMap::VoxelMap() : IOobject("Unnamed VoxelMap")
 {
 	saved_lod_level = 0;
 	int voxelTextureSize = VOX_SIZE;
@@ -33,11 +33,7 @@ VoxelMap::VoxelMap(const std::vector<GLubyte> & textureBuffer, const std::vector
 	
 	glTexStorage3D(GL_TEXTURE_3D, levels, GL_RGBA8, width, height, depth); //Specify storage
 
-	glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, width, height, depth, GL_RGBA, GL_UNSIGNED_BYTE, &textureBuffer[0]); //Set colors for lowest mipmap level (all black)
-	
-	glGenerateMipmap(GL_TEXTURE_3D); //No need to generate mipmaps right here ass the texture is completely black
-
-	glBindTexture(GL_TEXTURE_3D, 0); //Unbind Texture
+	clear();
 
 	checkErrors("VoxelMap Initialization");
 }
@@ -49,10 +45,21 @@ VoxelMap::~VoxelMap()
 }
 
 void VoxelMap::clear() {
-	//TODO
+	glBindTexture(GL_TEXTURE_3D, textureID);
+
+	const std::vector<GLubyte> texBuffer(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
+	int voxelTextureSize = VOX_SIZE;
+
+	glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, this->width, this->height, this->depth, GL_RGBA, GL_UNSIGNED_BYTE, &texBuffer[0]); //Set colors for lowest mipmap level (all black)
+
+	glGenerateMipmap(GL_TEXTURE_3D); //No need to generate mipmaps right here ass the texture is completely black
+
+	glBindTexture(GL_TEXTURE_3D, 0); //Unbind Texture
+
+	checkErrors("VoxelMap Clear");
 }
 
-void VoxelMap::activate(const int shaderProgramID, const std::string glSamplerName, const int textureUnit) {
+void VoxelMap::use(const int shaderProgramID, const std::string glSamplerName, const int textureUnit) {
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(GL_TEXTURE_3D, textureID);
 	glUniform1i(glGetUniformLocation(shaderProgramID, glSamplerName.c_str()), textureUnit);

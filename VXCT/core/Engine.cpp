@@ -8,9 +8,6 @@
 
 float currentFrame = (float)glfwGetTime();
 
-const std::vector<GLubyte> texture3D(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
-const std::vector<GLubyte> texture3D_lod(4 * VOX_SIZE * VOX_SIZE * VOX_SIZE, 0); //4 because RGBA
-
 bool objs = true;					//Draw Objects
 bool voxs = false;					//Draw Voxels  (Very costly! SfMode recommended)
 bool voxelizeOnNextFrame = false;	//voxelize the Scene on the next Frame
@@ -112,7 +109,7 @@ void Engine::run() {
 	visCone->addVec4Reference("emitColor", &glm::vec4(0.0f, 0.0f, 1.0f, 0.5f));
 
 	//Create voxel map
-	voxelMap = new VoxelMap(texture3D, texture3D_lod);
+	voxelMap = new VoxelMap();
 
 	frametimecounter->start();
 	revox_timer->start();
@@ -273,13 +270,13 @@ void Engine::Voxelize(Scene* scene) {
 	//voxelMap = new VoxelMap(texture3D, temporary_stuff);
 	//voxelMap_lod1 = new VoxelMap(texture3D_lod1, temporary_stuff);
 	
-	checkErrors("VoxelizeInit");
-	
 	//>>voxelize
 	
-	//if clearVoxelization: voxelMap->clear();
+	voxelMap->clear();
 	voxelization_shader->use();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	checkErrors("VoxelizeInit");
 
 	//Settings
 	glViewport(0, 0, VOX_SIZE, VOX_SIZE);
@@ -289,7 +286,7 @@ void Engine::Voxelize(Scene* scene) {
 	glDisable(GL_BLEND);
 	
 	//Texture/Map
-	voxelMap->activate(voxelization_shader->ID, "tex3D", 0);
+	voxelMap->use(voxelization_shader->ID, "tex3D", 0);
 	glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
 	
 	checkErrors("VoxelizePreDraw");
