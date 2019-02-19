@@ -142,20 +142,20 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\emit.fs" />
-    <None Include="shaders\emit.vs" />
-    <None Include="shaders\vox.fs" />
-    <None Include="shaders\vox.gs" />
-    <None Include="shaders\vox.vs" />
-    <None Include="shaders\color.fs" />
-    <None Include="shaders\color.vs" />
-    <None Include="shaders\voxillumin.vs" />
-    <None Include="shaders\voxillumin.fs" />
-    <None Include="shaders\lodTexture.vs" />
-    <None Include="shaders\lodTexture.fs" />
-    <None Include="shaders\lineshader.vs" />
-    <None Include="shaders\lineshader.fs" />
-    <None Include="shaders\emit_rgba.vs" />
-    <None Include="shaders\emit_rgba.fs" />
+    <None Include="shaders\Emit\emit.vs" />
+    <None Include="shaders\Emit\emit.fs" />
+    <None Include="shaders\Emit\emit_rgba.fs" />
+    <None Include="shaders\Emit\emit_rgba.vs" />
+    <None Include="shaders\Misc\lineshader.fs" />
+    <None Include="shaders\Misc\lineshader.vs" />
+    <None Include="shaders\Phong\color.fs" />
+    <None Include="shaders\Phong\color.vs" />
+    <None Include="shaders\Vxct\voxillumin.fs" />
+    <None Include="shaders\Vxct\voxillumin.vs" />
+    <None Include="shaders\Misc\lodTexture.fs" />
+    <None Include="shaders\Misc\lodTexture.vs" />
+    <None Include="shaders\Vxct\voxelize.fs" />
+    <None Include="shaders\Vxct\voxelize.gs" />
+    <None Include="shaders\Vxct\voxelize.vs" />
   </ItemGroup>
 </Project>

@@ -33,27 +33,27 @@
 #define SCENE_TXT "../VXCT/scenes/scene.txt"
 #define SCENE_DIR "../VXCT/scenes/"
 
-#define COLORSHADER_VS "../VXCT/shaders/color.vs"
-#define COLORSHADER_FS "../VXCT/shaders/color.fs"
+#define COLORSHADER_VS "../VXCT/shaders/Phong/color.vs"
+#define COLORSHADER_FS "../VXCT/shaders/Phong/color.fs"
 
-#define EMITSHADER_VS "../VXCT/shaders/emit.vs"
-#define EMITSHADER_FS "../VXCT/shaders/emit.fs"
+#define EMITSHADER_VS "../VXCT/shaders/Emit/emit.vs"
+#define EMITSHADER_FS "../VXCT/shaders/Emit/emit.fs"
 
-#define EMITRGBASHADER_VS "../VXCT/shaders/emit_rgba.vs"
-#define EMITRGBASHADER_FS "../VXCT/shaders/emit_rgba.fs"
+#define EMITRGBASHADER_VS "../VXCT/shaders/Emit/emit_rgba.vs"
+#define EMITRGBASHADER_FS "../VXCT/shaders/Emit/emit_rgba.fs"
 
-#define VOXSHADER_VS "../VXCT/shaders/vox.vs"
-#define VOXSHADER_GS "../VXCT/shaders/vox.gs"
-#define VOXSHADER_FS "../VXCT/shaders/vox.fs"
+#define VOXSHADER_VS "../VXCT/shaders/Vxct/voxelize.vs"
+#define VOXSHADER_GS "../VXCT/shaders/Vxct/voxelize.gs"
+#define VOXSHADER_FS "../VXCT/shaders/Vxct/voxelize.fs"
 
-#define VOXILLUMINSHADER_VS "../VXCT/shaders/voxillumin.vs"
-#define VOXILLUMINSHADER_FS "../VXCT/shaders/voxillumin.fs"
+#define VOXILLUMINSHADER_VS "../VXCT/shaders/Vxct/voxillumin.vs"
+#define VOXILLUMINSHADER_FS "../VXCT/shaders/Vxct/voxillumin.fs"
 
-#define LODTEXTURESHADER_VS "../VXCT/shaders/lodTexture.vs"
-#define LODTEXTURESHADER_FS "../VXCT/shaders/lodTexture.fs"
+#define LODTEXTURESHADER_VS "../VXCT/shaders/Misc/lodTexture.vs"
+#define LODTEXTURESHADER_FS "../VXCT/shaders/Misc/lodTexture.fs"
 
-#define LINESHADER_VS "../VXCT/shaders/lineshader.vs"
-#define LINESHADER_FS "../VXCT/shaders/lineshader.fs"
+#define LINESHADER_VS "../VXCT/shaders/Misc/lineshader.vs"
+#define LINESHADER_FS "../VXCT/shaders/Misc/lineshader.fs"
 
 #define OBJ_SPHERE "models/voxel_test.obj"
 #define OBJ_SCENE "models/voxel_scene.obj"
