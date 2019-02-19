@@ -72,6 +72,7 @@ public:
 	void lookAt(glm::vec3 target);
 	void setPosition(float x, float y, float z);
 	void setPosition(glm::vec3 pos);
+	void rotate(glm::vec3 euler_angles);
 	void resetPSR(); //Reset position scale and rotation
 	glm::vec3 getPosition();
 	std::vector<float> vertexData; //Includes vertices and Normals

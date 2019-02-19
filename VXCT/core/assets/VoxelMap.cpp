@@ -6,15 +6,14 @@ VoxelMap::VoxelMap() : IOobject("Unnamed VoxelMap")
 {
 	saved_lod_level = 0;
 	int voxelTextureSize = VOX_SIZE;
-	//const std::vector<GLfloat> texture3D(4 * voxelTextureSize * voxelTextureSize * voxelTextureSize, 0.0f); //4 because RGBA
 
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_3D, textureID);
 	
 	//Set wrapping options
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	
 	//LOD and Texture settings
 	//smooth version:
@@ -24,7 +23,6 @@ VoxelMap::VoxelMap() : IOobject("Unnamed VoxelMap")
 	//glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST); //Mipmaps
 	//glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //Texture
 	
-	//TODO: What does this do and is it necessary?
 	//Specify Storage for all levels of 3d texture
 	const GLint levels = 7;
 	const GLint width = voxelTextureSize;

@@ -44,6 +44,10 @@ struct VoxSettings {
 	bool vox_diffuse;
 	bool vox_shadows;
 	bool vox_specular;
+
+	bool front_cone;
+	bool side_cones;
+	bool intermediate_cones;
 };
 
 const float PI = 3.14159;
@@ -119,31 +123,42 @@ void main()
 // more aliasing and bad blur.
 vec3 indirectDiffuse(){
 	const vec3 origin = pos_fs + nrm * 0.05;
-	//const vec3 origin = pos_fs;
 
 	vec3 y = nrm; //Front axis
 	vec3 x = perp(y); //1st side axis
 	vec3 z = perp(y, x); //2nd side axis
 
-	//front cone
-	vec3 ret = voxelTraceCone(origin, y);
+	vec3 ret = vec3(0.0f);
+	float cone_count = 0;
 
-	//Side cones left out due to self-collisions
-	//ret += voxelTraceCone(origin, x);
-	//ret += voxelTraceCone(origin, -x);
-	//ret += voxelTraceCone(origin, z);
-	//ret += voxelTraceCone(origin, -z);
+	//front cone
+	if(settings.front_cone) {
+		ret += voxelTraceCone(origin, y);
+		cone_count += 1;
+	}
+
+	//Side cones
+	if(settings.side_cones) {
+		ret += voxelTraceCone(origin, x);
+		ret += voxelTraceCone(origin, -x);
+		ret += voxelTraceCone(origin, z);
+		ret += voxelTraceCone(origin, -z);
+		cone_count += 4;
+	}
 
 	//Intermediate cones:
-	float deg_mix = 0.5f;
-	ret += voxelTraceCone(origin, mix(y, x, deg_mix));
-	ret += voxelTraceCone(origin, mix(y, -x, deg_mix));
-	ret += voxelTraceCone(origin, mix(y, z, deg_mix));
-	ret += voxelTraceCone(origin, mix(y, -z, deg_mix));
+	if(settings.intermediate_cones) {
+		float deg_mix = 0.5f;
+		ret += voxelTraceCone(origin, mix(y, x, deg_mix));
+		ret += voxelTraceCone(origin, mix(y, -x, deg_mix));
+		ret += voxelTraceCone(origin, mix(y, z, deg_mix));
+		ret += voxelTraceCone(origin, mix(y, -z, deg_mix));
+		cone_count += 4;
+	}
 
 	
 
-	return ret;
+	return ret * (5.0f / cone_count); //All testing was done with 5 cones, so default factor is 5
 } 
 
 float voxelTraceOcclusionCone(const vec3 origin, vec3 dir, float max_dist=1.0f) {
@@ -162,7 +177,7 @@ float voxelTraceOcclusionCone(const vec3 origin, vec3 dir, float max_dist=1.0f) 
 		//Get mipmap level which should be sampled according to the cone diameter
 		//log2(vox_size) returns the maximum mipmap level
 		float vlevel = log2(current_coneDiameter * vox_size);
-		vlevel = min( 3.0f, vlevel ); //vlevel hardcap at 3
+		vlevel = min( 6.0f, vlevel ); //vlevel hardcap at 3
 
 		vec3 pos_worldspace = origin + dir * current_dist;
 		vec3 pos_texturespace = (pos_worldspace + vec3(1.0f)) * 0.5f; //[-1,1] Coordinates to [0,1]
@@ -198,7 +213,7 @@ vec3 voxelTraceSpecularCone(const vec3 origin, vec3 dir) {
 		//Get mipmap level which should be sampled according to the cone diameter
 		//log2(vox_size) returns the maximum mipmap level
 		float vlevel = log2(current_coneDiameter * vox_size);
-		vlevel = min( 3.0f, vlevel ); //vlevel hardcap at 3
+		vlevel = min( 6.0f, vlevel ); //vlevel hardcap at 3
 
 		vec3 pos_worldspace = origin + dir * current_dist;
 		vec3 pos_texturespace = (pos_worldspace + vec3(1.0f)) * 0.5f; //[-1,1] Coordinates to [0,1]
@@ -244,7 +259,7 @@ vec3 voxelTraceCone(const vec3 origin, vec3 dir) {
 		//Get mipmap level which should be sampled according to the cone diameter
 		//log2(vox_size) returns the maximum mipmap level
 		float vlevel = log2(current_coneDiameter * vox_size);
-		vlevel = min( 3.0f, vlevel ); //vlevel hardcap at 3
+		vlevel = min( 6.0f, vlevel ); //vlevel hardcap at 3
 
 		vec3 pos_worldspace = origin + dir * current_dist;
 		vec3 pos_texturespace = (pos_worldspace + vec3(1.0f)) * 0.5f; //[-1,1] Coordinates to [0,1]

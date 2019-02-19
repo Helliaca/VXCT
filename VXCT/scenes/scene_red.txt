@@ -2,20 +2,44 @@ scene = {
 	name = mainScene
 	
 	model = {
-		name = Lucy
+		name = Sphere1
 		active = true
-		path = models/stan_lucy_smooth.obj
-		position = { x = 0.0f y = -0.5f z = 0.0f }
+		path = models/voxel_scene_sphere1.obj
+		position = { x = 0.0f y = 0.0f z = 0.0f }
 		scale = 1.0f
 		shader = COLOR
 		material = {
-			shininess = 32.0f
+			shininess = 62.0f
+			specular_str = 1.0f
+		}
+	}
+	model = {
+		name = Sphere2
+		active = true
+		path = models/voxel_scene_sphere2.obj
+		position = { x = 0.0f y = 0.0f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			shininess = 62.0f
+			specular_str = 1.0f
+		}
+	}
+	model = {
+		name = Cube1
+		active = true
+		path = models/voxel_scene_cube1.obj
+		position = { x = 0.0f y = 0.0f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			shininess = 62.0f
 			specular_str = 1.0f
 		}
 	}
 	model = {
 		name = TopWall
-		active = true
+		active = false
 		path = models/voxel_scene_wall1.obj
 		position = { x = 0.0f y = 0.0f z = 0.0f }
 		scale = 1.0f
@@ -23,6 +47,7 @@ scene = {
 		material = {
 			shininess = 1.0f
 			specular_str = 0.01f
+			color = { r = 1.0, g = 0.4, b = 0.4 }
 		}
 	}
 	model = {
@@ -35,6 +60,7 @@ scene = {
 		material = {
 			shininess = 1.0f
 			specular_str = 0.01f
+			color = { r = 1.0, g = 0.4, b = 0.4 }
 		}
 	}
 	model = {
@@ -47,6 +73,7 @@ scene = {
 		material = {
 			shininess = 1.0f
 			specular_str = 0.01f
+			color = { r = 1.0, g = 0.4, b = 0.4 }
 		}
 	}
 	model = {
@@ -63,7 +90,7 @@ scene = {
 	}
 	model = {
 		name = RightWall
-		active = true
+		active = false
 		path = models/voxel_scene_wall5.obj
 		position = { x = 0.0f y = 0.0f z = 0.0f }
 		scale = 1.0f

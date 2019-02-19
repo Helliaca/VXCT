@@ -28,11 +28,24 @@ VoxSettings::VoxSettings()
 	vox_shadows = true;
 	vox_specular = true;
 
+	bool front_cone=true;
+	bool side_cones=false;
+	bool intermediate_cones=true;
+
 	//Different voxelmap sizes require different values.
 	if (VOX_SIZE == 128) {
 		diffuse_dist_factor = 0.01f;
 		specular_apperture = 0.02f;
 		specular_dist_factor = 0.3f;
+	}
+
+	//Different voxelmap sizes require different values.
+	if (VOX_SIZE == 256) {
+		occlusion_dist_factor = 0.1f;
+		shininess_falloff = 2.0f;
+		specular_offset = 0.05f;
+		specular_apperture = 0.01f;
+		specular_dist_factor = 0.15f;
 	}
 }
 
@@ -66,6 +79,10 @@ VoxSettings_struct VoxSettings::to_struct()
 	ret.vox_diffuse = vox_diffuse;
 	ret.vox_shadows = vox_shadows;
 	ret.vox_specular = vox_specular;
+
+	ret.front_cone = front_cone;
+	ret.side_cones = side_cones;
+	ret.intermediate_cones = intermediate_cones;
 
 	return ret;
 }

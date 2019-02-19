@@ -146,6 +146,12 @@ glm::vec3 Model::getPosition() {
 	return glm::vec3(model[3].x, model[3].y, model[3].z);
 }
 
+void Model::rotate(glm::vec3 euler_angles) {
+	model = glm::rotate(model, glm::radians(euler_angles.x), glm::vec3(1.0, 0.0, 0.0));
+	model = glm::rotate(model, glm::radians(euler_angles.y), glm::vec3(0.0, 1.0, 0.0));
+	model = glm::rotate(model, glm::radians(euler_angles.z), glm::vec3(0.0, 0.0, 1.0));
+}
+
 //Note that this will change scale of object
 //Note: assumes that y is forward.
 void Model::lookAt(glm::vec3 target) {

@@ -225,6 +225,8 @@ void Engine::run() {
 		glfwSwapBuffers(window->getGLFWwindow());
 		glfwPollEvents();
 
+		//glFinish(); //use this to measure frame-times
+
 		frametimecounter->nextFrame();
 
 		checkErrors("Engine Loop");
@@ -280,9 +282,9 @@ void Engine::Voxelize(Scene* scene) {
 
 	//Settings
 	glViewport(0, 0, VOX_SIZE, VOX_SIZE);
-	//glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDisable(GL_CULL_FACE);
-	//glDisable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	
 	//Texture/Map
@@ -298,6 +300,9 @@ void Engine::Voxelize(Scene* scene) {
 	voxelMap->updateMemory(!dynamic_scene);
 
 	//Revert Settings
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 	if(VXCT_CULLING) glEnable(GL_CULL_FACE);
 	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
 }
@@ -371,6 +376,10 @@ void Engine::console() {
 			else if (input[0] == "phong_ambient") G::VoxLightSettings->phong_ambient = !G::VoxLightSettings->phong_ambient;
 			else if (input[0] == "phong_diffuse") G::VoxLightSettings->phong_diffuse = !G::VoxLightSettings->phong_diffuse;
 			else if (input[0] == "phong_specular") G::VoxLightSettings->phong_specular = !G::VoxLightSettings->phong_specular;
+
+			else if (input[0] == "front_cone") G::VoxLightSettings->front_cone = !G::VoxLightSettings->front_cone;
+			else if (input[0] == "side_cones") G::VoxLightSettings->side_cones = !G::VoxLightSettings->side_cones;
+			else if (input[0] == "intermediate_cones") G::VoxLightSettings->intermediate_cones = !G::VoxLightSettings->intermediate_cones;
 
 			else if (input[0] == "vox_diffuse" || input[0] == "vdiff") G::VoxLightSettings->vox_diffuse = !G::VoxLightSettings->vox_diffuse;
 			else if (input[0] == "vox_specular" || input[0] == "vspec") G::VoxLightSettings->vox_specular = !G::VoxLightSettings->vox_specular;

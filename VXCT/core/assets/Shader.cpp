@@ -222,6 +222,10 @@ void Shader::setVsettings(const std::string &name, VoxSettings &vsettings_obj) c
 	this->setBool(name + ".vox_diffuse", vs.vox_diffuse);
 	this->setBool(name + ".vox_shadows", vs.vox_shadows);
 	this->setBool(name + ".vox_specular", vs.vox_specular);
+
+	this->setBool(name + ".front_cone", vs.front_cone);
+	this->setBool(name + ".side_cones", vs.side_cones);
+	this->setBool(name + ".intermediate_cones", vs.intermediate_cones);
 }
 
 

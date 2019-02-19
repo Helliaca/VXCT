@@ -9,6 +9,7 @@ std::map<std::string, sp_nodetype> TT_ids{
 	{ "scene", sp_nodetype::SCENE },
 	{ "model", sp_nodetype::MODEL },
 	{ "position", sp_nodetype::POSITION },
+	{ "rotation", sp_nodetype::ROTATION },
 	{ "x", sp_nodetype::X },
 	{ "y", sp_nodetype::Y },
 	{ "z", sp_nodetype::Z },
@@ -19,6 +20,8 @@ std::map<std::string, sp_nodetype> TT_ids{
 	{ "material", sp_nodetype::MATERIAL },
 	{ "shininess", sp_nodetype::SHININESS },
 	{ "specular_str", sp_nodetype::SPECULAR_STR },
+	{ "diffuse_str", sp_nodetype::DIFFUSE_STR },
+	{ "ambient_str", sp_nodetype::AMBIENT_STR },
 	{ "shader", sp_nodetype::SHADER },
 	{ "color", sp_nodetype::COLOR },
 	{ "r", sp_nodetype::R },
@@ -37,6 +40,7 @@ std::map<sp_nodetype, sp_datatype> Datatypes_ids{
 	{ sp_nodetype::MODEL, sp_datatype::NODE },
 	{ sp_nodetype::SCENE, sp_datatype::NODE },
 	{ sp_nodetype::POSITION, sp_datatype::NODE },
+	{ sp_nodetype::ROTATION, sp_datatype::NODE },
 	{ sp_nodetype::X, sp_datatype::FLOAT },
 	{ sp_nodetype::Y, sp_datatype::FLOAT },
 	{ sp_nodetype::Z, sp_datatype::FLOAT },
@@ -47,6 +51,8 @@ std::map<sp_nodetype, sp_datatype> Datatypes_ids{
 	{ sp_nodetype::MATERIAL, sp_datatype::NODE },
 	{ sp_nodetype::SHININESS, sp_datatype::FLOAT },
 	{ sp_nodetype::SPECULAR_STR, sp_datatype::FLOAT },
+	{ sp_nodetype::DIFFUSE_STR, sp_datatype::FLOAT },
+	{ sp_nodetype::AMBIENT_STR, sp_datatype::FLOAT },
 	{ sp_nodetype::SHADER, sp_datatype::STRING },
 	{ sp_nodetype::COLOR, sp_datatype::NODE },
 	{ sp_nodetype::R, sp_datatype::FLOAT },
@@ -301,6 +307,16 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 			offset.y = getChildOfType(pos_node, sp_nodetype::Y)->GetData_f();
 			offset.z = getChildOfType(pos_node, sp_nodetype::Z)->GetData_f();
 			new_model->setPosition(offset);
+		}
+
+		//Position
+		if (hasChildNodeOfType(node, sp_nodetype::ROTATION)) {
+			sp_node* pos_node = getChildOfType(node, sp_nodetype::ROTATION);
+			glm::vec3 rot;
+			rot.x = getChildOfType(pos_node, sp_nodetype::X)->GetData_f();
+			rot.y = getChildOfType(pos_node, sp_nodetype::Y)->GetData_f();
+			rot.z = getChildOfType(pos_node, sp_nodetype::Z)->GetData_f();
+			new_model->rotate(rot);
 		}
 
 		//Scale

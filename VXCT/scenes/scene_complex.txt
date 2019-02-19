@@ -1,0 +1,196 @@
+scene = {
+	name = mainScene
+	
+	model = {
+		name = Lucy
+		active = true
+		path = models/stan_lucy_smooth.obj
+		position = { x = 0.0f y = -0.5f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			shininess = 32.0f
+			specular_str = 1.0f
+		}
+	}
+	model = {
+		name = Dragon
+		active = true
+		path = models/stan_dragon.obj
+		position = { x = -0.28f y = -0.6f z = 0.3f }
+		rotation = { x = 0.0f y = 30.0f z = 0.0f }
+		scale = 0.5f
+		shader = COLOR
+		material = {
+			shininess = 64.0f
+			specular_str = 0.1f
+			diffuse_str = 2.0f
+			color = { r = 1.0f g = 0.7f b = 0.37f }
+		}
+	}
+	model = {
+		name = Bunny
+		active = true
+		path = models/stan_bunny.obj
+		position = { x = 0.31f y = -0.6f z = 0.15f }
+		rotation = { x = 0.0f y = -15.0f z = 0.0f }
+		scale = 0.5f
+		shader = COLOR
+		material = {
+			shininess = 64.0f
+			specular_str = 1.0f
+			diffuse_str = 2.0f
+			color = { r = 1.0f g = 0.7f b = 0.37f }
+		}
+	}
+	model = {
+		name = TopWall
+		active = true
+		path = models/voxel_scene_wall1.obj
+		position = { x = 0.0f y = 0.0f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			shininess = 1.0f
+			specular_str = 0.01f
+		}
+	}
+	model = {
+		name = BackWall
+		active = true
+		path = models/voxel_scene_wall2.obj
+		position = { x = 0.0f y = 0.0f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			shininess = 1.0f
+			specular_str = 0.01f
+		}
+	}
+	model = {
+		name = BottomWall
+		active = true
+		path = models/voxel_scene_wall3.obj
+		position = { x = 0.0f y = 0.0f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			shininess = 1.0f
+			specular_str = 0.01f
+		}
+	}
+	model = {
+		name = FrontWall
+		active = true
+		path = models/voxel_scene_wall4.obj
+		position = { x = 0.0f y = 0.0f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			shininess = 1.0f
+			specular_str = 0.01f
+		}
+	}
+	model = {
+		name = RightWall
+		active = true
+		path = models/voxel_scene_wall5.obj
+		position = { x = 0.0f y = 0.0f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			color = { r = 0.4f, g = 1.0f, b = 0.4f }
+			shininess = 1.0f
+			specular_str = 0.01f
+		}
+	}
+	model = {
+		name = LeftWall
+		active = true
+		path = models/voxel_scene_wall6.obj
+		position = { x = 0.0f y = 0.0f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			color = { r = 1.0, g = 0.4, b = 0.4 }
+			shininess = 1.0f
+			specular_str = 0.01f
+		}
+	}
+	model = {
+		name = Sphere1
+		active = true
+		path = models/voxel_scene_sphere1.obj
+		position = { x = -0.5f y = 0.0f z = 0.0f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			shininess = 256.0f
+			specular_str = 1.3f
+			color = { r = 0.8f g = 0.8f b = 0.8f }
+		}
+	}
+	model = {
+		name = Sphere2
+		active = true
+		path = models/voxel_scene_sphere2.obj
+		position = { x = 0.4f y = 0.18f z = -0.3f }
+		scale = 1.0f
+		shader = COLOR
+		material = {
+			shininess = 2.0f
+			specular_str = 1.0f
+		}
+	}
+	model = {
+		name = Cube
+		active = true
+		primitive = cube
+		rotation = { x = 45.0f y = 45.0f z = 0.0f }
+		position = { x = 0.3f y = 0.3f z = -0.2f }
+		scale = 0.15f
+		static = true
+		shader = EMIT
+		material = {
+			color = { r = 0.3f g = 0.8f b = 1.0f }
+		}
+	}
+	light = {
+		position = { x = 0.3f y = 0.3f z = -0.2f }
+		color = { r = 0.3f g = 0.8f b = 1.0f }
+	}
+	model = {
+		name = Cube2
+		active = true
+		primitive = cube
+		rotation = { x = 55.0f y = 37.0f z = 0.0f }
+		position = { x = 0.0f y = -0.35f z = 0.4f }
+		scale = 0.1f
+		static = true
+		shader = EMIT
+		material = {
+			color = { r = 1.0f g = 0.83f b = 0.3f }
+		}
+	}
+	light = {
+		position = { x = 0.0f y = -0.4f z = 0.4f }
+		color = { r = 1.0f g = 0.83f b = 0.3f }
+	}
+	model = {
+		name = Cube3
+		active = true
+		primitive = cube
+		rotation = { x = 67.0f y = 53.0f z = 0.0f }
+		position = { x = -0.4f y = 0.4f z = 0.3f }
+		scale = 0.05f
+		static = true
+		shader = EMIT
+		material = {
+			color = { r = 1.0f g = 0.48f b = 0.32f }
+		}
+	}
+	light = {
+		position = { x = -0.4f y = 0.4f z = 0.3f }
+		color = { r = 0.7f g = 0.18f b = 0.02f }
+	}
+}

@@ -25,6 +25,10 @@ struct VoxSettings_struct {
 	bool vox_diffuse;
 	bool vox_shadows;
 	bool vox_specular;
+
+	bool front_cone;
+	bool side_cones;
+	bool intermediate_cones;
 };
 
 class VoxSettings
@@ -54,6 +58,10 @@ public:
 	bool vox_diffuse;
 	bool vox_shadows;
 	bool vox_specular;
+
+	bool front_cone;
+	bool side_cones;
+	bool intermediate_cones;
 
 	VoxSettings_struct to_struct();
 };

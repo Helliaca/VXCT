@@ -15,10 +15,10 @@
 #define WIN_HEIGHT 600
 #define WIN_NAME "VXCT"
 
-#define VOX_SIZE 64
+#define VOX_SIZE 256
 
 //Amount of frames to save in FrameTimeCounter
-#define FRAMETIMES_SAVE 1000
+#define FRAMETIMES_SAVE 100
 
 //World Coordinate Bounds (Changing Values might not work)
 #define MIN_X -1.0f
