@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shader.h"
+#include "../Graphics/Shader.h"
 
 class LineRenderer : IOobject
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base.h"
+#include "../../base.h"
 
 struct PointLight_struct {
 	glm::vec3 position;

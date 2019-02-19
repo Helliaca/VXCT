@@ -33,46 +33,46 @@
     <ClCompile Include="core\assets\VoxelMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\assets\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\assets\LineRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\assets\Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\assets\RayCast.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\assets\Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\assets\Material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\assets\PointLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="core\assets\VoxSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\assets\FrameTimeCounter.cpp">
+    <ClCompile Include="core\assets\Utilities\FrameTimeCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\assets\Timer.cpp">
+    <ClCompile Include="core\assets\Utilities\RayCast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\assets\SceneParser.cpp">
+    <ClCompile Include="core\assets\Utilities\Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\assets\Lighting.cpp">
+    <ClCompile Include="core\assets\Utilities\LineRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\assets\Camera.cpp">
+    <ClCompile Include="core\assets\World\Lighting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\assets\Shader.cpp">
+    <ClCompile Include="core\assets\World\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\World\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\World\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\World\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\Graphics\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\Graphics\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\Graphics\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\assets\Utilities\SceneParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,9 +81,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\base.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\settings\defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
@@ -95,49 +92,52 @@
     <ClInclude Include="core\assets\VoxelMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\assets\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\assets\LineRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\assets\Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\assets\RayCast.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\assets\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\settings\VertexData.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\assets\Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\assets\PointLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="core\assets\VoxSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\assets\FrameTimeCounter.h">
+    <ClInclude Include="core\assets\Utilities\FrameTimeCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\assets\Timer.h">
+    <ClInclude Include="core\assets\Utilities\RayCast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\assets\SceneParser.h">
+    <ClInclude Include="core\assets\Utilities\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\assets\Lighting.h">
+    <ClInclude Include="core\assets\Utilities\LineRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\assets\Camera.h">
+    <ClInclude Include="core\constants\defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\assets\Shader.h">
+    <ClInclude Include="core\constants\VertexData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\World\Lighting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\World\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\World\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\World\PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\World\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\Graphics\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\Graphics\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\Graphics\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\assets\Utilities\SceneParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

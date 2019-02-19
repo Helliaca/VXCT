@@ -3,10 +3,10 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "assets\Camera.h"
-#include "assets\Material.h"
+#include "assets/Graphics/Camera.h"
+#include "assets/World/Material.h"
 #include "assets\VoxSettings.h"
-#include "assets\Lighting.h"
+#include "assets/World/Lighting.h"
 
 namespace G {
 	extern float deltaTime;

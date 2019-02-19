@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "../globals.h"
+#include "../../globals.h"
 
 class Shader : IOobject
 {

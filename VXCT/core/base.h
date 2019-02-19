@@ -14,8 +14,8 @@
 #include <string>
 #include <map>
 
-#include "settings\defs.h"
-#include "settings\VertexData.h"
+#include "constants\defs.h"
+#include "constants\VertexData.h"
 
 class IOobject;
 

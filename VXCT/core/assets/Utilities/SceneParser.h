@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Scene.h"
+#include "../World/Scene.h"
 
 enum class sp_nodetype { SCENE, MODEL, POSITION, ROTATION, X, Y, Z, NAME, SCALE, ACTIVE, PATH, MATERIAL, SHININESS, SPECULAR_STR, AMBIENT_STR, DIFFUSE_STR, SHADER, COLOR, R, G, B, SCALE_X, SCALE_Y, SCALE_Z, PRIMITIVE, STATIC, LIGHT, ERR };
 enum class sp_datatype { NODE, FLOAT, STRING, BOOL, NONE };

@@ -3,7 +3,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include "../globals.h"
+#include "../../globals.h"
 
 enum PolygonMode { W_VERTICES, W_WIREFRAME, W_FILL };
 

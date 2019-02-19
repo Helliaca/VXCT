@@ -128,48 +128,48 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\glad\src\glad.c" />
-    <ClCompile Include="core\assets\Camera.cpp" />
-    <ClCompile Include="core\assets\Shader.cpp" />
+    <ClCompile Include="core\assets\Graphics\Camera.cpp" />
+    <ClCompile Include="core\assets\Graphics\Shader.cpp" />
     <ClCompile Include="core\Engine.cpp" />
     <ClCompile Include="core\globals.cpp" />
-    <ClCompile Include="core\assets\Window.cpp" />
-    <ClCompile Include="core\assets\LineRenderer.cpp" />
-    <ClCompile Include="core\assets\FrameTimeCounter.cpp" />
-    <ClCompile Include="core\assets\Lighting.cpp" />
+    <ClCompile Include="core\assets\Graphics\Window.cpp" />
+    <ClCompile Include="core\assets\Utilities\LineRenderer.cpp" />
+    <ClCompile Include="core\assets\Utilities\FrameTimeCounter.cpp" />
+    <ClCompile Include="core\assets\World\Lighting.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="core\assets\Model.cpp" />
-    <ClCompile Include="core\assets\RayCast.cpp" />
-    <ClCompile Include="core\assets\Scene.cpp" />
-    <ClCompile Include="core\assets\Material.cpp" />
-    <ClCompile Include="core\assets\PointLight.cpp" />
-    <ClCompile Include="core\assets\SceneParser.cpp" />
+    <ClCompile Include="core\assets\World\Model.cpp" />
+    <ClCompile Include="core\assets\Utilities\RayCast.cpp" />
+    <ClCompile Include="core\assets\World\Scene.cpp" />
+    <ClCompile Include="core\assets\World\Material.cpp" />
+    <ClCompile Include="core\assets\World\PointLight.cpp" />
+    <ClCompile Include="core\assets\Utilities\SceneParser.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="core\assets\VoxelMap.cpp" />
     <ClCompile Include="core\assets\VoxSettings.cpp" />
-    <ClCompile Include="core\assets\Timer.cpp" />
+    <ClCompile Include="core\assets\Utilities\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="core\assets\Camera.h" />
+    <ClInclude Include="core\assets\Graphics\Camera.h" />
     <ClInclude Include="core\base.h" />
     <ClInclude Include="core\Engine.h" />
     <ClInclude Include="core\globals.h" />
-    <ClInclude Include="core\settings\defs.h" />
-    <ClInclude Include="core\assets\Shader.h" />
-    <ClInclude Include="core\assets\Window.h" />
-    <ClInclude Include="core\assets\Material.h" />
-    <ClInclude Include="core\assets\PointLight.h" />
-    <ClInclude Include="core\assets\LineRenderer.h" />
-    <ClInclude Include="core\assets\Model.h" />
-    <ClInclude Include="core\assets\RayCast.h" />
-    <ClInclude Include="core\assets\Scene.h" />
-    <ClInclude Include="core\assets\FrameTimeCounter.h" />
-    <ClInclude Include="core\assets\SceneParser.h" />
-    <ClInclude Include="core\assets\Lighting.h" />
+    <ClInclude Include="core\constants\defs.h" />
+    <ClInclude Include="core\assets\Graphics\Shader.h" />
+    <ClInclude Include="core\assets\Graphics\Window.h" />
+    <ClInclude Include="core\assets\World\Material.h" />
+    <ClInclude Include="core\assets\World\PointLight.h" />
+    <ClInclude Include="core\assets\Utilities\LineRenderer.h" />
+    <ClInclude Include="core\assets\World\Model.h" />
+    <ClInclude Include="core\assets\Utilities\RayCast.h" />
+    <ClInclude Include="core\assets\World\Scene.h" />
+    <ClInclude Include="core\assets\Utilities\FrameTimeCounter.h" />
+    <ClInclude Include="core\assets\Utilities\SceneParser.h" />
+    <ClInclude Include="core\assets\World\Lighting.h" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="core\settings\VertexData.h" />
+    <ClInclude Include="core\constants\VertexData.h" />
     <ClInclude Include="core\assets\VoxelMap.h" />
     <ClInclude Include="core\assets\VoxSettings.h" />
-    <ClInclude Include="core\assets\Timer.h" />
+    <ClInclude Include="core\assets\Utilities\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\color.fs" />

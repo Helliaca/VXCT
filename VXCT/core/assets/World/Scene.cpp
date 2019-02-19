@@ -1,6 +1,6 @@
 #include "Scene.h"
 
-#include "RayCast.h"
+#include "../Utilities/RayCast.h"
 
 Scene::Scene() : IOobject("unnamedScene")
 {

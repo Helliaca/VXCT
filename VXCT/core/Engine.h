@@ -3,11 +3,11 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "assets/Window.h"
+#include "assets/Graphics/Window.h"
 #include "assets/VoxelMap.h"
-#include "assets/LineRenderer.h"
-#include "assets/FrameTimeCounter.h"
-#include "assets/SceneParser.h"
+#include "assets/Utilities/LineRenderer.h"
+#include "assets/Utilities/FrameTimeCounter.h"
+#include "assets/Utilities/SceneParser.h"
 #include <mutex>
 #include <thread>
 
