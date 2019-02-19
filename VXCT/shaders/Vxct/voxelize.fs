@@ -35,7 +35,6 @@ void main() {
 	for(int i=0; i<MAX_LIGHTS && i<lighting_size; i++) {
 		PointLight light = lighting[i];
 
-		//>>Diffuse Lighting Calculation
 		// ambient
 		vec3 ambient = material.ambient_str * light.color;
   	
@@ -45,16 +44,14 @@ void main() {
 		float diff = max(dot(norm, lightDir), 0.0);
 		vec3 diffuse = material.diffuse_str * diff * light.color;
 
-		//specular should not be required here.
+		//No glossy component required for voxelization
         
 		result += (ambient + diffuse) * material.color;
 	}
 
-	//>>Voxelization specific
-	ivec3 voxSize = imageSize(tex3D);  //get Voxelization Size
-	vec3 pos_fs_normalized = 0.5f * (pos_fs + vec3(1.0f)); //Since we are in the fragment shader, we will get coordinates in Clip Space, meaning ranging from -1 to 1. In order to store them at the right place we convert them to coordinates ranging from 0 to 1.
-	ivec3 location = ivec3(pos_fs_normalized * voxSize); //Location on 3d Texture to store data
-	imageStore(tex3D, location, vec4(result, 1.0f));
-
-
+	// >> Store value into voxelMap:
+	ivec3 voxSize = imageSize(tex3D);						// Get voxelmap size
+	vec3 pos_fs_normalized = 0.5f * (pos_fs + vec3(1.0f));	// Since we are in the fragment shader, we will get coordinates in Clip Space, meaning ranging from -1 to 1. In order to store them at the right place we convert them to coordinates ranging from 0 to 1.
+	ivec3 location = ivec3(pos_fs_normalized * voxSize);	// Extrapolate location on 3d Texture to store data
+	imageStore(tex3D, location, vec4(result, 1.0f));		// Store phong value at given location
 }

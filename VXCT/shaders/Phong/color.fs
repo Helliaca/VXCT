@@ -23,7 +23,6 @@ struct Material {
 	float shininess;
 };
   
-//uniform PointLight light;
 #define MAX_LIGHTS 10
 uniform PointLight[MAX_LIGHTS] lighting;
 uniform int lighting_size;
@@ -38,15 +37,16 @@ void main()
 
 	for(int i=0; i<MAX_LIGHTS && i<lighting_size; i++) {
 		PointLight light = lighting[i];
-		// ambient
+
+		// Ambient
 		vec3 ambient = material.ambient_str * light.color;
   	
-		// diffuse 
+		// Diffuse
 		vec3 lightDir = normalize(light.position - pos_fs);
 		float diff = max(dot(nrm, lightDir), 0.0);
 		vec3 diffuse = material.diffuse_str * diff * light.color;
     
-		// specular
+		// Glossy
 		vec3 viewDir = normalize(viewPos - pos_fs);
 		vec3 reflectDir = reflect(-lightDir, nrm);  
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);

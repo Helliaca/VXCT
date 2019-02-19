@@ -51,6 +51,7 @@ struct VoxSettings {
 };
 
 const float PI = 3.14159;
+const float MIPMAP_HARDCAP = 6.0;
 
 #define MAX_LIGHTS 10
 uniform PointLight[MAX_LIGHTS] lighting;
@@ -66,13 +67,11 @@ float vox_size = textureSize(tex3D, 0).x; //Assuming that all dimensions of voxe
 
 vec3 indirectDiffuse();
 vec3 directLight();
+vec4 vol_sample(float diameter, vec3 location);
 
-vec3 voxelTraceCone(const vec3 from, vec3 direction);
-vec3 voxelTraceSpecularCone(const vec3 from, vec3 direction);
-float voxelTraceOcclusionCone(const vec3 from, vec3 direction, float max_dist);
-
-// Scales and bias a given vector (i.e. from [-1, 1] to [0, 1]).
-vec3 scaleAndBias(const vec3 p) { return 0.5f * p + vec3(0.5f); }
+vec3 DiffuseCone(const vec3 from, vec3 direction);
+vec3 SpecularCone(const vec3 from, vec3 direction);
+float OcclusionCone(const vec3 from, vec3 direction, float max_dist);
 
 // Returns a vector that is perpendicular/orthogonal to u (and q).
 vec3 perp(vec3 v, vec3 q=vec3(0.0,0.0,1.0)){
@@ -87,7 +86,7 @@ void main()
 {
 	const vec3 viewDirection = normalize(pos_fs - viewPos);
 	vec4 result = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	float min_occ = 1.0f;
+	float min_occ = 1.0f; // Keep track of minimum occlusion for diffuse component
 
 	for(int i=0; i<MAX_LIGHTS && i<lighting_size; i++) {
 		light = lighting[i];
@@ -96,15 +95,15 @@ void main()
 		// Direct phong light
 		if(settings.phong) tmp_l.rgb += directLight();
 
-		// specular
+		// indirect specular
 		const vec3 reflectDir = normalize(reflect(viewDirection, nrm));
-		if(settings.vox_specular) tmp_l.rgb += voxelTraceSpecularCone(pos_fs, reflectDir);
+		if(settings.vox_specular) tmp_l.rgb += SpecularCone(pos_fs, reflectDir);
 
-		// shadows
-		float occ = voxelTraceOcclusionCone(pos_fs, light.position - pos_fs, length(light.position - pos_fs));
+		// occlusion
+		float occ = OcclusionCone(pos_fs, light.position - pos_fs, length(light.position - pos_fs));
 		if(occ<min_occ) min_occ = occ;
 
-		if(settings.vox_shadows && !settings.vox_diffuse && !settings.vox_specular && !settings.phong) tmp_l = vec4(1.0f); //for showing only shadows
+		if(settings.vox_shadows && !settings.vox_diffuse && !settings.vox_specular && !settings.phong) tmp_l = vec4(1.0f); // for showing only shadows
 		if(settings.vox_shadows) tmp_l.rgb *= 1.0f - occ;
 
 		result += tmp_l;
@@ -112,16 +111,12 @@ void main()
 
 	// Indirect diffuse light
 	if(settings.vox_diffuse) result.rgb += indirectDiffuse() * (1.0f - min_occ);
-	//Note: we are keeping the indirect light artifically lower with minimum occlusion because
-	//the voxelTraceCone function doesnt factor in occlusion.
 
 	FragColor = result;
 }
 
-// Calculates indirect diffuse light using voxel cone tracing.
-// The current implementation uses 9 cones. I think 5 cones should be enough, but it might generate
-// more aliasing and bad blur.
-vec3 indirectDiffuse(){
+// Returns total indirect diffuse component
+vec3 indirectDiffuse() {
 	const vec3 origin = pos_fs + nrm * 0.05;
 
 	vec3 y = nrm; //Front axis
@@ -133,56 +128,43 @@ vec3 indirectDiffuse(){
 
 	//front cone
 	if(settings.front_cone) {
-		ret += voxelTraceCone(origin, y);
+		ret += DiffuseCone(origin, y);
 		cone_count += 1;
 	}
 
 	//Side cones
 	if(settings.side_cones) {
-		ret += voxelTraceCone(origin, x);
-		ret += voxelTraceCone(origin, -x);
-		ret += voxelTraceCone(origin, z);
-		ret += voxelTraceCone(origin, -z);
+		ret += DiffuseCone(origin, x);
+		ret += DiffuseCone(origin, -x);
+		ret += DiffuseCone(origin, z);
+		ret += DiffuseCone(origin, -z);
 		cone_count += 4;
 	}
 
 	//Intermediate cones:
 	if(settings.intermediate_cones) {
 		float deg_mix = 0.5f;
-		ret += voxelTraceCone(origin, mix(y, x, deg_mix));
-		ret += voxelTraceCone(origin, mix(y, -x, deg_mix));
-		ret += voxelTraceCone(origin, mix(y, z, deg_mix));
-		ret += voxelTraceCone(origin, mix(y, -z, deg_mix));
+		ret += DiffuseCone(origin, mix(y, x, deg_mix));
+		ret += DiffuseCone(origin, mix(y, -x, deg_mix));
+		ret += DiffuseCone(origin, mix(y, z, deg_mix));
+		ret += DiffuseCone(origin, mix(y, -z, deg_mix));
 		cone_count += 4;
 	}
-
-	
 
 	return ret * (5.0f / cone_count); //All testing was done with 5 cones, so default factor is 5
 } 
 
-float voxelTraceOcclusionCone(const vec3 origin, vec3 dir, float max_dist=1.0f) {
+float OcclusionCone(const vec3 origin, vec3 dir, float max_dist=1.0f) {
 	dir = normalize(dir);
-
 	float current_dist = settings.occlusion_offset;
-
-	float apperture_angle = settings.occlusion_apperture; //Angle in Radians. Will affect softness of shadows
-
+	float apperture_angle = settings.occlusion_apperture;
 	float occlusion = 0.0f;
 
 	while(current_dist < max_dist && occlusion < 1) {
-		//Get cone diameter (tan = cathetus / cathetus)
 		float current_coneDiameter = 2.0f * current_dist * tan(apperture_angle * 0.5f);
-
-		//Get mipmap level which should be sampled according to the cone diameter
-		//log2(vox_size) returns the maximum mipmap level
-		float vlevel = log2(current_coneDiameter * vox_size);
-		vlevel = min( 6.0f, vlevel ); //vlevel hardcap at 3
-
 		vec3 pos_worldspace = origin + dir * current_dist;
-		vec3 pos_texturespace = (pos_worldspace + vec3(1.0f)) * 0.5f; //[-1,1] Coordinates to [0,1]
 
-		vec4 voxel = textureLod(tex3D, pos_texturespace, vlevel);
+		vec4 voxel = vol_sample(current_coneDiameter, pos_worldspace);
 
 		float shadow_str = settings.shadow_str;
 		float occlusion_read = voxel.a * smoothstep(0.0f, max_dist, sqrt(current_dist)*shadow_str); //Using sqrt as all distances are <1.0; Gives us sqrt-falloff by distance
@@ -191,39 +173,25 @@ float voxelTraceOcclusionCone(const vec3 origin, vec3 dir, float max_dist=1.0f) 
 
 		current_dist += current_coneDiameter * settings.occlusion_dist_factor;
 	}
-
 	return occlusion;
 }
 
-vec3 voxelTraceSpecularCone(const vec3 origin, vec3 dir) {
+vec3 SpecularCone(const vec3 origin, vec3 dir) {
 	float max_dist = 1.0f;
 	dir = normalize(dir);
-
 	float current_dist = settings.specular_offset;
-
-	float apperture_angle = settings.specular_apperture; //Angle in Radians. Will affect softness of specular reflections
-
+	float apperture_angle = settings.specular_apperture;
 	vec3 color = vec3(0.0f);
 	float occlusion = 0.0f;
 
 	while(current_dist < max_dist && occlusion < 1) {
-		//Get cone diameter (tan = cathetus / cathetus)
 		float current_coneDiameter = 2.0f * current_dist * tan(apperture_angle * 0.5f);
-
-		//Get mipmap level which should be sampled according to the cone diameter
-		//log2(vox_size) returns the maximum mipmap level
-		float vlevel = log2(current_coneDiameter * vox_size);
-		vlevel = min( 6.0f, vlevel ); //vlevel hardcap at 3
-
 		vec3 pos_worldspace = origin + dir * current_dist;
-		vec3 pos_texturespace = (pos_worldspace + vec3(1.0f)) * 0.5f; //[-1,1] Coordinates to [0,1]
 
-		vec4 voxel = textureLod(tex3D, pos_texturespace, vlevel);
+		vec4 voxel = vol_sample(current_coneDiameter, pos_worldspace);
 
 		vec3 color_read = voxel.rgb;
 		float occlusion_read = voxel.a;
-
-		//if(occlusion_read>0.01f) { color = color_read; return color; } //Cheap alternative: simply return first color we find
 
 		color = occlusion*color + (1 - occlusion) * occlusion_read * color_read;
 		occlusion = occlusion + (1 - occlusion) * occlusion_read;
@@ -241,45 +209,30 @@ vec3 voxelTraceSpecularCone(const vec3 origin, vec3 dir) {
 	return material.specular_str * color * angle_str;
 }
 
-vec3 voxelTraceCone(const vec3 origin, vec3 dir) {
+vec3 DiffuseCone(const vec3 origin, vec3 dir) {
 	float max_dist = 1.0f;
-	dir = normalize(dir); //just to be safe
-
+	dir = normalize(dir); // just to be safe
 	float current_dist = settings.diffuse_offset;
-
-	float apperture_angle = settings.diffuse_apperture; //Angle in Radians.
-
+	float apperture_angle = settings.diffuse_apperture; // Angle in Radians.
 	vec3 color = vec3(0.0f);
 	float occlusion = 0.0f;
 
 	while(current_dist < max_dist && occlusion < 1) {
-		//Get cone diameter (tan = cathetus / cathetus)
 		float current_coneDiameter = 2.0f * current_dist * tan(apperture_angle * 0.5f);
-
-		//Get mipmap level which should be sampled according to the cone diameter
-		//log2(vox_size) returns the maximum mipmap level
-		float vlevel = log2(current_coneDiameter * vox_size);
-		vlevel = min( 6.0f, vlevel ); //vlevel hardcap at 3
-
 		vec3 pos_worldspace = origin + dir * current_dist;
-		vec3 pos_texturespace = (pos_worldspace + vec3(1.0f)) * 0.5f; //[-1,1] Coordinates to [0,1]
 
-		vec4 voxel = textureLod(tex3D, pos_texturespace, vlevel);
+		vec4 voxel = vol_sample(current_coneDiameter, pos_worldspace);
 
 		vec3 color_read = voxel.rgb;
 		float occlusion_read = voxel.a;
 
-		if(occlusion_read>0.01f) { color = color_read; return color; } //Cheap alternative: simply return first color we find
+		if(occlusion_read>0.01f) { color = color_read; return color; } // Cheap alternative: simply return first color we find
 
-		//color = occlusion*color + (1 - occlusion) * occlusion_read * color_read;
-		//color *= 3; //Enhance color
-		//occlusion = 3 * (occlusion + (1 - occlusion) * occlusion_read);
-
+		//color = occlusion*color + (1 - occlusion) * occlusion_read * color_read; // Traditional approach
 		occlusion = occlusion + (1 - occlusion) * occlusion_read;
 
 		current_dist += current_coneDiameter * settings.diffuse_dist_factor;
 	}
-
 	return color;
 }
 
@@ -310,6 +263,14 @@ vec3 directLight() {
 	float distance = length(light.position - pos_fs);
 	float attenuation = 1.0f / (light.att_constant + light.att_linear * distance + light.att_quadratic * (distance * distance));
 
-
 	return (ambient + diffuse + specular) * material.color * attenuation;
+}
+
+vec4 vol_sample(float diameter, vec3 location) {
+	float vlevel = log2(diameter * vox_size); // Current mipmap level
+	vlevel = min( MIPMAP_HARDCAP, vlevel );
+
+	vec3 pos_texturespace = (location + vec3(1.0f)) * 0.5f; // [-1,1] Coordinates to [0,1]
+
+	return textureLod(tex3D, pos_texturespace, vlevel);	// Sample
 }

@@ -6,5 +6,5 @@ uniform vec4 emitColor;
 
 void main()
 {
-    FragColor = emitColor;
+    FragColor = emitColor; //Emit a specified RGBA color
 }

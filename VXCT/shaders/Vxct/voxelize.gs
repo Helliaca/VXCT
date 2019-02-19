@@ -10,8 +10,6 @@ out vec3 pos_fs;
 out vec3 nrm_fs;
 
 void main() {
-	//vec3 faceNormal = abs( nrm_gs[0] + nrm_gs[1] + nrm_gs[2] );						//Cheaper option to get faceNormal if vertex normals are set correctly
-
 	vec3 faceNormal = abs( cross( pos_gs[1] - pos_gs[0], pos_gs[2] - pos_gs[0] ) );		//Get vector that is orthogonal to both axes of the triangle (pos1-pos0 and pos2-pos0)
 
 	float dominantAxis = max( faceNormal.x, max( faceNormal.y, faceNormal.z ) );		//Dominant Axis selection

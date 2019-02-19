@@ -5,7 +5,7 @@
 layout (location = 0) in vec3 pos_vs; //Vertex position
 layout (location = 1) in vec3 nrm_vs; //Vertex normal
 
-out vec3 pos_fs; //Position in world coordinates
+out vec3 pos_fs;
 out vec3 nrm_fs;
 
 uniform mat4 model_u;
