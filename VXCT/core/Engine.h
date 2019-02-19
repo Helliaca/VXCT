@@ -6,7 +6,6 @@
 #include "assets/Window.h"
 #include "assets/VoxelMap.h"
 #include "assets/LineRenderer.h"
-#include "assets/VisCone.h"
 #include "assets/FrameTimeCounter.h"
 #include "assets/SceneParser.h"
 #include <mutex>
@@ -28,8 +27,6 @@ public:
 
 	LineRenderer* DebugLine;
 
-	VisCone* visCone;
-
 	FrameTimeCounter* frametimecounter;
 
 	Timer* revox_timer;
@@ -37,7 +34,6 @@ public:
 	Shader* voxelization_shader;
 
 	void Voxelize(Scene* scene);
-	void visDetail(glm::vec3 fragPos, glm::vec3 fragNrm);
 	Window* window;
 	Engine();
 	~Engine();

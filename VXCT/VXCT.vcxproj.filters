@@ -48,9 +48,6 @@
     <ClCompile Include="core\assets\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\assets\VisCone.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="core\assets\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -115,9 +112,6 @@
     </ClInclude>
     <ClInclude Include="core\settings\VertexData.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\assets\VisCone.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\assets\Material.h">
       <Filter>Header Files</Filter>

@@ -51,7 +51,7 @@ scene = {
 	}
 	model = {
 		name = FrontWall
-		active = false
+		active = true
 		path = models/voxel_scene_wall4.obj
 		position = { x = 0.0f y = 0.0f z = 0.0f }
 		scale = 1.0f

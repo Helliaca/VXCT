@@ -102,12 +102,6 @@ void Engine::run() {
 	glm::vec3 putColorHere; //The value of this vector will be changed in VoxelMap.visualize()
 	voxel->addVec3Reference("material.color", &putColorHere); //Might lead to memory leaks as we keep no reference of this variable
 
-	visCone = new VisCone();
-	visCone->addMat4Reference("model_u", &visCone->model);
-	visCone->addMat4Reference("view_u", &G::SceneCamera->viewMatrix);
-	visCone->addMat4Reference("proj_u", &G::SceneCamera->projMatrix);
-	visCone->addVec4Reference("emitColor", &glm::vec4(0.0f, 0.0f, 1.0f, 0.5f));
-
 	//Create voxel map
 	voxelMap = new VoxelMap();
 
@@ -141,7 +135,6 @@ void Engine::run() {
 				print(this, "Ray position: " + glm::to_string(pos));
 				ray_hit_point = pos;
 				ray_hit_normal = nrm;
-				visCone->setPosition(ray_hit_point);
 				print(this, "Ray normal: " + glm::to_string(nrm));
 				show_detail_point = true;
 			}
@@ -195,12 +188,7 @@ void Engine::run() {
 		if (objsWireframe) window->setPolygonMode(PolygonMode::W_FILL);
 
 		if (show_detail_point) {
-			voxel->setPosition(ray_hit_point);
-			voxel->draw();
 			DebugLine->drawLine(ray_hit_point, ray_hit_normal, 0.2f);
-			visDetail(ray_hit_point, ray_hit_normal);
-			//visCone->setConeParameters(ray_hit_point, ray_hit_normal, 0.55f, 1.0f);
-			//visCone->draw();
 		}
 
 		//TMP: Draw hit voxel in real time
@@ -245,26 +233,6 @@ glm::vec3 perp(glm::vec3 v, glm::vec3 q = glm::vec3(0.0, 0.0, 1.0)) {
 	v = glm::normalize(v);
 	q = glm::normalize(q);
 	return glm::cross(v, q);
-}
-
-void Engine::visDetail(glm::vec3 fragPos, glm::vec3 fragNrm) {
-	float cone_aperture_angle = 0.55f;
-	float deg_mix = 0.5f;
-
-	glm::vec3 y = fragNrm; //Front axis
-	glm::vec3 x = perp(y); //1st side axis
-	glm::vec3 z = perp(y, x); //2nd side axis
-
-	visCone->setConeParameters(fragPos, fragNrm, cone_aperture_angle, 1.0f);
-	visCone->draw();
-	visCone->setConeParameters(fragPos, glm::mix(y, x, deg_mix), cone_aperture_angle, 1.0f);
-	visCone->draw();
-	visCone->setConeParameters(fragPos, glm::mix(y, -x, deg_mix), cone_aperture_angle, 1.0f);
-	visCone->draw();
-	visCone->setConeParameters(fragPos, glm::mix(y, z, deg_mix), cone_aperture_angle, 1.0f);
-	visCone->draw();
-	visCone->setConeParameters(fragPos, glm::mix(y, -z, deg_mix), cone_aperture_angle, 1.0f);
-	visCone->draw();
 }
 
 void Engine::Voxelize(Scene* scene) {

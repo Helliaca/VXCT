@@ -145,7 +145,6 @@
     <ClCompile Include="core\assets\SceneParser.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="core\assets\VoxelMap.cpp" />
-    <ClCompile Include="core\assets\VisCone.cpp" />
     <ClCompile Include="core\assets\VoxSettings.cpp" />
     <ClCompile Include="core\assets\Timer.cpp" />
   </ItemGroup>
@@ -169,7 +168,6 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="core\settings\VertexData.h" />
     <ClInclude Include="core\assets\VoxelMap.h" />
-    <ClInclude Include="core\assets\VisCone.h" />
     <ClInclude Include="core\assets\VoxSettings.h" />
     <ClInclude Include="core\assets\Timer.h" />
   </ItemGroup>
