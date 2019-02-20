@@ -18,27 +18,27 @@ private:
 	void console();
 	std::thread consoleThread;
 	std::mutex settingMutex;
+
 public:
-	VoxelMap * voxelMap;
+	VoxelMap * voxelMap;	// 3D texture
 
-	//VoxelMap * voxelMap_lod1;
+	Scene* mainScene;		// Scene
 
-	Scene* mainScene;
-
-	LineRenderer* DebugLine;
+	LineRenderer* DebugLine;// LineRenderer
 
 	FrameTimeCounter* frametimecounter;
 
-	Timer* revox_timer;
+	Timer* revox_timer;		// Timer for dynamic revoxelization
 
 	Shader* voxelization_shader;
 
+	Window* window;			// OpenGL context
+
+	void run();
 	void Voxelize(Scene* scene);
-	Window* window;
+
 	Engine();
 	~Engine();
-	void run();
-	Scene* InitScene();
 };
 
 #endif

@@ -2,7 +2,6 @@
 
 
 
-#define TINYOBJLOADER_IMPLEMENTATION
 #include <assimp\Importer.hpp>
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
@@ -25,6 +24,7 @@ Model::Model(std::string name = "unnamedModel", RenderShader sh = RenderShader::
 }
 
 void Model::initialize(RenderShader sh) {
+	//Generate VAO, VBO and EBO
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -37,6 +37,7 @@ void Model::initialize(RenderShader sh) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int)*indices.size(), &indices[0], GL_STATIC_DRAW);
 
+	// Set attributes in accordance to the shader
 	if (sh == RenderShader::VOX) {
 		shader = new Shader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
 
@@ -96,7 +97,6 @@ void Model::draw() {
 	for (auto const& x : lightingRefs) shader->setLighting(x.first, *x.second);
 	for (auto const& x : materialRefs) shader->setMaterial(x.first, *x.second);
 	for (auto const& x : vsettingsRefs) shader->setVsettings(x.first, *x.second);
-
 
 	// render
 	glBindVertexArray(VAO);
@@ -173,63 +173,6 @@ void Model::lookAt(glm::vec3 target) {
 }
 
 void Model::fromFile(std::string inputfile) {
-	/*
-	//DEPRECATED TINYOBJLOADER IMPLEMENTATION.
-
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-
-	std::string err;
-	std::string warn;
-	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, &warn, inputfile.c_str());
-
-	if (!err.empty()) print(this, "Error reading File: " + err);
-
-	if (!ret) { exit(1); }
-
-	//Format conversion:
-
-	for (int i = 0; i < shapes[0].mesh.indices.size(); i++) {
-		indices.push_back(shapes[0].mesh.indices[i].vertex_index);
-	}
-
-	for (int i = 0; i+2 < attrib.vertices.size(); i+=3) {
-		int current_vindex = i / 3;
-		//Get vertex
-		float x, y, z;
-		float nx, ny, nz;
-		x = attrib.vertices[i + 0];
-		y = attrib.vertices[i + 1];
-		z = attrib.vertices[i + 2];
-
-		//Push vertex onto vector
-		vertexData.push_back(x);
-		vertexData.push_back(y);
-		vertexData.push_back(z);
-
-		//Get respective normal index (Needs to be done like this because tinyobjloader gives us a separate normals_indices and we want them all in one array)
-		for (int j = 0; j < shapes[0].mesh.indices.size(); j++) {
-			if (shapes[0].mesh.indices[j].vertex_index == current_vindex) {
-				int normalindex = shapes[0].mesh.indices[j].normal_index;
-
-				//Push normal onto vector
-				nx = attrib.normals[3 * normalindex + 0];
-				ny = attrib.normals[3 * normalindex + 1];
-				nz = attrib.normals[3 * normalindex + 2];
-				vertexData.push_back(nx);
-				vertexData.push_back(ny);
-				vertexData.push_back(nz);
-				break;
-			}
-		}
-	}
-
-	//Format conversion done
-
-	print(this, "File loaded. Size of vertexData: " + vertexData.size());
-	*/
-
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(inputfile, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero

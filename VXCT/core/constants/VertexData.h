@@ -2,6 +2,8 @@
 
 #include <vector>
 
+// A set of primitive shapes are declared here. (Used for the likes of voxe visualization etc.)
+
 namespace defaultModels {
 
 	const std::vector<float> single_vertex = {

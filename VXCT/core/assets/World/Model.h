@@ -11,7 +11,7 @@ class Model : public IOobject
 {
 private:
 
-	//Shader Uniform References
+	//Shader Uniform Reference dictionaries.
 	std::map<std::string, glm::vec3*> vec3Refs;
 	typedef std::pair<std::string, glm::vec3*> Vec3Entry;
 

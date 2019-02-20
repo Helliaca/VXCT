@@ -2,8 +2,10 @@
 
 #include "../World/Scene.h"
 
+//All node and leaf datatypes are declared here. The cpp file includes the respective string
 enum class sp_nodetype { SCENE, MODEL, POSITION, ROTATION, X, Y, Z, NAME, SCALE, ACTIVE, PATH, MATERIAL, SHININESS, SPECULAR_STR, AMBIENT_STR, DIFFUSE_STR, SHADER, COLOR, R, G, B, SCALE_X, SCALE_Y, SCALE_Z, PRIMITIVE, STATIC, LIGHT, ERR };
 enum class sp_datatype { NODE, FLOAT, STRING, BOOL, NONE };
+
 
 class sp_node
 {
@@ -25,6 +27,7 @@ private:
 	float f;
 	bool b;
 };
+
 
 class SceneParser : IOobject
 {

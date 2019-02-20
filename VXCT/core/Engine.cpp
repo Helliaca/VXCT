@@ -8,6 +8,8 @@
 
 float currentFrame = (float)glfwGetTime();
 
+
+// These variables are manipulated by the console() thread and determine the output accordingly
 bool objs = true;					//Draw Objects
 bool voxs = false;					//Draw Voxels  (Very costly! SfMode recommended)
 bool voxelizeOnNextFrame = false;	//voxelize the Scene on the next Frame
@@ -22,7 +24,7 @@ bool LocLod = false;				//Toggle Localized LOD mode
 bool overlayWireframe = false;		//Overlay objects with their Wireframe
 int drawLod = 0;					//LOD level to draw mipmaps of
 bool loadSceneOnNextFrame = false;	//Load a Scene next frame
-bool dynamic_scene = false;				//Revoxelize after every voxelize_freq time
+bool dynamic_scene = false;			//Revoxelize after every voxelize_freq time
 float voxelize_freq = 0.5;			//Revoxelization frequency for dynamic scenes
 std::string scene_load_dir = "";	//Scene File path to load if the value above is true
 
@@ -30,7 +32,6 @@ glm::vec3 ray_hit_point = glm::vec3(0.0f);
 glm::vec3 ray_hit_normal = glm::vec3(0.0f);
 
 //=====================================================================
-
 
 //Check how many vertex attributes our hardware allows
 void shaderInfo() {
@@ -59,12 +60,11 @@ void Engine::loadGlad() { //only needs to be called once.
 }
 
 void Engine::run() {
-	window = new Window(); //create opengl context with GLFW
+	 
+	// >> Create Context and set settings <<
 
-	loadGlad();	//Load Glad Extension library
-
-	//This might not be necessary:
-	//glEnable(GL_TEXTURE_3D);
+	window = new Window();
+	loadGlad();
 
 	glEnable(GL_DEPTH_TEST); //turn on z-buffer
 	glEnable(GL_BLEND);		 //turn on blending for transparency
@@ -82,18 +82,17 @@ void Engine::run() {
 	frametimecounter = new FrameTimeCounter(FRAMETIMES_SAVE);
 	revox_timer = new Timer();
 
-	//==================================================================================
+	// >> Initialize Attribute Objects <<
 
 	Shader* voxIlluminShader = new Shader(VOXILLUMINSHADER_VS, VOXILLUMINSHADER_FS);
 	Shader* locLodShader = new Shader(LODTEXTURESHADER_VS, LODTEXTURESHADER_FS);
 	voxelization_shader = new Shader(VOXSHADER_VS, VOXSHADER_FS, VOXSHADER_GS);
 
-	//mainScene = InitScene();
 	SceneParser* sceneParser = new SceneParser();
 	sceneParser->parse(SCENE_TXT);
 	mainScene = sceneParser->to_scene();
 
-	DebugLine = new LineRenderer(); //Need to initiate this here because we need an opengl context
+	DebugLine = new LineRenderer();
 
 	Model* voxel = new Model("voxel", RenderShader::EMIT, defaultModels::cube_indices, defaultModels::cube_vertexData);
 	voxel->addMat4Reference("model_u", &voxel->model);
@@ -102,8 +101,9 @@ void Engine::run() {
 	glm::vec3 putColorHere; //The value of this vector will be changed in VoxelMap.visualize()
 	voxel->addVec3Reference("material.color", &putColorHere); //Might lead to memory leaks as we keep no reference of this variable
 
-	//Create voxel map
 	voxelMap = new VoxelMap();
+
+	// >> Restart Timers and separate cmd <<
 
 	frametimecounter->start();
 	revox_timer->start();
@@ -111,11 +111,15 @@ void Engine::run() {
 	consoleThread = std::thread(&Engine::console, this);
 	consoleThread.detach();
 
-	//Render loop:
+	// >> Render Loop <<
+
 	while (!window->shouldClose())
 	{
 		settingMutex.lock();
 
+		// > Pre-Render <
+
+		// Single-Frame mode
 		if (sfMode) {
 			if (!singleFrame) {
 				settingMutex.unlock();
@@ -123,12 +127,14 @@ void Engine::run() {
 			}
 			else singleFrame = false;
 		}
+		// Voxelize on this frame
 		if (voxelizeOnNextFrame || (dynamic_scene && revox_timer->elapsedTime()>voxelize_freq)) {
 			Voxelize(mainScene);
 			checkErrors();
 			voxelizeOnNextFrame = false;
 			revox_timer->start();
 		}
+		// Perform a raycast
 		if (rayOnNextFrame) {
 			glm::vec3 pos, nrm;
 			if (this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm)) {
@@ -141,6 +147,7 @@ void Engine::run() {
 			else print(this, "no hit");
 			rayOnNextFrame = false;
 		}
+		// Load a scene on this frame
 		if (loadSceneOnNextFrame) {
 			SceneParser* sp = new SceneParser();
 			if(sp->parse(scene_load_dir)) mainScene = sp->to_scene();
@@ -148,24 +155,21 @@ void Engine::run() {
 		}
 		checkErrors("EngineLoop Pre-Render");
 
-		// per-frame time logic
-		// --------------------
+		// > Per Frame Logic <
 		float currentFrame = glfwGetTime();
 		G::deltaTime = currentFrame - G::lastFrame;
 		G::lastFrame = currentFrame;
 
-		// input
-		// -----
 		if(!sfMode) window->processInput(); //Dont move Camera if in sfMode
 
-		// render
-		// ------
+		// > Render <
+
+		//Clear canvas
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//Object Drawing
-		if (objsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
-		//lamp->draw();
+		// Draw objects/models
+		if (objsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME); //Wireframe mode
 		if (objs) {
 			if (LocLod) {
 				locLodShader->use();
@@ -173,9 +177,6 @@ void Engine::run() {
 				mainScene->draw(locLodShader);
 			}
 			else if (iLight) {
-				//voxelMap->activate(voxIlluminShader->ID, "tex3D_in", 0);
-				//voxelMap->activate(voxIlluminShader->ID, "tex3D", 0); //This line leads to errors, is it necessary?
-				//glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8); //Is this necessary?
 				mainScene->draw(voxIlluminShader);
 			}
 			else if (overlayWireframe) {
@@ -191,14 +192,7 @@ void Engine::run() {
 			DebugLine->drawLine(ray_hit_point, ray_hit_normal, 0.2f);
 		}
 
-		//TMP: Draw hit voxel in real time
-		//glm::vec3 pos, nrm;
-		//this->mainScene->raycast(G::SceneCamera->Position, G::SceneCamera->Front, pos, nrm);
-		//tmp_ray_hit = pos;
-		//voxel->setPosition(tmp_ray_hit);
-		//voxel->draw();
-
-		//Voxel Drawing
+		// Draw Voxels
 		if(voxsWireframe) window->setPolygonMode(PolygonMode::W_WIREFRAME);
 		if (voxelMap != nullptr && voxs) {
 			voxelMap->visualize(voxel, &putColorHere, drawLod);
@@ -208,8 +202,7 @@ void Engine::run() {
 
 		settingMutex.unlock();
 
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
+		// > Swap Buffers and poll IO <
 		glfwSwapBuffers(window->getGLFWwindow());
 		glfwPollEvents();
 
@@ -220,26 +213,11 @@ void Engine::run() {
 		checkErrors("Engine Loop");
 	}
 
-	// de-allocate all resources once they've outlived their purpose:
-	//delete(lamp);
-	//delete(mainCube);
-
 	glfwTerminate(); //Delete and clean all glfw resources allocated
 	return;
 }
 
-// Returns a vector that is perpendicular/orthogonal to u (and q).
-glm::vec3 perp(glm::vec3 v, glm::vec3 q = glm::vec3(0.0, 0.0, 1.0)) {
-	v = glm::normalize(v);
-	q = glm::normalize(q);
-	return glm::cross(v, q);
-}
-
 void Engine::Voxelize(Scene* scene) {
-	//>>initVoxelization
-	//voxelMap = new VoxelMap(texture3D, temporary_stuff);
-	//voxelMap_lod1 = new VoxelMap(texture3D_lod1, temporary_stuff);
-	
 	//>>voxelize
 	
 	voxelMap->clear();
@@ -260,7 +238,8 @@ void Engine::Voxelize(Scene* scene) {
 	glBindImageTexture(0, voxelMap->textureID, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA8);
 	
 	checkErrors("VoxelizePreDraw");
-	
+
+	//Voxelize	
 	scene->draw(voxelization_shader);
 
 	//glfwSwapBuffers(window->getGLFWwindow());

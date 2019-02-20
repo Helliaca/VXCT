@@ -188,6 +188,14 @@
     <None Include="shaders\Vxct\voxillumin.fs" />
     <None Include="shaders\Vxct\voxillumin.vs" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="scenes\scene.txt" />
+    <Text Include="scenes\scene_complex.txt" />
+    <Text Include="scenes\scene_dragon.txt" />
+    <Text Include="scenes\scene_lucy_highpoly.txt" />
+    <Text Include="scenes\scene_objects.txt" />
+    <Text Include="scenes\scene_red.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

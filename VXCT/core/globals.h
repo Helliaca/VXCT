@@ -5,8 +5,10 @@
 
 #include "assets/Graphics/Camera.h"
 #include "assets/World/Material.h"
-#include "assets\VoxSettings.h"
+#include "assets/VoxSettings.h"
 #include "assets/World/Lighting.h"
+
+// This namespace is accessible by all components
 
 namespace G {
 	extern float deltaTime;

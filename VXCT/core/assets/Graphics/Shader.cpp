@@ -7,7 +7,7 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath, con
 {
 	std::string vertexShaderCode, fragmentShaderCode, geometryShaderCode;
 	std::ifstream vShaderFile, fShaderFile, gShaderFile;
-	// ensure ifstream objects can throw exceptions:
+	// allow ifstream to throw exceptions:
 	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
