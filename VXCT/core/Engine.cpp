@@ -273,9 +273,9 @@ void Engine::console() {
 			else if (input[0] == "occlusion_offset" || input[0] == "oo") { G::VoxLightSettings->occlusion_offset = strtof(input[1].c_str(), 0); }
 			else if (input[0] == "specular_offset" || input[0] == "so") { G::VoxLightSettings->specular_offset = strtof(input[1].c_str(), 0); }
 
-			else if (input[0] == "diffuse_apperture" || input[0] == "da") { G::VoxLightSettings->diffuse_apperture = strtof(input[1].c_str(), 0); }
-			else if (input[0] == "occlusion_apperture" || input[0] == "oa") { G::VoxLightSettings->occlusion_apperture = strtof(input[1].c_str(), 0); }
-			else if (input[0] == "specular_apperture" || input[0] == "sa") { G::VoxLightSettings->specular_apperture = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "diffuse_aperture" || input[0] == "da") { G::VoxLightSettings->diffuse_apperture = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "occlusion_aperture" || input[0] == "oa") { G::VoxLightSettings->occlusion_apperture = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "specular_aperture" || input[0] == "sa") { G::VoxLightSettings->specular_apperture = strtof(input[1].c_str(), 0); }
 
 			else if (input[0] == "shadow_str" || input[0] == "ss") { G::VoxLightSettings->shadow_str = strtof(input[1].c_str(), 0); }
 			else if (input[0] == "shininess_falloff" || input[0] == "sf") { G::VoxLightSettings->shininess_falloff = strtof(input[1].c_str(), 0); }
