@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-#include "../stb_image.h"
+//#include "../stb_image.h"
 #include <glm/ext.hpp>
 #include <iterator>
 
