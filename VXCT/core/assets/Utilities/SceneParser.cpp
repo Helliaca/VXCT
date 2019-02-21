@@ -10,6 +10,9 @@ std::map<std::string, sp_nodetype> TT_ids{
 	{ "model", sp_nodetype::MODEL },
 	{ "position", sp_nodetype::POSITION },
 	{ "rotation", sp_nodetype::ROTATION },
+	{ "att_quadratic", sp_nodetype::ATT_Q },
+	{ "att_linear", sp_nodetype::ATT_L },
+	{ "att_constant", sp_nodetype::ATT_C },
 	{ "x", sp_nodetype::X },
 	{ "y", sp_nodetype::Y },
 	{ "z", sp_nodetype::Z },
@@ -41,6 +44,9 @@ std::map<sp_nodetype, sp_datatype> Datatypes_ids{
 	{ sp_nodetype::SCENE, sp_datatype::NODE },
 	{ sp_nodetype::POSITION, sp_datatype::NODE },
 	{ sp_nodetype::ROTATION, sp_datatype::NODE },
+	{ sp_nodetype::ATT_Q, sp_datatype::FLOAT },
+	{ sp_nodetype::ATT_L, sp_datatype::FLOAT },
+	{ sp_nodetype::ATT_C, sp_datatype::FLOAT },
 	{ sp_nodetype::X, sp_datatype::FLOAT },
 	{ sp_nodetype::Y, sp_datatype::FLOAT },
 	{ sp_nodetype::Z, sp_datatype::FLOAT },
@@ -244,6 +250,9 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 			c.z = getChildOfType(pos_node, sp_nodetype::B)->GetData_f();
 			l->color = c;
 		}
+		if (hasChildNodeOfType(node, sp_nodetype::ATT_Q)) l->att_quadratic = getChildOfType(node, sp_nodetype::ATT_Q)->GetData_f();
+		if (hasChildNodeOfType(node, sp_nodetype::ATT_L)) l->att_linear = getChildOfType(node, sp_nodetype::ATT_L)->GetData_f();
+		if (hasChildNodeOfType(node, sp_nodetype::ATT_C)) l->att_constant = getChildOfType(node, sp_nodetype::ATT_C)->GetData_f();
 		G::SceneLighting->add_pointLight(l);
 		break; }
 

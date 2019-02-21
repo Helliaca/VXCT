@@ -25,6 +25,7 @@ bool overlayWireframe = false;		//Overlay objects with their Wireframe
 int drawLod = 0;					//LOD level to draw mipmaps of
 bool loadSceneOnNextFrame = false;	//Load a Scene next frame
 bool dynamic_scene = false;			//Revoxelize after every voxelize_freq time
+bool draw_block = false;
 float voxelize_freq = 0.5;			//Revoxelization frequency for dynamic scenes
 std::string scene_load_dir = "";	//Scene File path to load if the value above is true
 
@@ -212,7 +213,7 @@ void Engine::run() {
 		glfwSwapBuffers(window->getGLFWwindow());
 		glfwPollEvents();
 
-		//glFinish(); //use this to measure frame-times
+		if(draw_block) glFinish(); //use this to measure frame-times
 
 		frametimecounter->nextFrame();
 
@@ -384,6 +385,8 @@ void Engine::console() {
 			else if (input[0] == "diffuse_offset" || input[0] == "do") { print(this, "Diffuse Offset : " + std::to_string(G::VoxLightSettings->diffuse_offset)); }
 			else if (input[0] == "occlusion_offset" || input[0] == "oo") { print(this, "Occlusion Offset : " + std::to_string(G::VoxLightSettings->occlusion_offset)); }
 			else if (input[0] == "specular_offset" || input[0] == "so") { print(this, "Specular Offset : " + std::to_string(G::VoxLightSettings->specular_offset)); }
+
+			else if (input[0] == "draw_block") toggle(&draw_block, "Draw Block");
 
 			else if (input[0] == "exit" || input[0] == "quit" || input[0] == "q") window->exit();
 

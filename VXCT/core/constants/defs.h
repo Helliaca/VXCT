@@ -15,7 +15,7 @@
 #define WIN_HEIGHT 600
 #define WIN_NAME "VXCT"
 
-#define VOX_SIZE 256
+#define VOX_SIZE 64
 
 //Amount of frames to save in FrameTimeCounter
 #define FRAMETIMES_SAVE 100
