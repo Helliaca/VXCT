@@ -27,6 +27,7 @@ struct VoxSettings {
 	float specular_dist_factor;
 	
 	float diffuse_offset;
+	float diffuse_origin_offset;
 	float occlusion_offset;
 	float specular_offset;
 
@@ -74,7 +75,7 @@ vec3 SpecularCone(const vec3 from, vec3 direction);
 float OcclusionCone(const vec3 from, vec3 direction, float max_dist);
 
 // Returns a vector that is perpendicular/orthogonal to u (and q).
-vec3 perp(vec3 v, vec3 q=vec3(0.0,0.0,1.0)){
+vec3 perp(vec3 v, vec3 q){
 	v = normalize(v);
 	q = normalize(q);
 	return cross(v, q);
@@ -117,10 +118,10 @@ void main()
 
 // Returns total indirect diffuse component
 vec3 indirectDiffuse() {
-	const vec3 origin = pos_fs + nrm * 0.05;
+	const vec3 origin = pos_fs + nrm * settings.diffuse_origin_offset;
 
 	vec3 y = nrm; //Front axis
-	vec3 x = perp(y); //1st side axis
+	vec3 x = perp(y, vec3(0.0,0.0,1.0)); //1st side axis
 	vec3 z = perp(y, x); //2nd side axis
 
 	vec3 ret = vec3(0.0f);
@@ -143,18 +144,18 @@ vec3 indirectDiffuse() {
 
 	//Intermediate cones:
 	if(settings.intermediate_cones) {
-		float deg_mix = 0.5f;
-		ret += DiffuseCone(origin, mix(y, x, deg_mix));
-		ret += DiffuseCone(origin, mix(y, -x, deg_mix));
-		ret += DiffuseCone(origin, mix(y, z, deg_mix));
-		ret += DiffuseCone(origin, mix(y, -z, deg_mix));
+		float tilt_factor = 0.5f;
+		ret += DiffuseCone(origin, mix(y, x, tilt_factor));
+		ret += DiffuseCone(origin, mix(y, -x, tilt_factor));
+		ret += DiffuseCone(origin, mix(y, z, tilt_factor));
+		ret += DiffuseCone(origin, mix(y, -z, tilt_factor));
 		cone_count += 4;
 	}
 
 	return ret * (5.0f / cone_count); //All testing was done with 5 cones, so default factor is 5
 } 
 
-float OcclusionCone(const vec3 origin, vec3 dir, float max_dist=1.0f) {
+float OcclusionCone(const vec3 origin, vec3 dir, float max_dist) {
 	dir = normalize(dir);
 	float current_dist = settings.occlusion_offset;
 	float apperture_angle = settings.occlusion_apperture;

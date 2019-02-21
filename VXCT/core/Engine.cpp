@@ -111,6 +111,12 @@ void Engine::run() {
 	consoleThread = std::thread(&Engine::console, this);
 	consoleThread.detach();
 
+	// == TEMPORARY FIX ==
+	// For some reason compiling this program with /MD instead of /MDd leads to only these values being false. I know it makes no sense, but this at leas fixes it...
+	G::VoxLightSettings->intermediate_cones = true;
+	G::VoxLightSettings->front_cone = true;
+	G::VoxLightSettings->side_cones = false;
+
 	// >> Render Loop <<
 
 	while (!window->shouldClose())
@@ -270,6 +276,7 @@ void Engine::console() {
 			else if (input[0] == "specular_dist_factor" || input[0] == "sdf") { G::VoxLightSettings->specular_dist_factor = strtof(input[1].c_str(), 0); }
 
 			else if (input[0] == "diffuse_offset" || input[0] == "do") { G::VoxLightSettings->diffuse_offset = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "diffuse_origin_offset" || input[0] == "doo") { G::VoxLightSettings->diffuse_origin_offset = strtof(input[1].c_str(), 0); }
 			else if (input[0] == "occlusion_offset" || input[0] == "oo") { G::VoxLightSettings->occlusion_offset = strtof(input[1].c_str(), 0); }
 			else if (input[0] == "specular_offset" || input[0] == "so") { G::VoxLightSettings->specular_offset = strtof(input[1].c_str(), 0); }
 
@@ -285,6 +292,22 @@ void Engine::console() {
 
 			else if (input[0] == "load") { loadSceneOnNextFrame = true; scene_load_dir = SCENE_DIR + input[1] + ".txt"; }
 			else if (input[0] == "vox_freq") { voxelize_freq = strtof(input[1].c_str(), 0); }
+			else if (input[0] == "toggle") {
+				for (int i = 0; i < mainScene->objs.size(); i++) {
+					if (mainScene->objs[i]->name == input[1]) toggle(&mainScene->objs[i]->active, mainScene->objs[i]->name);
+				}
+			}
+			else print(this, "Unknwon Command");
+		}
+		else if (input.size() == 3) {
+			if (input[0] == "scale") {
+				for (int i = 0; i < mainScene->objs.size(); i++) {
+					if (mainScene->objs[i]->name == input[1]) {
+						float scalar = strtof(input[2].c_str(), 0);
+						mainScene->objs[i]->scale( glm::vec3(scalar) );
+					}
+				}
+			}
 			else print(this, "Unknwon Command");
 		}
 		//eg. setmat Sphere1 shininess 0.1
@@ -299,38 +322,58 @@ void Engine::console() {
 					}
 				}
 			}
+			else if (input[0] == "translate") {
+				for (int i = 0; i < mainScene->objs.size(); i++) {
+					if (mainScene->objs[i]->name == input[1]) {
+						if (input[2] == "x") { mainScene->objs[i]->translate( strtof(input[3].c_str(), 0), 0, 0); }
+						else if (input[2] == "y") { mainScene->objs[i]->translate(0, strtof(input[3].c_str(), 0), 0); }
+						else if (input[2] == "z") { mainScene->objs[i]->translate(0, 0, strtof(input[3].c_str(), 0)); }
+						else print(this, "Invalid Axis");
+					}
+				}
+			}
+			else if (input[0] == "rotate") {
+				for (int i = 0; i < mainScene->objs.size(); i++) {
+					if (mainScene->objs[i]->name == input[1]) {
+						if (input[2] == "x") { mainScene->objs[i]->rotate(glm::vec3(strtof(input[3].c_str(), 0), 0, 0)); }
+						else if (input[2] == "y") { mainScene->objs[i]->rotate(glm::vec3(0, strtof(input[3].c_str(), 0), 0)); }
+						else if (input[2] == "z") { mainScene->objs[i]->rotate(glm::vec3(0, 0, strtof(input[3].c_str(), 0))); }
+						else print(this, "Invalid Axis");
+					}
+				}
+			}
 			else print(this, "Unknwon Command");
 		}
 		else  if (input.size() == 1) {
-			if (input[0] == "objs") objs = !objs;
-			else if (input[0] == "voxs") voxs = !voxs;
+			if (input[0] == "objs") { toggle(&objs, "Draw Objects"); }
+			else if (input[0] == "voxs") { toggle(&voxs, "Draw Voxels"); }
 			else if (input[0] == "vox") voxelizeOnNextFrame = true;
-			else if (input[0] == "voxsW") voxsWireframe = !voxsWireframe;
-			else if (input[0] == "objsW") objsWireframe = !objsWireframe;
-			else if (input[0] == "sfMode") sfMode = !sfMode;
+			else if (input[0] == "voxsW") { toggle(&voxsWireframe, "Wireframe Voxels"); }
+			else if (input[0] == "objsW") { toggle(&objsWireframe, "Wireframe Objects"); }
+			else if (input[0] == "sfMode") { toggle(&sfMode, "Single Frame Mode"); }
 			else if (input[0] == "sf" && sfMode) singleFrame = true;
-			else if (input[0] == "iLight") iLight = !iLight;
-			else if (input[0] == "overlayW") overlayWireframe = !overlayWireframe;
+			else if (input[0] == "iLight") { toggle(&iLight, "VXCT"); }
+			else if (input[0] == "overlayW") { toggle(&overlayWireframe, "Wireframe Overlay"); }
 			else if (input[0] == "pos1") G::SceneCamera->setPosition(1);
 			else if (input[0] == "pos2") G::SceneCamera->setPosition(2);
 			else if (input[0] == "ray") rayOnNextFrame = true;
-			else if (input[0] == "loclod") LocLod = !LocLod;
+			else if (input[0] == "loclod") { toggle(&LocLod, "Localized LOD Mode"); }
 			else if (input[0] == "avgf") frametimecounter->printAvg();
 			else if (input[0] == "clearf") frametimecounter->clear();
-			else if (input[0] == "dynamic") { dynamic_scene = !dynamic_scene; print(this, dynamic_scene?"Dynamic revoxelization: ON":"Dynamic revoxelization: OFF"); }
+			else if (input[0] == "dynamic") { toggle(&dynamic_scene, "Dynamic Revoxelization"); }
 
-			else if (input[0] == "phong") G::VoxLightSettings->phong = !G::VoxLightSettings->phong;
-			else if (input[0] == "phong_ambient") G::VoxLightSettings->phong_ambient = !G::VoxLightSettings->phong_ambient;
-			else if (input[0] == "phong_diffuse") G::VoxLightSettings->phong_diffuse = !G::VoxLightSettings->phong_diffuse;
-			else if (input[0] == "phong_specular") G::VoxLightSettings->phong_specular = !G::VoxLightSettings->phong_specular;
+			else if (input[0] == "phong") toggle(&G::VoxLightSettings->phong, "VXCT Phong");
+			else if (input[0] == "phong_ambient") toggle(&G::VoxLightSettings->phong_ambient, "VXCT Phong Ambient");
+			else if (input[0] == "phong_diffuse") toggle(&G::VoxLightSettings->phong_diffuse, "VXCT Phong Diffuse");
+			else if (input[0] == "phong_specular") toggle(&G::VoxLightSettings->phong_specular, "VXCT Phong Specular");
 
-			else if (input[0] == "front_cone") G::VoxLightSettings->front_cone = !G::VoxLightSettings->front_cone;
-			else if (input[0] == "side_cones") G::VoxLightSettings->side_cones = !G::VoxLightSettings->side_cones;
-			else if (input[0] == "intermediate_cones") G::VoxLightSettings->intermediate_cones = !G::VoxLightSettings->intermediate_cones;
+			else if (input[0] == "front_cone") toggle(&G::VoxLightSettings->front_cone, "VXCT Front Cone");
+			else if (input[0] == "side_cones") toggle(&G::VoxLightSettings->side_cones, "VXCT Side Cones");
+			else if (input[0] == "intermediate_cones") toggle(&G::VoxLightSettings->intermediate_cones, "VXCT Intermediate Cones");
 
-			else if (input[0] == "vox_diffuse" || input[0] == "vdiff") G::VoxLightSettings->vox_diffuse = !G::VoxLightSettings->vox_diffuse;
-			else if (input[0] == "vox_specular" || input[0] == "vspec") G::VoxLightSettings->vox_specular = !G::VoxLightSettings->vox_specular;
-			else if (input[0] == "vox_shadows" || input[0] == "vshad") G::VoxLightSettings->vox_shadows = !G::VoxLightSettings->vox_shadows;
+			else if (input[0] == "vox_diffuse" || input[0] == "vdiff") toggle(&G::VoxLightSettings->vox_diffuse, "VXCT Diffuse Component");
+			else if (input[0] == "vox_specular" || input[0] == "vspec") toggle(&G::VoxLightSettings->vox_specular, "VXCT Specular Component");
+			else if (input[0] == "vox_shadows" || input[0] == "vshad") toggle(&G::VoxLightSettings->vox_shadows, "VXCT Occlusion Component");
 
 			else if (input[0] == "phong_only") { G::VoxLightSettings->vox_diffuse = G::VoxLightSettings->vox_shadows = G::VoxLightSettings->vox_specular = false; G::VoxLightSettings->phong = true; }
 			else if (input[0] == "shadows_only") { G::VoxLightSettings->vox_diffuse = G::VoxLightSettings->phong = G::VoxLightSettings->vox_specular = false; G::VoxLightSettings->vox_shadows = true; }
@@ -342,6 +385,8 @@ void Engine::console() {
 			else if (input[0] == "occlusion_offset" || input[0] == "oo") { print(this, "Occlusion Offset : " + std::to_string(G::VoxLightSettings->occlusion_offset)); }
 			else if (input[0] == "specular_offset" || input[0] == "so") { print(this, "Specular Offset : " + std::to_string(G::VoxLightSettings->specular_offset)); }
 
+			else if (input[0] == "exit" || input[0] == "quit" || input[0] == "q") window->exit();
+
 			else print(this, "Unknwon Command");
 		}
 
@@ -349,4 +394,9 @@ void Engine::console() {
 
 		settingMutex.unlock();
 	}
+}
+
+void Engine::toggle(bool* var, std::string name) {
+	(*var) = !(*var);
+	print(this, name + ((*var) ? ": ON" : ": OFF"));
 }

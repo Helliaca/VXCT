@@ -8,6 +8,7 @@
 
 Model::Model(std::string name, RenderShader sh=RenderShader::EMIT, std::string inputfile="") : IOobject(name)
 {
+	active = true;
 	if (inputfile!="") { this->fromFile(inputfile); }
 	initialize(sh);
 	this->material = new Material();
@@ -16,6 +17,7 @@ Model::Model(std::string name, RenderShader sh=RenderShader::EMIT, std::string i
 
 Model::Model(std::string name = "unnamedModel", RenderShader sh = RenderShader::EMIT, std::vector<int>indices = {}, std::vector<float>vertexData = {}) : IOobject(name)
 {
+	active = true;
 	this->vertexData = vertexData;
 	this->indices = indices;
 	initialize(sh);
@@ -88,6 +90,8 @@ Model::~Model()
 
 void Model::draw() {
 
+	if (!active) return;
+
 	shader->use();
 
 	//Set all references
@@ -100,12 +104,13 @@ void Model::draw() {
 
 	// render
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, vertexData.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
 	checkErrors("Draw");
 }
 
 void Model::draw(Shader* customShader) {
+	if (!active) return;
 	Shader* tmp = this->shader;
 	this->shader = customShader;
 	this->draw();

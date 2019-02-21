@@ -9,8 +9,8 @@ scene = {
 		scale = 1.0f
 		shader = COLOR
 		material = {
-			shininess = 32.0f
-			specular_str = 1.0f
+			shininess = 2.0f
+			specular_str = 1.5f
 		}
 	}
 	model = {

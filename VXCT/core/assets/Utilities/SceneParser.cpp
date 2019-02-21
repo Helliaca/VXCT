@@ -248,9 +248,6 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 		break; }
 
 	case sp_nodetype::MODEL: {
-		//active
-		if (hasChildNodeOfType(node, sp_nodetype::ACTIVE) && !getChildOfType(node, sp_nodetype::ACTIVE)->GetData_b()) return;
-
 		//path, shader, name
 		std::string path = OBJ_SCENE_CUBE1;
 		std::string tmp_shader="COLOR";
@@ -274,6 +271,9 @@ void SceneParser::processComplexNode_toscene(Scene* scene, sp_node* node) {
 			else { print(this, "Primitive type not recognized: " + primitive_type); return; }
 		}
 		else { print(this, "Model has neither path nor primitive: " + name); return; }
+
+		//active
+		if (hasChildNodeOfType(node, sp_nodetype::ACTIVE) && !getChildOfType(node, sp_nodetype::ACTIVE)->GetData_b()) new_model->active = false;
 
 		//set shader unifrom references
 		new_model->addMat4Reference("model_u", &new_model->model);

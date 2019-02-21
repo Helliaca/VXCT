@@ -10,6 +10,7 @@ VoxSettings::VoxSettings()
 	specular_dist_factor = 0.8f;
 
 	diffuse_offset = 0.19f;
+	diffuse_origin_offset = 0.05f;
 	occlusion_offset = 0.08f;
 	specular_offset = 0.15f;
 
@@ -28,9 +29,9 @@ VoxSettings::VoxSettings()
 	vox_shadows = true;
 	vox_specular = true;
 
-	bool front_cone=true;
-	bool side_cones=false;
-	bool intermediate_cones=true;
+	bool front_cone = true;
+	bool side_cones = false;
+	bool intermediate_cones = true;
 
 	//Different voxelmap sizes require different values.
 	if (VOX_SIZE == 128) {
@@ -62,6 +63,7 @@ VoxSettings_struct VoxSettings::to_struct()
 	ret.specular_dist_factor = specular_dist_factor;
 
 	ret.diffuse_offset = diffuse_offset;
+	ret.diffuse_origin_offset = diffuse_origin_offset;
 	ret.occlusion_offset = occlusion_offset;
 	ret.specular_offset = specular_offset;
 

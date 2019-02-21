@@ -8,6 +8,7 @@ struct VoxSettings_struct {
 	float specular_dist_factor;
 
 	float diffuse_offset;
+	float diffuse_origin_offset;
 	float occlusion_offset;
 	float specular_offset;
 
@@ -41,6 +42,7 @@ public:
 	float specular_dist_factor;
 
 	float diffuse_offset;
+	float diffuse_origin_offset;
 	float occlusion_offset;
 	float specular_offset;
 

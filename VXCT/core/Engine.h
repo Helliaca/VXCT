@@ -16,6 +16,7 @@ class Engine : IOobject
 private:
 	void loadGlad();
 	void console();
+	void toggle(bool* var, std::string name);
 	std::thread consoleThread;
 	std::mutex settingMutex;
 

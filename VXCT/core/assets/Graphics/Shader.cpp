@@ -203,6 +203,7 @@ void Shader::setVsettings(const std::string &name, VoxSettings &vsettings_obj) c
 	this->setFloat(name + ".diffuse_dist_factor", vs.diffuse_dist_factor);
 	this->setFloat(name + ".diffuse_apperture", vs.diffuse_apperture);
 	this->setFloat(name + ".diffuse_offset", vs.diffuse_offset);
+	this->setFloat(name + ".diffuse_origin_offset", vs.diffuse_origin_offset);
 
 	this->setFloat(name + ".occlusion_dist_factor", vs.occlusion_dist_factor);
 	this->setFloat(name + ".occlusion_apperture", vs.occlusion_apperture);

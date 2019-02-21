@@ -15,7 +15,7 @@
 #define WIN_HEIGHT 600
 #define WIN_NAME "VXCT"
 
-#define VOX_SIZE 64
+#define VOX_SIZE 256
 
 //Amount of frames to save in FrameTimeCounter
 #define FRAMETIMES_SAVE 100
@@ -30,49 +30,30 @@
 #define MAX_Z 1.0f
 
 //Paths
-#define SCENE_TXT "../VXCT/scenes/scene.txt"
-#define SCENE_DIR "../VXCT/scenes/"
+#define SCENE_TXT "scenes/scene.txt"
+#define SCENE_DIR "scenes/"
 
-#define COLORSHADER_VS "../VXCT/shaders/Phong/color.vs"
-#define COLORSHADER_FS "../VXCT/shaders/Phong/color.fs"
+#define COLORSHADER_VS "shaders/Phong/color.vs"
+#define COLORSHADER_FS "shaders/Phong/color.fs"
 
-#define EMITSHADER_VS "../VXCT/shaders/Emit/emit.vs"
-#define EMITSHADER_FS "../VXCT/shaders/Emit/emit.fs"
+#define EMITSHADER_VS "shaders/Emit/emit.vs"
+#define EMITSHADER_FS "shaders/Emit/emit.fs"
 
-#define EMITRGBASHADER_VS "../VXCT/shaders/Emit/emit_rgba.vs"
-#define EMITRGBASHADER_FS "../VXCT/shaders/Emit/emit_rgba.fs"
+#define EMITRGBASHADER_VS "shaders/Emit/emit_rgba.vs"
+#define EMITRGBASHADER_FS "shaders/Emit/emit_rgba.fs"
 
-#define VOXSHADER_VS "../VXCT/shaders/Vxct/voxelize.vs"
-#define VOXSHADER_GS "../VXCT/shaders/Vxct/voxelize.gs"
-#define VOXSHADER_FS "../VXCT/shaders/Vxct/voxelize.fs"
+#define VOXSHADER_VS "shaders/Vxct/voxelize.vs"
+#define VOXSHADER_GS "shaders/Vxct/voxelize.gs"
+#define VOXSHADER_FS "shaders/Vxct/voxelize.fs"
 
-#define VOXILLUMINSHADER_VS "../VXCT/shaders/Vxct/voxillumin.vs"
-#define VOXILLUMINSHADER_FS "../VXCT/shaders/Vxct/voxillumin.fs"
+#define VOXILLUMINSHADER_VS "shaders/Vxct/voxillumin.vs"
+#define VOXILLUMINSHADER_FS "shaders/Vxct/voxillumin.fs"
 
-#define LODTEXTURESHADER_VS "../VXCT/shaders/Misc/lodTexture.vs"
-#define LODTEXTURESHADER_FS "../VXCT/shaders/Misc/lodTexture.fs"
+#define LODTEXTURESHADER_VS "shaders/Misc/lodTexture.vs"
+#define LODTEXTURESHADER_FS "shaders/Misc/lodTexture.fs"
 
-#define LINESHADER_VS "../VXCT/shaders/Misc/lineshader.vs"
-#define LINESHADER_FS "../VXCT/shaders/Misc/lineshader.fs"
+#define LINESHADER_VS "shaders/Misc/lineshader.vs"
+#define LINESHADER_FS "shaders/Misc/lineshader.fs"
 
-#define OBJ_SPHERE "models/voxel_test.obj"
-#define OBJ_SCENE "models/voxel_scene.obj"
-
-//Base Scene Objects
-#define OBJ_SCENE_SPHERE1 "models/voxel_scene_sphere1.obj"
-#define OBJ_SCENE_SPHERE2 "models/voxel_scene_sphere2.obj"
+//Primitive Objects
 #define OBJ_SCENE_CUBE1 "models/voxel_scene_cube1.obj"
-
-#define OBJ_SCENE_WALL1 "models/voxel_scene_wall1.obj"
-#define OBJ_SCENE_WALL2 "models/voxel_scene_wall2.obj"
-#define OBJ_SCENE_WALL3 "models/voxel_scene_wall3.obj"
-#define OBJ_SCENE_WALL4 "models/voxel_scene_wall4.obj"
-#define OBJ_SCENE_WALL5 "models/voxel_scene_wall5.obj"
-#define OBJ_SCENE_WALL6 "models/voxel_scene_wall6.obj"
-
-#define OBJ_VIS_CONE "models/cone.obj"
-
-#define OBJ_SCENE_BUNNY "models/stan_bunny.obj"
-
-//#define OBJ_SCENE_LUCY "models/stan_lucy_smooth.obj"
-#define OBJ_SCENE_LUCY "models/stan_lucy_lowpoly_smooth.obj" //Low poly version to decrease loading time

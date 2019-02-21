@@ -7,6 +7,8 @@ void processInput(GLFWwindow *window);
 
 Window::Window() : IOobject("unnamedWindow")
 {
+	close = false;
+
 	glfwInit(); //Initialize glfw
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //Set opengl version to 4.5 core
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -33,6 +35,10 @@ Window::~Window()
 {
 }
 
+void Window::exit() {
+	this->close = true;
+}
+
 void Window::setPolygonMode(PolygonMode polygonmode, bool doubleSidedFaces) {
 	GLenum face, mode;
 	face = doubleSidedFaces ? GL_FRONT_AND_BACK : GL_FRONT;
@@ -43,7 +49,7 @@ void Window::setPolygonMode(PolygonMode polygonmode, bool doubleSidedFaces) {
 }
 
 bool Window::shouldClose() {
-	return glfwWindowShouldClose(this->window);
+	return close || glfwWindowShouldClose(this->window);
 }
 
 GLFWwindow* Window::getGLFWwindow() {

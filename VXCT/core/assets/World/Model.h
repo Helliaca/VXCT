@@ -63,6 +63,7 @@ public:
 	}
 
 	bool is_static; //Determines whether if the model is tied to the given shader, or other shaders can be used (eg. voxelization shader)
+	bool active;
 
 	glm::mat4 model; //Model Matrix
 	void scale(float scale);

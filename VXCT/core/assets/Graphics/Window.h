@@ -11,11 +11,13 @@ class Window : IOobject
 {
 private:
 	GLFWwindow * window;
+	bool close;
 public:
 	void setPolygonMode(PolygonMode polygonmode = W_FILL, bool doubleSidedFaces = true);
 	Window();
 	~Window();
 	bool shouldClose();
+	void exit();
 	GLFWwindow* getGLFWwindow();
 	void processInput();
 };
