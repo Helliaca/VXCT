@@ -40,7 +40,7 @@ scene = {
 	model = {
 		name = MyModel
 		active = true
-    static = false
+    		static = false
 		path = models/my_model.obj
 		position = { x = 0.0f y = 0.0f z = 0.0f }
 		rotation = { x = 0.0f y = 0.0f z = 0.0f }
