@@ -203,9 +203,9 @@ The available shell commands are the following (vxct is short for voxel cone tra
 
 --
 
-* `diffuse_aperture [x]` or `da [x]`: Set vxct diffuse aperture to x.
-* `diffuse_aperture [x]` or `da [x]`: Set vxct diffuse aperture to x.
-* `diffuse_aperture [x]` or `da [x]`: Set vxct diffuse aperture to x.
+* `diffuse_aperture [x]` or `da [x]`: Set vxct diffuse cone aperture to x.
+* `occlusion_aperture [x]` or `oa [x]`: Set vxct occlusion cone aperture to x.
+* `specular_aperture [x]` or `sa [x]`: Set vxct specular cone aperture to x.
 
 --
 
