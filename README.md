@@ -6,7 +6,7 @@ VXCT is an OpenGL 4.5 based implementation of the Voxel Cone Tracing rendering a
 
 It allows for easy visualization of all data utilized during the process such as 3D textures, individual lighting components and more. Customized scenes and models can be defined and loaded into the rendering environment with ease.
 
-The development took place as part of a Bachelor's thesis at the [Freie Universität Berlin](https://www.fu-berlin.de/). A revised and corrected version of said thesis can be viewed and used as a form of documentation [here.](https://github.com/Helliaca/VXCT/blob/master/BT_reviewed.pdf)
+The development took place as part of a Bachelor's thesis at the [Freie Universität Berlin](https://www.fu-berlin.de/). A revised and corrected version of said thesis can be viewed and used as a form of documentation [here.](https://drive.google.com/file/d/1ZS57rgKCYl-T-sqEzVSDuj0E7VQEB6EY/view?usp=sharing)
 
 ![Example Pictures](https://i.imgur.com/TSqa8XK.jpg)
 
