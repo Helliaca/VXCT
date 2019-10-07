@@ -10,9 +10,6 @@ The development took place as part of a Bachelor's thesis at the [Freie Universi
 
 ![Example Pictures](https://i.imgur.com/TSqa8XK.jpg)
 
-Performance comparison:
-![Comparison](https://i.imgur.com/lWYRW2x.jpg)
-
 # Instructions
 
 ## Setup
@@ -29,6 +26,9 @@ Alternatively, if you are looking to compile the program yourself in Visual Stud
 - [An OpenGL 4.5 loader generated with glad 0.1.16a0](http://glad.dav1d.de/#profile=core&language=c&specification=gl&loader=on&api=gl%3D4.5)
 
 Whichever method you opt for, once executed, you should be greeted by a commandline window together with an OpenGL rendering window displaying the default scene consisting of a simple Cornell Box and a low-poly version of 'Lucy', from the [Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/). All other complex models shipped with this application also originate form the Stanford repository.
+
+Performance comparison:
+![Comparison](https://i.imgur.com/lWYRW2x.jpg)
 
 ## Creating/Modifying a scene
 
