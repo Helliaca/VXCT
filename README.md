@@ -11,7 +11,7 @@ The development took place as part of a Bachelor's thesis at the [Freie Universi
 ![Example Pictures](https://i.imgur.com/TSqa8XK.jpg)
 
 Performance comparison:
-![Comparison](https://i.imgur.com/lWYRW2x.jpg
+![Comparison](https://i.imgur.com/lWYRW2x.jpg)
 
 # Instructions
 
